@@ -1,0 +1,29 @@
+import 'package:flutter/material.dart';
+
+class ScreenSize{
+  late Size screenSize;
+
+  ScreenSize(this.screenSize);
+
+  double getHeightSize(){
+    return screenSize.height;
+  }
+
+  double getWidthSize(){
+    return screenSize.width;
+  }
+
+  double getHeightPerSize(double per) {
+    return (screenSize.height * per) / 100;
+  }
+
+  double getWidthPerSize(double per) {
+    return (screenSize.width * per) / 100;
+  }
+}
+
+
+
+
+
+
