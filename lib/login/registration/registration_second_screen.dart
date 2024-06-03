@@ -1,4 +1,5 @@
 import 'package:chattingapp/login/registration/registration_dialog.dart';
+import 'package:chattingapp/login/registration/registration_third_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../utils/screen_size.dart';
@@ -8,7 +9,9 @@ import 'authentication.dart';
 class RegistrationSecondScreen extends StatefulWidget {
   final String email;
   final String password;
-  const RegistrationSecondScreen({super.key, required this.email, required this.password});
+
+  const RegistrationSecondScreen(
+      {super.key, required this.email, required this.password});
 
   @override
   State<RegistrationSecondScreen> createState() =>
@@ -22,10 +25,34 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
   bool loadingState = false;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     email = widget.email;
     password = widget.password;
+  }
+
+  Future<void> _checkEmail(context) async {
+    if (mounted) {
+      setState(() {
+        loadingState = true;
+      });
+    }
+    bool isEmailVerified = await checkEmailVerificationStatus();
+    if (isEmailVerified) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const RegistrationThirdScreen()),
+      );
+    } else {
+      emailAuthFail(context);
+    }
+    // 마운트된 상태에서만 setState 실행
+    if (mounted) {
+      setState(() {
+        loadingState = false;
+      });
+    }
   }
 
   @override
@@ -80,7 +107,7 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
                     width: screenSize.getWidthPerSize(50),
                     child: ElevatedButton(
                         onPressed: () {
-                          signInWithVerifyEmailAndPassword(email,password);
+                          signInWithVerifyEmailAndPassword(email, password);
                         },
                         child: Text(
                           "이메일 다시 보내기",
@@ -94,45 +121,34 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
             ),
           ),
           Positioned(
-              bottom: 0,
-              child: SizedBox(
-                height: screenSize.getHeightPerSize(8),
-                width: screenSize.getWidthPerSize(100),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0), // 왼쪽 위 모서리만 둥글게 설정
-                          topRight: Radius.circular(20.0), // 오른쪽 위 모서리만 둥글게 설정
-                        ), // 모서리를 둥글게 설정
+            bottom: 0,
+            child: SizedBox(
+              height: screenSize.getHeightPerSize(8),
+              width: screenSize.getWidthPerSize(100),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20.0), // 왼쪽 위 모서리만 둥글게 설정
+                      topRight: Radius.circular(20.0), // 오른쪽 위 모서리만 둥글게 설정
+                    ), // 모서리를 둥글게 설정
+                  ),
+                ),
+                onPressed: () => _checkEmail(context),
+                child: loadingState
+                    ? const SpinKitThreeInOut(
+                        color: Colors.white,
+                      )
+                    : Text(
+                        "다음",
+                        style: TextStyle(
+                            fontSize: screenSize.getHeightPerSize(3),
+                            color: Colors.black),
                       ),
-                    ),
-                    onPressed: () async {
-                      if(!loadingState){
-                        setState(() {
-                          loadingState = true;
-                        });
-                        if(await checkEmailVerificationStatus()){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()),);
-                        }else{
-                          emailAuthFail(context);
-                          setState(() {
-                            loadingState = false;
-                          });
-                        }
-                      }
-                    },
-                    child: loadingState
-                        ? const SpinKitThreeInOut(
-                      color: Colors.white,
-                    )
-                        : Text(
-                      "다음",
-                      style: TextStyle(
-                          fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
-                    )),
-              ))
+              ),
+            ),
+          ),
         ],
       ),
     );
