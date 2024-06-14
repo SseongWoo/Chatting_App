@@ -1,10 +1,11 @@
-import 'package:chattingapp/home/chat/chat_screen.dart';
+import 'package:chattingapp/home/chat/create_chat/creat_chat.dart';
 import 'package:chattingapp/home/friend/request/friend_request_screen.dart';
 import 'package:chattingapp/home/information_screen.dart';
-import 'package:chattingapp/splash_screen.dart';
 import 'package:chattingapp/utils/color.dart';
+import 'package:chattingapp/utils/public_variable.dart';
 import 'package:chattingapp/utils/test_screen.dart';
 import 'package:flutter/material.dart';
+import 'chat/chat_screen.dart';
 import 'friend/friend_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,8 +15,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   int barIndex = 0;
   late TabController _tabController;
   final titles = {
@@ -28,8 +28,7 @@ class _HomeScreenState extends State<HomeScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
-    _tabController =
-        TabController(length: titles.length, initialIndex: 0, vsync: this);
+    _tabController = TabController(length: titles.length, initialIndex: homeTap, vsync: this);
   }
 
   @override
@@ -61,8 +60,7 @@ class _HomeScreenState extends State<HomeScreen>
               IconButton(
                 onPressed: () {
                   Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => const FriendManagementScreen()),
+                      MaterialPageRoute(builder: (context) => const FriendManagementScreen()),
                       (route) => false);
                 },
                 icon: const Icon(Icons.add),
@@ -73,13 +71,22 @@ class _HomeScreenState extends State<HomeScreen>
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const SplashScreen()),
+                    MaterialPageRoute(builder: (context) => const CreateChat()),
                   );
                 },
-                icon: const Icon(Icons.search),
-                tooltip: "검색",
+                icon: const Icon(Icons.add_comment_outlined),
+                tooltip: "채팅방 개설",
               ),
+            IconButton(
+              onPressed: () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => const SplashScreen()),
+                // );
+              },
+              icon: const Icon(Icons.search),
+              tooltip: "검색",
+            ),
             if (_tabController.index == 2)
               IconButton(
                 onPressed: () {},
@@ -100,24 +107,30 @@ class _HomeScreenState extends State<HomeScreen>
         bottomNavigationBar: Container(
           color: mainLightColor,
           child: TabBar(
+              onTap: (value) {
+                setState(() {
+                  homeTap = _tabController.index;
+                });
+              },
               labelColor: Colors.white,
               unselectedLabelColor: mainBoldColor,
               indicatorColor: Colors.white,
               dividerColor: mainLightColor,
-              controller: _tabController, tabs: const [
-            Tab(
-              icon: Icon(Icons.people),
-              text: "친구",
-            ),
-            Tab(
-              icon: Icon(Icons.chat),
-              text: "채팅",
-            ),
-            Tab(
-              icon: Icon(Icons.person),
-              text: "내 정보",
-            )
-          ]),
+              controller: _tabController,
+              tabs: const [
+                Tab(
+                  icon: Icon(Icons.people),
+                  text: "친구",
+                ),
+                Tab(
+                  icon: Icon(Icons.chat),
+                  text: "채팅",
+                ),
+                Tab(
+                  icon: Icon(Icons.person),
+                  text: "내 정보",
+                )
+              ]),
         ),
       ),
     );

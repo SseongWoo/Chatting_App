@@ -27,7 +27,6 @@ Future<String> createUserWithEmailAndPassword(String email, String password) asy
       "creation_time":DateFormat("yyyy-MM-dd").format(DateTime.now()),
       "category":{},
       "category_sequence" : [],
-      "chatting_room" : {},
     });
     await FirebaseFirestore.instance.collection('users_public').doc(user?.uid).set({
       "uid":user?.uid,

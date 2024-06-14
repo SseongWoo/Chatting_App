@@ -13,7 +13,7 @@ class AccountFindFirstScreen extends StatefulWidget {
 
 class _AccountFindFirstScreenState extends State<AccountFindFirstScreen> {
   late ScreenSize screenSize;
-  final formKey = GlobalKey<FormState>();
+  final _accountFindFirstFormKey = GlobalKey<FormState>();
   TextEditingController controllerID = TextEditingController();
   final FocusNode focusNodeID = FocusNode();
   bool loadingState = false;
@@ -25,20 +25,22 @@ class _AccountFindFirstScreenState extends State<AccountFindFirstScreen> {
     super.dispose();
   }
 
-  void findPassword() async{
+  void findPassword() async {
     bool emailCheck = await isEmailRegistered(controllerID.text);
-    if(emailCheck){
+    if (emailCheck) {
       resetPassword(controllerID.text);
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => AccountFindSecondScreen(email: controllerID.text,)),
+            builder: (context) => AccountFindSecondScreen(
+                  email: controllerID.text,
+                )),
       );
-    }else{
+    } else {
       setState(() {
         loadingState = false;
         existentEmail = false;
-        formKey.currentState!.validate();
+        _accountFindFirstFormKey.currentState!.validate();
       });
     }
   }
@@ -49,8 +51,7 @@ class _AccountFindFirstScreenState extends State<AccountFindFirstScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios_new)),
+            onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back_ios_new)),
       ),
       body: Stack(
         children: [
@@ -66,16 +67,14 @@ class _AccountFindFirstScreenState extends State<AccountFindFirstScreen> {
                     width: screenSize.getWidthPerSize(80),
                     child: Text(
                       "계정 찾기\n",
-                      style:
-                      TextStyle(fontSize: screenSize.getHeightPerSize(4)),
+                      style: TextStyle(fontSize: screenSize.getHeightPerSize(4)),
                     ),
                   ),
                   SizedBox(
                     width: screenSize.getWidthPerSize(80),
                     child: Text(
                       "복구 할 이메일을 입력해 주세요",
-                      style:
-                      TextStyle(fontSize: screenSize.getHeightPerSize(2)),
+                      style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
                     ),
                   ),
                   SizedBox(
@@ -85,21 +84,20 @@ class _AccountFindFirstScreenState extends State<AccountFindFirstScreen> {
                     height: screenSize.getHeightPerSize(12),
                     width: screenSize.getWidthPerSize(80),
                     child: Form(
-                      key: formKey,
+                      key: _accountFindFirstFormKey,
                       child: TextFormField(
                         focusNode: focusNodeID,
                         controller: controllerID,
-                        decoration: const InputDecoration(
-                            labelText: '이메일', border: OutlineInputBorder()),
+                        decoration:
+                            const InputDecoration(labelText: '이메일', border: OutlineInputBorder()),
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
-                        onTapOutside: (event) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
+                        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                         validator: (String? value) {
                           if (value?.isEmpty ?? true) return '이메일을 입력해 주세요';
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                              .hasMatch(value!)) return "이메일 형식이 아닙니다.";
-                          if(!existentEmail)return "등록되어 있지 않는 이메일입니다.";
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value!))
+                            return "이메일 형식이 아닙니다.";
+                          if (!existentEmail) return "등록되어 있지 않는 이메일입니다.";
                           return null;
                         },
                       ),
@@ -128,7 +126,7 @@ class _AccountFindFirstScreenState extends State<AccountFindFirstScreen> {
                   ),
                 ),
                 onPressed: () {
-                  if(formKey.currentState!.validate()&&!loadingState){
+                  if (_accountFindFirstFormKey.currentState!.validate() && !loadingState) {
                     setState(() {
                       loadingState = true;
                     });
@@ -137,14 +135,13 @@ class _AccountFindFirstScreenState extends State<AccountFindFirstScreen> {
                 },
                 child: loadingState
                     ? const SpinKitThreeInOut(
-                  color: Colors.white,
-                )
+                        color: Colors.white,
+                      )
                     : Text(
-                  "다음",
-                  style: TextStyle(
-                      fontSize: screenSize.getHeightPerSize(3),
-                      color: Colors.black),
-                ),
+                        "다음",
+                        style: TextStyle(
+                            fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
+                      ),
               ),
             ),
           ),

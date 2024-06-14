@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../../utils/convert_array.dart';
 import '../friend_data.dart';
 
 FirebaseAuth _auth = FirebaseAuth.instance;
@@ -8,6 +9,8 @@ List<String> categorySequence = [];
 Map<String, List<String>> categoryList = {};
 bool categoryControlCheck = false;
 List<String> deleteUserList = [];
+
+
 
 Future<void> getCategoryList() async {
   try {
@@ -18,12 +21,14 @@ Future<void> getCategoryList() async {
         .get();
 
     if (documentSnapshot.exists) {
-      Map<String, dynamic> mapData = documentSnapshot.get('category');
-      List<dynamic> listData = documentSnapshot.get('category_sequence');
-      categoryList = mapData.map((key, value) {
-        return MapEntry(key, List<String>.from(value));
-      });
-      categorySequence = List<String>.from(listData);
+      // Map<String, dynamic> mapData = documentSnapshot.get('category');
+      // List<dynamic> listData = documentSnapshot.get('category_sequence');
+      // categoryList = mapData.map((key, value) {
+      //   return MapEntry(key, List<String>.from(value));
+      // });
+      // categorySequence = List<String>.from(listData);
+      categoryList = convertMap(documentSnapshot.get('category'));
+      categorySequence = convertList(documentSnapshot.get('category_sequence'));
     } else {
       print("getCategoryList에러1");
     }

@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:chattingapp/login/registration/authentication.dart';
 import 'package:chattingapp/login/registration/registration_first_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import '../home/chat/chat_data.dart';
+import '../home/friend/friend_data.dart';
 import '../home/home_screen.dart';
+import '../utils/my_data.dart';
 import '../utils/screen_size.dart';
 import 'find/account_find_first_screen.dart';
 
@@ -35,8 +40,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _login() async {
     if (await signIn(controllerID.text, controllerPW.text)) {
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-          builder: (context) => const HomeScreen()), (route) => false);
+      await getFriendDataList();
+      await getMyData();
+      await getChatRoomData();
+      await getChatRoomDataList();
+      Timer(const Duration(seconds: 1), () {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const HomeScreen()), (route) => false);
+      });
     } else {
       setState(() {
         loadingState = false;
@@ -63,16 +74,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 firstChild: SizedBox(
                   width: screenSize.getWidthPerSize(80),
                   height: screenSize.getHeightPerSize(10),
-                  child: Center(child: Text("Flutter Talk", style: TextStyle( color: const Color(0xff53c5f8),fontSize: screenSize.getHeightPerSize(5)),)),
+                  child: Center(
+                      child: Text(
+                    "Flutter Talk",
+                    style: TextStyle(
+                        color: const Color(0xff53c5f8), fontSize: screenSize.getHeightPerSize(5)),
+                  )),
                 ),
                 secondChild: SizedBox(
                   width: screenSize.getWidthPerSize(80),
                   height: screenSize.getWidthPerSize(50),
                   child: Image.asset('assets/images/logo.png'),
                 ),
-                crossFadeState: keyboardVisibilty
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
+                crossFadeState:
+                    keyboardVisibilty ? CrossFadeState.showFirst : CrossFadeState.showSecond,
               ),
               SizedBox(
                 height: screenSize.getHeightPerSize(4),
@@ -81,16 +96,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: screenSize.getWidthPerSize(80),
                 height: screenSize.getHeightPerSize(6),
                 child: TextField(
-                  controller: controllerID,
-                  decoration: const InputDecoration(labelText: '아이디'),
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  onTap: () => keyboardVisibilty = true,
-                  onTapOutside: (event) {
-                    keyboardVisibilty = false;
-                    FocusManager.instance.primaryFocus?.unfocus();
-                  }
-                ),
+                    controller: controllerID,
+                    decoration: const InputDecoration(labelText: '아이디'),
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    onTap: () => keyboardVisibilty = true,
+                    onTapOutside: (event) {
+                      keyboardVisibilty = false;
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    }),
               ),
               SizedBox(
                 height: screenSize.getHeightPerSize(3),
@@ -99,16 +113,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: screenSize.getWidthPerSize(80),
                 height: screenSize.getHeightPerSize(6),
                 child: TextField(
-                  controller: controllerPW,
-                  decoration: const InputDecoration(labelText: "비밀번호"),
-                  keyboardType: TextInputType.text,
-                  obscureText: true,
-                  onTap: () => keyboardVisibilty = true,
-                  onTapOutside: (event) {
-                    keyboardVisibilty = false;
+                    controller: controllerPW,
+                    decoration: const InputDecoration(labelText: "비밀번호"),
+                    keyboardType: TextInputType.text,
+                    obscureText: true,
+                    onTap: () => keyboardVisibilty = true,
+                    onTapOutside: (event) {
+                      keyboardVisibilty = false;
                       FocusManager.instance.primaryFocus?.unfocus();
-                  }
-                ),
+                    }),
               ),
               SizedBox(
                 height: screenSize.getHeightPerSize(2),
@@ -146,9 +159,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: screenSize.getHeightPerSize(3),
                     child: Text(
                       loginFailReason,
-                      style: TextStyle(
-                          fontSize: screenSize.getHeightPerSize(1.5),
-                          color: Colors.red),
+                      style:
+                          TextStyle(fontSize: screenSize.getHeightPerSize(1.5), color: Colors.red),
                     ),
                   )),
               SizedBox(
@@ -191,28 +203,23 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const RegistrationFirstScreen()),
+                                builder: (context) => const RegistrationFirstScreen()),
                           );
                         },
                         child: Text(
                           "회원가입",
-                          style: TextStyle(
-                              fontSize: screenSize.getHeightPerSize(1.5)),
+                          style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
                         )),
                     TextButton(
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const AccountFindFirstScreen()),
+                            MaterialPageRoute(builder: (context) => const AccountFindFirstScreen()),
                           );
                         },
                         child: Text(
                           "계정 찾기",
-                          style: TextStyle(
-                              fontSize: screenSize.getHeightPerSize(1.5)),
+                          style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
                         )),
                   ],
                 ),

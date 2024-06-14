@@ -1,6 +1,7 @@
 import 'package:chattingapp/home/friend/request/friend_add_dialog.dart';
 import 'package:chattingapp/home/friend/request/request_widget.dart';
 import 'package:chattingapp/utils/color.dart';
+import 'package:chattingapp/utils/public_variable.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -22,7 +23,8 @@ class FriendManagementScreen extends StatefulWidget {
   State<FriendManagementScreen> createState() => _FriendManagementScreenState();
 }
 
-class _FriendManagementScreenState extends State<FriendManagementScreen> with SingleTickerProviderStateMixin {
+class _FriendManagementScreenState extends State<FriendManagementScreen>
+    with SingleTickerProviderStateMixin {
   // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // final FirebaseAuth _auth = FirebaseAuth.instance;
   bool newAddFriend = false;
@@ -31,8 +33,8 @@ class _FriendManagementScreenState extends State<FriendManagementScreen> with Si
   late TabController _tabController;
 
   final titles = {
-    0: "보낸 요청",
-    1: "받은 요청",
+    0: "받은 요청",
+    1: "보낸 요청",
   };
 
   @override
@@ -41,11 +43,12 @@ class _FriendManagementScreenState extends State<FriendManagementScreen> with Si
     super.initState();
     getRequestList();
     //_listenToFriendRequests();
-    _tabController = TabController(length: titles.length, initialIndex: 0, vsync: this);
+    _tabController = TabController(length: titles.length, initialIndex: requestTap, vsync: this);
     _tabController.addListener(() {
       setState(() {});
     });
   }
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -79,14 +82,15 @@ class _FriendManagementScreenState extends State<FriendManagementScreen> with Si
   //     });
   //   });
   // }
-   Future<bool> _onPopInvoked() async {
+  Future<bool> _onPopInvoked() async {
     movePage();
     return false;
   }
 
-  void movePage(){
-    Navigator.of(context).pushAndRemoveUntil(screenMovementLeftToRight(const HomeScreen()),
-          (Route<dynamic> route) => false,
+  void movePage() {
+    Navigator.of(context).pushAndRemoveUntil(
+      screenMovementLeftToRight(const HomeScreen()),
+      (Route<dynamic> route) => false,
     );
   }
 
@@ -99,9 +103,11 @@ class _FriendManagementScreenState extends State<FriendManagementScreen> with Si
         onPopInvoked: (didPop) => _onPopInvoked,
         child: Scaffold(
           appBar: AppBar(
-            leading: IconButton(onPressed: () {
-              movePage();
-            }, icon: const Icon(Icons.arrow_back_ios_new)),
+            leading: IconButton(
+                onPressed: () {
+                  movePage();
+                },
+                icon: const Icon(Icons.arrow_back_ios_new)),
             backgroundColor: mainLightColor,
             centerTitle: false,
             title: Text(titles[_tabController.index]!),
@@ -121,12 +127,12 @@ class _FriendManagementScreenState extends State<FriendManagementScreen> with Si
                     ? SpinKitFadingCircle(
                         color: mainColor,
                       )
-                    : const RequestSentScreen(),
+                    : const RequestReceivedScreen(),
                 loadingState
                     ? SpinKitFadingCircle(
                         color: mainColor,
                       )
-                    : const RequestReceivedScreen(),
+                    : const RequestSentScreen(),
               ],
             ),
             Positioned(
@@ -134,24 +140,26 @@ class _FriendManagementScreenState extends State<FriendManagementScreen> with Si
               right: screenSize.getWidthPerSize(5),
               child: Container(
                 padding: const EdgeInsets.all(1),
-                decoration:
-                    BoxDecoration(color: mainColor, shape: BoxShape.circle),
+                decoration: BoxDecoration(color: mainColor, shape: BoxShape.circle),
                 constraints: BoxConstraints(
                   minWidth: screenSize.getHeightPerSize(7),
                   minHeight: screenSize.getHeightPerSize(7),
                 ),
-                child: loadingState ? const SpinKitRing(color: Colors.white,) :
-                IconButton(
-                  onPressed: () {
-                    addFriendDialogTest(context);
-                  },
-                  icon: Icon(
-                    Icons.add,
-                    size: screenSize.getHeightPerSize(4),
-                    color: Colors.black,
-                  ),
-                  tooltip: "친구 추가",
-                ),
+                child: loadingState
+                    ? const SpinKitRing(
+                        color: Colors.white,
+                      )
+                    : IconButton(
+                        onPressed: () {
+                          addFriendDialogTest(context);
+                        },
+                        icon: Icon(
+                          Icons.add,
+                          size: screenSize.getHeightPerSize(4),
+                          color: Colors.black,
+                        ),
+                        tooltip: "친구 추가",
+                      ),
               ),
             ),
           ]),
@@ -163,33 +171,10 @@ class _FriendManagementScreenState extends State<FriendManagementScreen> with Si
                 unselectedLabelColor: mainBoldColor,
                 indicatorColor: Colors.white,
                 dividerColor: mainLightColor,
+                onTap: (value) {
+                  requestTap = value;
+                },
                 tabs: [
-                  Tab(
-                    height: screenSize.getHeightPerSize(8),
-                    child: Stack(
-                      children: [
-                        const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [Icon(Icons.send), Text("보낸 요청")],
-                        ),
-                        Visibility(
-                          visible: newAddFriend,
-                          child: Positioned(
-                              right: screenSize.getHeightPerSize(0.5),
-                              top: screenSize.getHeightPerSize(1),
-                              child: Container(
-                                padding: const EdgeInsets.all(1),
-                                decoration: const BoxDecoration(
-                                    color: Colors.red, shape: BoxShape.circle),
-                                constraints: BoxConstraints(
-                                  minWidth: screenSize.getHeightPerSize(1),
-                                  minHeight: screenSize.getHeightPerSize(1),
-                                ),
-                              )),
-                        ),
-                      ],
-                    ),
-                  ),
                   Tab(
                     height: screenSize.getHeightPerSize(8),
                     child: Stack(
@@ -205,8 +190,34 @@ class _FriendManagementScreenState extends State<FriendManagementScreen> with Si
                               top: screenSize.getHeightPerSize(1),
                               child: Container(
                                 padding: const EdgeInsets.all(1),
-                                decoration: const BoxDecoration(
-                                    color: Colors.red, shape: BoxShape.circle),
+                                decoration:
+                                    const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                                constraints: BoxConstraints(
+                                  minWidth: screenSize.getHeightPerSize(1),
+                                  minHeight: screenSize.getHeightPerSize(1),
+                                ),
+                              )),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Tab(
+                    height: screenSize.getHeightPerSize(8),
+                    child: Stack(
+                      children: [
+                        const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [Icon(Icons.send), Text("보낸 요청")],
+                        ),
+                        Visibility(
+                          visible: newAddFriend,
+                          child: Positioned(
+                              right: screenSize.getHeightPerSize(0.5),
+                              top: screenSize.getHeightPerSize(1),
+                              child: Container(
+                                padding: const EdgeInsets.all(1),
+                                decoration:
+                                    const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
                                 constraints: BoxConstraints(
                                   minWidth: screenSize.getHeightPerSize(1),
                                   minHeight: screenSize.getHeightPerSize(1),
@@ -251,7 +262,7 @@ class _RequestSentScreenState extends State<RequestSentScreen> {
             ListView.builder(
               itemCount: requestSendList.length,
               itemBuilder: (context, index) {
-                return RequestSentWidget(screenSize: screenSize, index : index);
+                return RequestSentWidget(screenSize: screenSize, index: index);
               },
             ),
             Visibility(
@@ -278,7 +289,6 @@ class RequestReceivedScreen extends StatefulWidget {
 }
 
 class _RequestReceivedScreenState extends State<RequestReceivedScreen> {
-
   Future<void> refreshAccept() async {
     await acceptRequest();
     setState(() {
@@ -294,9 +304,10 @@ class _RequestReceivedScreenState extends State<RequestReceivedScreen> {
   }
 
   // 받은 요청중 응답을 한 요청사항들 중 3일이 지난 요청들을 삭제하는 과정
-  void dateCheck(){
-    for(int index = 0; index < requestReceivedList.length; index++){
-      if(dateDifference(requestReceivedList[index].requestTime) > 3 && requestReceivedList[index].requestCheck != false){
+  void dateCheck() {
+    for (int index = 0; index < requestReceivedList.length; index++) {
+      if (dateDifference(requestReceivedList[index].requestTime) > 3 &&
+          requestReceivedList[index].requestCheck != false) {
         deleteRequest(requestReceivedList[index].requestUID, true, false);
         requestReceivedList.removeAt(index);
       }
@@ -315,7 +326,7 @@ class _RequestReceivedScreenState extends State<RequestReceivedScreen> {
             ListView.builder(
               itemCount: requestReceivedList.length,
               itemBuilder: (context, index) {
-                return RequestReceivedWidget(screenSize : screenSize, index : index);
+                return RequestReceivedWidget(screenSize: screenSize, index: index);
               },
             ),
             Visibility(

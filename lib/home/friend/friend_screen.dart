@@ -14,19 +14,17 @@ class FriendScreen extends StatefulWidget {
   State<FriendScreen> createState() => _FriendScreenState();
 }
 
-class _FriendScreenState extends State<FriendScreen>
-    with TickerProviderStateMixin {
+class _FriendScreenState extends State<FriendScreen> with TickerProviderStateMixin {
   late ScreenSize screenSize;
   List<String> newCategorySequence = [];
   Map<String, FriendData> newFriendList = {};
-  late TabController tabController;
+  late TabController _tabController;
   int categoryIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    tabController =
-        TabController(length: categorySequence.length + 1, vsync: this);
+    _tabController = TabController(length: categorySequence.length + 1, vsync: this);
     newFriendList = friendList;
     newCategorySequence = ["전체"];
     newCategorySequence.addAll(categorySequence);
@@ -35,7 +33,7 @@ class _FriendScreenState extends State<FriendScreen>
 
   @override
   void dispose() {
-    tabController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -52,14 +50,14 @@ class _FriendScreenState extends State<FriendScreen>
         Container(
           height: screenSize.getHeightPerSize(5),
           decoration: const BoxDecoration(
-            color: Colors
-                .white, /*border: Border(bottom: BorderSide(width: 1.0,color: Colors.grey)),*/
+            color:
+                Colors.white, /*border: Border(bottom: BorderSide(width: 1.0,color: Colors.grey)),*/
           ),
           child: Row(
             children: [
               Expanded(
                   child: ButtonsTabBar(
-                controller: tabController,
+                controller: _tabController,
                 backgroundColor: mainColor,
                 unselectedBackgroundColor: Colors.grey[300],
                 borderWidth: 1,
@@ -73,9 +71,7 @@ class _FriendScreenState extends State<FriendScreen>
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
-                tabs: newCategorySequence
-                    .map((String name) => Tab(text: name))
-                    .toList(),
+                tabs: newCategorySequence.map((String name) => Tab(text: name)).toList(),
               )),
               Container(
                 width: 50,
@@ -102,7 +98,7 @@ class _FriendScreenState extends State<FriendScreen>
         ),
         Expanded(
           child: TabBarView(
-            controller: tabController,
+            controller: _tabController,
             children: newCategorySequence.map((String name) {
               if (name == "  전체  " && newFriendList.isNotEmpty) {
                 return ListView.builder(
@@ -122,20 +118,17 @@ class _FriendScreenState extends State<FriendScreen>
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       return FriendWidget(
-                        friendData:
-                            newFriendList[friendListUidKey[items[index]]]!,
+                        friendData: newFriendList[friendListUidKey[items[index]]]!,
                       );
                     },
                   );
                 } else {
                   // items가 null이거나 비어 있을 때 빈 위젯 반환
-                  return const Center(
-                      child: Text("현재 이 카테고리에 친구가 없습니다.\n친구를 추가해보세요!"));
+                  return const Center(child: Text("현재 이 카테고리에 친구가 없습니다.\n친구를 추가해보세요!"));
                 }
               } else {
                 // name이 카테고리에 없을 때 빈 위젯 반환
-                return const Center(
-                    child: Text("현재 이 카테고리에 친구가 없습니다.\n친구를 추가해보세요!"));
+                return const Center(child: Text("현재 이 카테고리에 친구가 없습니다.\n친구를 추가해보세요!"));
               }
             }).toList(),
           ),

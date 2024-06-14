@@ -21,7 +21,6 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   late String categoryName;
   late int index;
 
-
   @override
   void initState() {
     // TODO: implement initState
@@ -36,10 +35,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
         width: screenSize.getWidthSize(),
         height: screenSize.getHeightPerSize(6),
         margin: EdgeInsets.fromLTRB(
-            0,
-            screenSize.getHeightPerSize(0.5),
-            0,
-            screenSize.getHeightPerSize(0.5)),
+            0, screenSize.getHeightPerSize(0.5), 0, screenSize.getHeightPerSize(0.5)),
         decoration: BoxDecoration(
           color: mainLightColor,
           border: Border.all(color: Colors.grey, width: 0.5),
@@ -47,17 +43,13 @@ class _CategoryWidgetState extends State<CategoryWidget> {
         ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(
-              screenSize.getWidthPerSize(4),
-              0,
-              screenSize.getWidthPerSize(2),
-              0),
+              screenSize.getWidthPerSize(4), 0, screenSize.getWidthPerSize(2), 0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 categoryName,
-                style: TextStyle(
-                    fontSize: screenSize.getHeightPerSize(2)),
+                style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
               ),
               Row(
                 children: [
@@ -65,18 +57,23 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                       tooltip: "이름 변경",
                       onPressed: () {
                         renameCategoryDialog(context, categoryName);
-                  }, icon: const Icon(Icons.edit)),
+                      },
+                      icon: const Icon(Icons.edit)),
                   IconButton(
                       tooltip: "순서 변경",
                       onPressed: () {
                         showSequenceCategoryDialog(context, categoryName);
-
-                  }, icon: const Icon(Icons.swap_vert)),
+                      },
+                      icon: const Icon(Icons.swap_vert)),
                   IconButton(
                       tooltip: "삭제",
                       onPressed: () {
                         deleteCategoryDialog(context, categoryName);
-                  }, icon: const Icon(Icons.delete, color: Colors.red,)),
+                      },
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      )),
                 ],
               ),
             ],
@@ -86,7 +83,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
 }
 
 void renameCategoryDialog(BuildContext getContext, String categoryName) {
-  final formKey = GlobalKey<FormState>();
+  final renameFormKey = GlobalKey<FormState>();
   TextEditingController controller = TextEditingController();
   showDialog(
     context: getContext,
@@ -95,7 +92,7 @@ void renameCategoryDialog(BuildContext getContext, String categoryName) {
       return AlertDialog(
         title: const Text("이름 변경"),
         content: Form(
-          key: formKey,
+          key: renameFormKey,
           child: TextFormField(
             controller: controller,
             decoration: InputDecoration(
@@ -104,7 +101,7 @@ void renameCategoryDialog(BuildContext getContext, String categoryName) {
             validator: (value) {
               if (value == null || value.length >= 10) {
                 return "1글자 이상 10글자 이하로 입력해 주세요";
-              }else if(categoryList.containsKey(value)){
+              } else if (categoryList.containsKey(value)) {
                 return "이미 존재하는 이름입니다.";
               }
               return null;
@@ -116,12 +113,14 @@ void renameCategoryDialog(BuildContext getContext, String categoryName) {
         ),
         actions: <Widget>[
           TextButton(
-              onPressed: (){
-                if(formKey.currentState!.validate()){
-                  reNameCategory(categoryName,controller.text);
+              onPressed: () {
+                if (renameFormKey.currentState!.validate()) {
+                  reNameCategory(categoryName, controller.text);
                   Navigator.of(context).pushAndRemoveUntil(
-                    screenMovementZero(const CategorySettingScreen(checkData: true,)),
-                        (Route<dynamic> route) => false,
+                    screenMovementZero(const CategorySettingScreen(
+                      checkData: true,
+                    )),
+                    (Route<dynamic> route) => false,
                   );
                 }
               },
@@ -147,11 +146,13 @@ void deleteCategoryDialog(BuildContext getContext, String categoryName) {
         content: const Text("정말로 삭제하시겠습니까?"),
         actions: <Widget>[
           TextButton(
-              onPressed: (){
+              onPressed: () {
                 deleteCategory(categoryName);
                 Navigator.of(context).pushAndRemoveUntil(
-                  screenMovementZero(const CategorySettingScreen(checkData: true,)),
-                      (Route<dynamic> route) => false,
+                  screenMovementZero(const CategorySettingScreen(
+                    checkData: true,
+                  )),
+                  (Route<dynamic> route) => false,
                 );
               },
               child: const Text("삭제")),
@@ -177,7 +178,7 @@ class SequenceCategoryDialog extends StatefulWidget {
 }
 
 class _SequenceCategoryDialogState extends State<SequenceCategoryDialog> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _sequenceCategoryFormKey = GlobalKey<FormState>();
   final TextEditingController _controller = TextEditingController();
   late String categoryName;
   late int newIndex;
@@ -205,12 +206,13 @@ class _SequenceCategoryDialogState extends State<SequenceCategoryDialog> {
   void _incrementValue() {
     setState(() {
       int currentValue = int.parse(_controller.text);
-      if(categorySequence.length > currentValue){
+      if (categorySequence.length > currentValue) {
         newIndex = currentValue + 1;
         _controller.text = newIndex.toString();
       }
     });
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -223,7 +225,7 @@ class _SequenceCategoryDialogState extends State<SequenceCategoryDialog> {
     return AlertDialog(
       title: const Text("순서 변경"),
       content: Form(
-        key: _formKey,
+        key: _sequenceCategoryFormKey,
         child: Row(
           children: [
             IconButton(
@@ -243,16 +245,15 @@ class _SequenceCategoryDialogState extends State<SequenceCategoryDialog> {
                   }
                   return null;
                 },
-
                 onTapOutside: (event) {
-                  if(_controller.text.isNotEmpty){
+                  if (_controller.text.isNotEmpty) {
                     int valueIndex = int.parse(_controller.text);
-                    if(valueIndex >= 1 && valueIndex < categorySequence.length){
+                    if (valueIndex >= 1 && valueIndex < categorySequence.length) {
                       newIndex = valueIndex;
-                    }else{
+                    } else {
                       _controller.text = newIndex.toString();
                     }
-                  }else{
+                  } else {
                     _controller.text = newIndex.toString();
                   }
                   FocusManager.instance.primaryFocus?.unfocus();
@@ -269,7 +270,7 @@ class _SequenceCategoryDialogState extends State<SequenceCategoryDialog> {
       actions: <Widget>[
         TextButton(
           onPressed: () {
-            if (_formKey.currentState!.validate()) {
+            if (_sequenceCategoryFormKey.currentState!.validate()) {
               changeSequenceCategory(oldIndex, newIndex);
               Navigator.of(context).pushAndRemoveUntil(
                 screenMovementZero(const CategorySettingScreen(checkData: true)),
@@ -299,4 +300,3 @@ void showSequenceCategoryDialog(BuildContext context, String categoryName) {
     },
   );
 }
-

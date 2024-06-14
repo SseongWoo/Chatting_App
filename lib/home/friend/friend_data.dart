@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../chat/chat_data.dart';
+
 class FriendData {
   String friendUID;
   String friendEmail;
@@ -10,6 +12,7 @@ class FriendData {
   String friendProfile;
   String firendDate;
   String friendCustomName;
+  String friendInherentChatRoom;
   List<String> category;
   bool bookmark;
 
@@ -20,6 +23,7 @@ class FriendData {
       this.friendProfile,
       this.firendDate,
       this.friendCustomName,
+      this.friendInherentChatRoom,
       this.category,
       this.bookmark);
 }
@@ -43,6 +47,10 @@ Future<bool> checkFriend(String friendUID) async {
 
 Future<void> getFriendDataList() async {
   try {
+    friendList.clear();
+    friendListUidKey.clear();
+    friendListSequence.clear();
+
     User? user = _auth.currentUser;
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection("users")
@@ -62,6 +70,7 @@ Future<void> getFriendDataList() async {
         result["friendprofile"],
         result["firenddate"],
         result["friendcustomname"],
+        result["friendinherentchatroom"],
         categoryList,
         result["bookmark"],
       );
@@ -90,9 +99,7 @@ Future<void> deleteFriend(BuildContext context, String friendUID) async {
         .doc(user?.uid)
         .get();
 
-    if (user != null &&
-        documentSnapshotMy.exists &&
-        documentSnapshotFriend.exists) {
+    if (user != null && documentSnapshotMy.exists && documentSnapshotFriend.exists) {
       await firestore
           .collection("users")
           .doc(user.uid)
@@ -106,6 +113,9 @@ Future<void> deleteFriend(BuildContext context, String friendUID) async {
           .doc(user.uid)
           .delete();
       await getFriendDataList();
+      await getFriendDataList();
+      await getChatRoomData();
+      await getChatRoomDataList();
       snackBarMessage(context, "친구가 성공적으로 삭제되었습니다.");
     } else {
       snackBarMessage(context, "친구를 삭제하는 중 오류가 발생했습니다.");
@@ -121,8 +131,7 @@ Future<void> updateFriendName(FriendData friendData, String name) async {
     User? user = _auth.currentUser;
     bool check = await checkFriend(friendData.friendUID);
 
-    if (user != null &&
-        check) {
+    if (user != null && check) {
       await firestore
           .collection("users")
           .doc(user.uid)
@@ -137,7 +146,3 @@ Future<void> updateFriendName(FriendData friendData, String name) async {
     print('updateFriendName에러 $e');
   }
 }
-
-
-
-

@@ -1,6 +1,5 @@
-import 'package:chattingapp/home/friend/request/friend_request_screen.dart';
+import 'package:chattingapp/home/chat/chat_room/chat_room_widget.dart';
 import 'package:chattingapp/utils/color.dart';
-import 'package:chattingapp/utils/platform_check.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flutter/material.dart';
 
@@ -18,89 +17,28 @@ class _TestScreen3State extends State<TestScreen3> {
   Widget build(BuildContext context) {
     screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
-      appBar: AppBar(),
-      body: getPlatform() == "AOS" ? aosWidget(screenSize) : iosWidget(screenSize),
-    );
+        backgroundColor: mainBackgroundColor,
+        appBar: AppBar(),
+        body: Container(
+          height: screenSize.getHeightPerSize(8),
+          width: screenSize.getWidthPerSize(60),
+          color: Colors.blue,
+          child: Row(
+            children: [
+              Container(
+                width: screenSize.getWidthPerSize(15),
+                decoration: BoxDecoration(
+                  color: Colors.greenAccent,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.file_download_rounded,
+                  size: screenSize.getHeightPerSize(5),
+                ),
+              ),
+              Expanded(child: Text("다운로드 버튼을 클릭하여 동영상 파일을 다운로드하세요"))
+            ],
+          ),
+        ));
   }
-}
-
-Widget aosWidget(ScreenSize screenSize){
-  return Column(
-    children: [
-      Expanded(
-        child: Container(
-          color: mainColor,
-        ),
-      ),
-      Container(
-        height: screenSize.getHeightPerSize(5),
-        color: Colors.yellow,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              color: Colors.purple,
-              height: screenSize.getHeightPerSize(5),
-              width: screenSize.getWidthPerSize(10),
-              child: IconButton(onPressed: () {
-
-              }, icon: Icon(Icons.add)),
-            ),
-            Container(
-              color: Colors.grey,
-              height: screenSize.getHeightPerSize(5),
-              width: screenSize.getWidthPerSize(80),
-            ),
-            Container(
-              color: Colors.purple,
-              height: screenSize.getHeightPerSize(5),
-              width: screenSize.getWidthPerSize(10),
-              child: IconButton(onPressed: () {
-
-              }, icon: Icon(Icons.add)),
-            ),
-          ],
-        ),
-      )
-    ],
-  );
-}
-
-Widget iosWidget(ScreenSize screenSize){
-  return Column(
-    children: [
-      Expanded(
-        child: Container(
-          color: mainColor,
-        ),
-      ),
-      Container(
-        height: screenSize.getHeightPerSize(8),
-        color: Colors.yellow,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              color: Colors.purple,
-              width: screenSize.getWidthPerSize(10),
-              child: IconButton(onPressed: () {
-
-              }, icon: Icon(Icons.add)),
-            ),
-            Container(
-              color: Colors.grey,
-              width: screenSize.getWidthPerSize(80),
-            ),
-            Container(
-              color: Colors.purple,
-              width: screenSize.getWidthPerSize(10),
-              child: IconButton(onPressed: () {
-
-              }, icon: Icon(Icons.add)),
-            ),
-          ],
-        ),
-      )
-    ],
-  );
 }

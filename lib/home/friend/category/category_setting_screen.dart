@@ -22,7 +22,7 @@ class CategorySettingScreen extends StatefulWidget {
 class _CategorySettingScreenState extends State<CategorySettingScreen>
     with TickerProviderStateMixin {
   late ScreenSize screenSize;
-  late TabController tabController;
+  late TabController _tabController;
   final TextEditingController controllerName = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late bool nameChcek;
@@ -31,13 +31,13 @@ class _CategorySettingScreenState extends State<CategorySettingScreen>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: categorySequence.length, vsync: this);
+    _tabController = TabController(length: categorySequence.length, vsync: this);
     categoryControlCheck = false;
   }
 
   @override
   void dispose() {
-    tabController.dispose();
+    _tabController.dispose();
     controllerName.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -77,16 +77,15 @@ class _CategorySettingScreenState extends State<CategorySettingScreen>
             Container(
               width: screenSize.getWidthSize(),
               height: screenSize.getHeightPerSize(6),
-              margin: EdgeInsets.fromLTRB(screenSize.getWidthPerSize(5), 0,
-                  screenSize.getWidthPerSize(5), 0),
+              margin: EdgeInsets.fromLTRB(
+                  screenSize.getWidthPerSize(5), 0, screenSize.getWidthPerSize(5), 0),
               child: Row(
                 children: [
                   SizedBox(
                     width: screenSize.getWidthPerSize(70),
                     child: TextField(
                         controller: controllerName,
-                        decoration:
-                            const InputDecoration(labelText: "카테고리 추가하기"),
+                        decoration: const InputDecoration(labelText: "카테고리 추가하기"),
                         keyboardType: TextInputType.text,
                         onTapOutside: (event) {
                           FocusManager.instance.primaryFocus?.unfocus();
@@ -95,8 +94,7 @@ class _CategorySettingScreenState extends State<CategorySettingScreen>
                   Expanded(
                       child: ElevatedButton(
                           onPressed: () {
-                            nameChcek =
-                                categoryList.containsKey(controllerName.text);
+                            nameChcek = categoryList.containsKey(controllerName.text);
                             if (!nameChcek &&
                                 controllerName.text.isNotEmpty &&
                                 categorySequence.length < 11 &&
@@ -111,25 +109,28 @@ class _CategorySettingScreenState extends State<CategorySettingScreen>
                                 (Route<dynamic> route) => false,
                               );
                             } else if (categorySequence.length >= 11) {
-                              snackBarErrorMessage(
-                                  context, "최대 10개의 카테고리만 추가할 수 있습니다.");
+                              snackBarErrorMessage(context, "최대 10개의 카테고리만 추가할 수 있습니다.");
                             } else if (nameChcek) {
                               snackBarErrorMessage(context, "이미 존재하는 이름입니다.");
                             } else if (controllerName.text.isEmpty) {
                               snackBarErrorMessage(context, "입력값이 없습니다.");
                             } else {
-                              snackBarErrorMessage(
-                                  context, "2글자 이상 10글자 이하의 이름을 입력해주세요");
+                              snackBarErrorMessage(context, "2글자 이상 10글자 이하의 이름을 입력해주세요");
                             }
                           },
-                          child: Text("추가",style: TextStyle(color: Colors.black,fontSize: screenSize.getHeightPerSize(1.5)),)))
+                          child: Text(
+                            "추가",
+                            style: TextStyle(
+                                color: Colors.black, fontSize: screenSize.getHeightPerSize(1.5)),
+                          )))
                 ],
               ),
             ),
             Container(
               height: screenSize.getHeightPerSize(1),
               width: screenSize.getWidthSize(),
-              decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.black,width: 0.5))),
+              decoration: const BoxDecoration(
+                  border: Border(bottom: BorderSide(color: Colors.black, width: 0.5))),
             ),
             Expanded(
               child: Row(
@@ -142,14 +143,15 @@ class _CategorySettingScreenState extends State<CategorySettingScreen>
                       itemCount: categorySequence.length,
                       itemBuilder: (context, index) {
                         return Container(
-                          //decoration: BoxDecoration(shape: BoxShape.circle,color: mainColor),
-                            margin: EdgeInsets.fromLTRB(
-                                0,
-                                screenSize.getHeightPerSize(0.5),
-                                0,
+                            //decoration: BoxDecoration(shape: BoxShape.circle,color: mainColor),
+                            margin: EdgeInsets.fromLTRB(0, screenSize.getHeightPerSize(0.5), 0,
                                 screenSize.getHeightPerSize(0.5)),
                             height: screenSize.getHeightPerSize(6),
-                            child: Center(child: Text((index + 1).toString(),style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),)));
+                            child: Center(
+                                child: Text(
+                              (index + 1).toString(),
+                              style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
+                            )));
                       },
                     ),
                   ),
@@ -171,12 +173,10 @@ class _CategorySettingScreenState extends State<CategorySettingScreen>
                       removeDuration: const Duration(milliseconds: 300),
                       onReorder: (int oldIndex, int newIndex) {
                         setState(() {
-                          if (newIndex > oldIndex &&
-                              newIndex > categorySequence.length) {
+                          if (newIndex > oldIndex && newIndex > categorySequence.length) {
                             newIndex -= 1;
                           }
-                          final String item =
-                          categorySequence.removeAt(oldIndex);
+                          final String item = categorySequence.removeAt(oldIndex);
                           categorySequence.insert(newIndex, item);
                           categoryControlCheck = true;
                         });

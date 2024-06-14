@@ -1,11 +1,17 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:chattingapp/home/friend/detail/detail_change_screen.dart';
 import 'package:chattingapp/home/friend/detail/detail_information_screen.dart';
+import 'package:chattingapp/home/home_screen.dart';
+import 'package:chattingapp/utils/snackbar_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../utils/color.dart';
 import '../../utils/image_viewer.dart';
+import '../../utils/screen_movement.dart';
 import '../../utils/screen_size.dart';
+import '../chat/chat_data.dart';
+import '../chat/chat_room/chat_room_data.dart';
+import '../chat/chat_room/chat_room_screen.dart';
 import 'friend_data.dart';
 
 class FriendWidget extends StatefulWidget {
@@ -21,21 +27,40 @@ class _FriendWidgetState extends State<FriendWidget> {
   late ScreenSize screenSize;
   bool selected = false;
   late FriendData friendData;
+  late ChatRoomSimpleData chatRoomSimpleData;
+  bool dataChaek = true;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     friendData = widget.friendData;
+    if (chatRoomList.containsKey(friendData.friendInherentChatRoom)) {
+      chatRoomSimpleData = chatRoomList[friendData.friendInherentChatRoom]!;
+    } else {
+      dataChaek = false;
+    }
+  }
+
+  void moveChatRoom() async {
+    EasyLoading.show();
+    await getChatData(chatRoomSimpleData.chatRoomUid);
+    EasyLoading.dismiss();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ChatRoomScreen(
+                  chatRoomSimpleData: chatRoomSimpleData,
+                )));
   }
 
   @override
   Widget build(BuildContext context) {
     screenSize = ScreenSize(MediaQuery.of(context).size);
     String name;
-    if(friendData.friendCustomName != ""){
+    if (friendData.friendCustomName.isNotEmpty) {
       name = friendData.friendCustomName;
-    }else{
+    } else {
       name = friendData.friendNickName;
     }
 
@@ -67,8 +92,8 @@ class _FriendWidgetState extends State<FriendWidget> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ImageViewer(
-                                  imageURL: friendData.friendProfile)),
+                              builder: (context) =>
+                                  ImageViewer(imageURL: friendData.friendProfile)),
                         );
                       },
                       child: SizedBox(
@@ -118,7 +143,13 @@ class _FriendWidgetState extends State<FriendWidget> {
                     backgroundColor: mainColor,
                     shape: const BeveledRectangleBorder(),
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    if (dataChaek) {
+                      moveChatRoom();
+                    } else {
+                      snackBarErrorMessage(context, '작업을 수행하는데 문제가 발생하였습니다.\n친구를 삭제하였다가 다시 추가해주세요');
+                    }
+                  },
                   icon: const Icon(
                     Icons.chat,
                     color: Colors.white,
@@ -131,13 +162,11 @@ class _FriendWidgetState extends State<FriendWidget> {
   }
 }
 
-void friendWidgetDialog(
-    BuildContext context, ScreenSize screenSize, FriendData friendData) {
-
+void friendWidgetDialog(BuildContext context, ScreenSize screenSize, FriendData friendData) {
   String name;
-  if(friendData.friendCustomName != ""){
+  if (friendData.friendCustomName.isNotEmpty) {
     name = "${friendData.friendCustomName}(${friendData.friendNickName})";
-  }else{
+  } else {
     name = friendData.friendNickName;
   }
 
@@ -151,17 +180,20 @@ void friendWidgetDialog(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: screenSize.getHeightPerSize(1),),
+            SizedBox(
+              height: screenSize.getHeightPerSize(1),
+            ),
             Padding(
-              padding: EdgeInsets.fromLTRB(screenSize.getWidthPerSize(3),
-                  screenSize.getHeightPerSize(1.5), 0, 0),
+              padding: EdgeInsets.fromLTRB(
+                  screenSize.getWidthPerSize(3), screenSize.getHeightPerSize(1.5), 0, 0),
               child: Text(
                 name,
-                style:
-                    TextStyle(fontSize: screenSize.getHeightPerSize(2.5)),
+                style: TextStyle(fontSize: screenSize.getHeightPerSize(2.5)),
               ),
             ),
-            SizedBox(height: screenSize.getHeightPerSize(1),),
+            SizedBox(
+              height: screenSize.getHeightPerSize(1),
+            ),
             SizedBox(
                 height: screenSize.getHeightPerSize(4.5),
                 width: double.infinity,
@@ -174,13 +206,14 @@ void friendWidgetDialog(
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                          builder: (context) => DetailInformationScreen(friendData: friendData,)));
+                              builder: (context) => DetailInformationScreen(
+                                    friendData: friendData,
+                                  )));
                     },
                     child: Text(
                       "상세 정보",
                       style: TextStyle(
-                          color: Colors.black,
-                          fontSize: screenSize.getHeightPerSize(1.5)),
+                          color: Colors.black, fontSize: screenSize.getHeightPerSize(1.5)),
                     ))),
             SizedBox(
                 height: screenSize.getHeightPerSize(4.5),
@@ -194,13 +227,14 @@ void friendWidgetDialog(
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => DetailChangeScreen(friendData: friendData,)));
+                              builder: (context) => DetailChangeScreen(
+                                    friendData: friendData,
+                                  )));
                     },
                     child: Text(
                       "정보 수정",
                       style: TextStyle(
-                          color: Colors.black,
-                          fontSize: screenSize.getHeightPerSize(1.5)),
+                          color: Colors.black, fontSize: screenSize.getHeightPerSize(1.5)),
                     ))),
             SizedBox(
                 height: screenSize.getHeightPerSize(4.5),
@@ -215,9 +249,8 @@ void friendWidgetDialog(
                     },
                     child: Text(
                       "친구 삭제",
-                      style: TextStyle(
-                          color: Colors.red,
-                          fontSize: screenSize.getHeightPerSize(1.5)),
+                      style:
+                          TextStyle(color: Colors.red, fontSize: screenSize.getHeightPerSize(1.5)),
                     ))),
             SizedBox(
               height: screenSize.getHeightPerSize(1.5),
@@ -240,10 +273,13 @@ void friendDeleteDialog(BuildContext getContext, FriendData friendData) {
         actions: <Widget>[
           TextButton(
               onPressed: () async {
-                Navigator.of(context).pop();
                 EasyLoading.show();
                 await deleteFriend(context, friendData.friendUID);
                 EasyLoading.dismiss();
+                Navigator.of(context).pushAndRemoveUntil(
+                  screenMovementZero(const HomeScreen()),
+                  (Route<dynamic> route) => false,
+                );
               },
               child: const Text("삭제")),
           TextButton(
@@ -257,10 +293,9 @@ void friendDeleteDialog(BuildContext getContext, FriendData friendData) {
   );
 }
 
-void friendCustomNickNameDialog(
-    BuildContext getContext, FriendData friendData) {
+void friendCustomNickNameDialog(BuildContext getContext, FriendData friendData) {
   TextEditingController controller = TextEditingController();
-  if(friendData.friendCustomName != ""){
+  if (friendData.friendCustomName.isNotEmpty) {
     controller.text = friendData.friendCustomName;
   }
 

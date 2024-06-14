@@ -10,13 +10,12 @@ class RegistrationFirstScreen extends StatefulWidget {
   const RegistrationFirstScreen({super.key});
 
   @override
-  State<RegistrationFirstScreen> createState() =>
-      _RegistrationFirstScreenState();
+  State<RegistrationFirstScreen> createState() => _RegistrationFirstScreenState();
 }
 
 class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
   late ScreenSize screenSize;
-  final formKey = GlobalKey<FormState>();
+  final _registrationFirstFormKey = GlobalKey<FormState>();
   TextEditingController controllerID = TextEditingController();
   TextEditingController controllerPW = TextEditingController();
   TextEditingController controllerPWCheck = TextEditingController();
@@ -36,9 +35,8 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
     setState(() {
       loadingState = true;
     });
-    if (formKey.currentState!.validate()) {
-      String message = await createUserWithEmailAndPassword(
-          controllerID.text, controllerPW.text);
+    if (_registrationFirstFormKey.currentState!.validate()) {
+      String message = await createUserWithEmailAndPassword(controllerID.text, controllerPW.text);
       if (mounted) {
         if (message == "") {
           Navigator.push(
@@ -66,16 +64,14 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.close)),
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close)),
       ),
       body: SizedBox(
         height: screenSize.getHeightSize(),
         child: Stack(
           children: [
             Form(
-              key: formKey,
+              key: _registrationFirstFormKey,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -86,8 +82,7 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                       width: screenSize.getWidthPerSize(80),
                       child: Text(
                         "회원정보를\n입력해주세요",
-                        style:
-                            TextStyle(fontSize: screenSize.getHeightPerSize(4)),
+                        style: TextStyle(fontSize: screenSize.getHeightPerSize(4)),
                       ),
                     ),
                     SizedBox(
@@ -99,16 +94,15 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                       child: TextFormField(
                         focusNode: focusNodeID,
                         controller: controllerID,
-                        decoration: const InputDecoration(
-                            labelText: '이메일', border: OutlineInputBorder()),
+                        decoration:
+                            const InputDecoration(labelText: '이메일', border: OutlineInputBorder()),
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
-                        onTapOutside: (event) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
+                        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                         validator: (String? value) {
                           if (value?.isEmpty ?? true) return '이메일을 입력해 주세요';
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                              .hasMatch(value!)) return "이메일 형식이 아닙니다.";
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value!))
+                            return "이메일 형식이 아닙니다.";
                           return null;
                         },
                       ),
@@ -125,8 +119,7 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                             hintText: "8글자 이상의 비밀번호를 만들어 주세요"),
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.next,
-                        onTapOutside: (event) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
+                        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                         validator: (String? value) {
                           if (value?.isEmpty ?? true) return "비밀번호를 입력해 주세요";
                           if (value!.length < 7) return "비밀번호를 8글자 이상 입력해주세요";
@@ -146,8 +139,7 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                         ),
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.done,
-                        onTapOutside: (event) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
+                        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                         validator: (String? value) {
                           if (value != controllerPW.text) {
                             return "비밀번호가 동일하지 않습니다.";
@@ -163,9 +155,7 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
             AnimatedPositioned(
               duration: Duration(microseconds: Platform.isIOS ? 300000 : 130000),
               curve: Curves.easeInOut,
-              bottom: focusNodeID.hasFocus ||
-                      focusNodePW.hasFocus ||
-                      focusNodePWCheck.hasFocus
+              bottom: focusNodeID.hasFocus || focusNodePW.hasFocus || focusNodePWCheck.hasFocus
                   ? -screenSize.getHeightPerSize(8)
                   : 0,
               child: SizedBox(
@@ -193,8 +183,7 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                         : Text(
                             "다음",
                             style: TextStyle(
-                                fontSize: screenSize.getHeightPerSize(3),
-                                color: Colors.black),
+                                fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
                           )),
               ),
             )

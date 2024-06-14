@@ -4,7 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../../utils/get_image.dart';
+import '../../utils/image_picker.dart';
 import '../../utils/screen_size.dart';
 import 'authentication.dart';
 
@@ -12,8 +12,7 @@ class RegistrationThirdScreen extends StatefulWidget {
   const RegistrationThirdScreen({super.key});
 
   @override
-  State<RegistrationThirdScreen> createState() =>
-      _RegistrationThirdScreenState();
+  State<RegistrationThirdScreen> createState() => _RegistrationThirdScreenState();
 }
 
 class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
@@ -24,7 +23,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
   bool pikerState = false;
   bool cropState = false;
   late Size size;
-  final formKey = GlobalKey<FormState>();
+  final _registrationThirdFormKey = GlobalKey<FormState>();
   bool isVisibility = false;
   double visibilityAnimated = 0.0;
 
@@ -68,8 +67,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
     setState(() {
       loadingState = true;
     });
-    await saveUserImage(
-        _imageFile, _croppedFile, controllerNickName.text, context);
+    await saveUserImage(_imageFile, _croppedFile, controllerNickName.text, context);
     setState(() {
       loadingState = false;
     });
@@ -81,8 +79,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios_new)),
+            onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back_ios_new)),
       ),
       body: Stack(
         children: [
@@ -98,16 +95,14 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                     width: screenSize.getWidthPerSize(80),
                     child: Text(
                       "계정 설정\n",
-                      style:
-                          TextStyle(fontSize: screenSize.getHeightPerSize(4)),
+                      style: TextStyle(fontSize: screenSize.getHeightPerSize(4)),
                     ),
                   ),
                   SizedBox(
                     width: screenSize.getWidthPerSize(80),
                     child: Text(
                       "마지막 단계입니다!\n사용할 사용자의 닉네임과 프로필 사진을 등록해주세요. 이 정보들은 나중에 변경할 수 있습니다.",
-                      style:
-                          TextStyle(fontSize: screenSize.getHeightPerSize(2)),
+                      style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
                     ),
                   ),
                   SizedBox(
@@ -138,7 +133,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                     height: screenSize.getHeightPerSize(10),
                     width: screenSize.getWidthPerSize(60),
                     child: Form(
-                      key: formKey,
+                      key: _registrationThirdFormKey,
                       child: TextFormField(
                         focusNode: focusNodeNickName,
                         controller: controllerNickName,
@@ -147,18 +142,17 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9a-zA-Zㄱ-ㅎ가-힣]')),
                         ],
                         maxLength: 8,
-                        onTapOutside: (event) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
+                        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                         validator: (String? value) {
                           if (value?.isEmpty ?? true) return '닉네임을 입력해 주세요';
                           return null;
                         },
                       ),
-
                     ),
                   ),
                   AnimatedOpacity(
-                    opacity: _imageFile != null ? visibilityAnimated = 1.0 : visibilityAnimated = 0.0,
+                    opacity:
+                        _imageFile != null ? visibilityAnimated = 1.0 : visibilityAnimated = 0.0,
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeInOut,
                     onEnd: () {
@@ -194,8 +188,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                                       "프로필 편집",
                                       style: TextStyle(
                                           color: Colors.black,
-                                          fontSize:
-                                              screenSize.getHeightPerSize(1.5)),
+                                          fontSize: screenSize.getHeightPerSize(1.5)),
                                     ),
                             ),
                           ),
@@ -221,8 +214,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                                       "프로필 제거",
                                       style: TextStyle(
                                           color: Colors.black,
-                                          fontSize:
-                                              screenSize.getHeightPerSize(1.5)),
+                                          fontSize: screenSize.getHeightPerSize(1.5)),
                                     ),
                             ),
                           ),
@@ -248,8 +240,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                           : Text(
                               "앨범",
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: screenSize.getHeightPerSize(1.8)),
+                                  color: Colors.black, fontSize: screenSize.getHeightPerSize(1.8)),
                             ),
                     ),
                   ),
@@ -260,9 +251,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
           AnimatedPositioned(
             duration: Duration(microseconds: Platform.isIOS ? 300000 : 130000),
             curve: Curves.easeInOut,
-            bottom: focusNodeNickName.hasFocus
-                ? -screenSize.getHeightPerSize(8)
-                : 0,
+            bottom: focusNodeNickName.hasFocus ? -screenSize.getHeightPerSize(8) : 0,
             child: SizedBox(
               height: screenSize.getHeightPerSize(8),
               width: screenSize.getWidthPerSize(100),
@@ -277,7 +266,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                   ),
                 ),
                 onPressed: () {
-                  if(formKey.currentState!.validate()&&loadingState == false){
+                  if (_registrationThirdFormKey.currentState!.validate() && loadingState == false) {
                     saveData(context);
                   }
                 },
@@ -288,8 +277,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                     : Text(
                         "완료",
                         style: TextStyle(
-                            fontSize: screenSize.getHeightPerSize(3),
-                            color: Colors.black),
+                            fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
                       ),
               ),
             ),

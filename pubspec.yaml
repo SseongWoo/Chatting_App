@@ -52,6 +52,8 @@ dependencies:
   auto_size_text: ^3.0.0        # 글자 크기 자동 조절
   simple_tags: ^0.0.6           # 태그 뷰어
   flutter_easyloading: ^3.0.5   # 로딩창
+  uuid:                         # 랜덤한 UID를 생성
+  search_choices:               # 검색창
 
 dev_dependencies:
   flutter_test:
