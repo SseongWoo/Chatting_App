@@ -6,12 +6,14 @@ import 'package:chattingapp/utils/snackbar_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../utils/color.dart';
+import '../../utils/get_people_data.dart';
 import '../../utils/image_viewer.dart';
 import '../../utils/screen_movement.dart';
 import '../../utils/screen_size.dart';
 import '../chat/chat_data.dart';
 import '../chat/chat_room/chat_room_data.dart';
 import '../chat/chat_room/chat_room_screen.dart';
+import '../chat/create_chat/creat_chat_data.dart';
 import 'friend_data.dart';
 
 class FriendWidget extends StatefulWidget {
@@ -45,12 +47,14 @@ class _FriendWidgetState extends State<FriendWidget> {
   void moveChatRoom() async {
     EasyLoading.show();
     await getChatData(chatRoomSimpleData.chatRoomUid);
+    List<ChatPeopleClass> chatPeople = await getPeopleData(chatRoomSimpleData.chatRoomUid);
     EasyLoading.dismiss();
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => ChatRoomScreen(
                   chatRoomSimpleData: chatRoomSimpleData,
+                  chatPeopleList: chatPeople,
                 )));
   }
 

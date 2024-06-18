@@ -1,4 +1,4 @@
-import 'package:chattingapp/home/chat/create_chat/creat_chat.dart';
+import 'package:chattingapp/home/chat/create_chat/creat_chat_screen.dart';
 import 'package:chattingapp/home/friend/request/friend_request_screen.dart';
 import 'package:chattingapp/home/information_screen.dart';
 import 'package:chattingapp/utils/color.dart';

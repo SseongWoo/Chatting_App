@@ -8,3 +8,5 @@ Color mainBackgroundColor = const Color(0xffd3f0ff);
 Color subBackgroundColor1 = const Color(0xffe0e0e0);
 Color subBackgroundColor2 = const Color(0xffE7F0FF);
 Color subBackgroundColor3 = const Color(0xffF0F8FF);
+
+Color errorColor = const Color(0xffC35342);

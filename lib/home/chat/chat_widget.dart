@@ -3,8 +3,10 @@ import 'package:chattingapp/home/chat/chat_data.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import '../../utils/get_people_data.dart';
 import 'chat_room/chat_room_data.dart';
 import 'chat_room/chat_room_screen.dart';
+import 'create_chat/creat_chat_data.dart';
 
 class ChatListWidget extends StatefulWidget {
   final int index;
@@ -39,12 +41,14 @@ class _ChatListWidgetState extends State<ChatListWidget> {
       onTap: () async {
         EasyLoading.show();
         await getChatData(chatRoomSimpleData.chatRoomUid);
+        List<ChatPeopleClass> chatPeople = await getPeopleData(chatRoomSimpleData.chatRoomUid);
         EasyLoading.dismiss();
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => ChatRoomScreen(
                       chatRoomSimpleData: chatRoomSimpleData,
+                      chatPeopleList: chatPeople,
                     )));
       },
       child: Container(

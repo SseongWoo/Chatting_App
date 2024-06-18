@@ -9,18 +9,25 @@ import 'package:flutter/material.dart';
 
 import '../../../utils/image_viewer.dart';
 
-void goDetailInfomation(BuildContext context, MessageDataClass messageDataClass) {
+void goDetailInfomation(BuildContext context, String userUid, String userName, String userProfile) {
   FriendData friendData;
 
-  if (friendList.containsKey(friendListUidKey[messageDataClass.userUid]!)) {
-    friendData = friendList[friendListUidKey[messageDataClass.userUid]]!;
+  if (userUid != myData.myUID && friendList.containsKey(friendListUidKey[userUid]!)) {
+    friendData = friendList[friendListUidKey[userUid]]!;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DetailInformationScreen(friendData: friendData)),
+    );
+  } else if (userUid == myData.myUID) {
+    friendData = FriendData(
+        myData.myUID, myData.myEmail, myData.myNickName, myData.myProfile, "", "", "", [], false);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => DetailInformationScreen(friendData: friendData)),
     );
   } else {
-    friendData = FriendData(messageDataClass.userUid, "", messageDataClass.userName,
-        messageDataClass.userProfile, "", "", "", [], false);
+    print("1");
+    friendData = FriendData(userUid, "", userName, userProfile, "", "", "", [], false);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => DetailInformationScreen(friendData: friendData)),
@@ -75,7 +82,8 @@ Widget messageTextType2(BuildContext context, ScreenSize screenSize,
             visible: firstMessage,
             child: GestureDetector(
               onTap: () {
-                goDetailInfomation(context, messageDataClass);
+                goDetailInfomation(context, messageDataClass.messageUid, messageDataClass.userName,
+                    messageDataClass.userProfile);
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),

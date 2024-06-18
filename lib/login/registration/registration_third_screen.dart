@@ -37,7 +37,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
     super.dispose();
   }
 
-  void imagePicker(ImageSource imageSource) async {
+  void _imagePicker(ImageSource imageSource) async {
     setState(() {
       pikerState = true;
     });
@@ -49,7 +49,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
     });
   }
 
-  void imageCropped() async {
+  void _imageCropped() async {
     setState(() {
       cropState = true;
     });
@@ -178,7 +178,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                                 shape: const BeveledRectangleBorder(),
                               ),
                               onPressed: () {
-                                imageCropped();
+                                _imageCropped();
                               },
                               child: cropState
                                   ? const SpinKitThreeInOut(
@@ -231,7 +231,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                         shape: const BeveledRectangleBorder(),
                       ),
                       onPressed: () {
-                        imagePicker(ImageSource.gallery);
+                        _imagePicker(ImageSource.gallery);
                       },
                       child: pikerState
                           ? const SpinKitThreeInOut(

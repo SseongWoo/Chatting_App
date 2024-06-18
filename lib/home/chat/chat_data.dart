@@ -12,10 +12,20 @@ class ChatRoomData {
   String chatRoomCreateDate;
   String chatRoomManager;
   String chatRoomPassword;
-  Map<String, String> peopleList;
+  String chatRoomExplain;
+  bool chatRoomPublic;
+  List<String> peopleList;
 
-  ChatRoomData(this.chatRoomUid, this.chatRoomName, this.chatRoomProfile, this.chatRoomCreateDate,
-      this.chatRoomManager, this.chatRoomPassword, this.peopleList);
+  ChatRoomData(
+      this.chatRoomUid,
+      this.chatRoomName,
+      this.chatRoomProfile,
+      this.chatRoomCreateDate,
+      this.chatRoomManager,
+      this.chatRoomPassword,
+      this.chatRoomExplain,
+      this.chatRoomPublic,
+      this.peopleList);
 }
 
 class ChatRoomSimpleData {
@@ -44,13 +54,16 @@ Future<void> getChatRoomDataList() async {
   for (var uid in chatRoomSequence) {
     documentSnapshot = await _firestore.collection('chat').doc(uid).get();
     chatRoomDataList[documentSnapshot['chatroomuid']] = ChatRoomData(
-        documentSnapshot['chatroomuid'],
-        documentSnapshot['chatroomprofile'],
-        documentSnapshot['chatroomname'],
-        documentSnapshot['chatroomcreatedate'],
-        documentSnapshot['chatroommanager'],
-        documentSnapshot['chatroompassword'],
-        convertMap2(documentSnapshot['peoplelist']));
+      documentSnapshot['chatroomuid'],
+      documentSnapshot['chatroomprofile'],
+      documentSnapshot['chatroomname'],
+      documentSnapshot['chatroomcreatedate'],
+      documentSnapshot['chatroommanager'],
+      documentSnapshot['chatroompassword'],
+      documentSnapshot['chatroomexplain'],
+      documentSnapshot['chatroompublic'],
+      convertList(documentSnapshot['peoplelist']),
+    );
     chatRoomDataSequence.add(documentSnapshot['chatroomuid']);
   }
 }
@@ -77,82 +90,70 @@ Future<void> getChatRoomData() async {
   }
 }
 
-// // 1대1 채팅 생성
-// Future<void> createInherentChatRoom(FriendData friendData) async {
-//   try {
-//     User? user = _auth.currentUser;
-//     // 채팅방 고유 id 생성작업
-//     CollectionReference collection = _firestore.collection('chat');
-//     String documentID = collection.doc().id;
-//     ChatRoomSimpleData chatRoomSimpleData = ChatRoomSimpleData(
-//         documentID, "", "${myData.myNickName},${friendData.friendNickName}", "", 0, DateTime.now());
-//
-//     chatRoomList[documentID] = chatRoomSimpleData;
-//     Map<String, String> peopleList = {
-//       myData.myUID: myData.myNickName,
-//       friendData.friendUID: friendData.friendNickName
-//     };
-//     // Map<String, String> peopleList = {};
-//     // peopleList[myData.myUID] = myData.myNickName;
-//     // peopleList[friendData.friendUID] = friendData.friendNickName;
-//
-//     // 채팅방 생성 작업
-//     await _firestore.collection('chat').doc(documentID).set({
-//       'chatroomuid': documentID,
-//       'chatroomname': "${myData.myNickName},${friendData.friendNickName}",
-//       'chatroomprofile': "",
-//       'chatroomcreatedate': DateFormat("yyyy-MM-dd").format(DateTime.now()),
-//       'chatroommanager': myData.myNickName,
-//       'chatroompassword': "",
-//       'peoplelist': peopleList,
-//     });
-//
-//     print("2-3");
-//     // 채팅방 개인데이터를 개인DB에 저장하기 위한 작업 1
-//     await _firestore.collection('users').doc(user?.uid).collection('chat').doc(documentID).set({
-//       'chatroomuid': chatRoomSimpleData.chatRoomUid,
-//       'chatroomcustomprofile': chatRoomSimpleData.chatRoomCustomProfile,
-//       'chatroomcustomname': chatRoomSimpleData.chatRoomCustomName,
-//       'lastchatmessage': chatRoomSimpleData.lastChatMessage,
-//       'readablemessage': chatRoomSimpleData.readableMessage,
-//       'lastchattime': chatRoomSimpleData.lastChatTime,
-//     });
-//
-//     // 채팅방 개인데이터를 상대방 DB에 저장하기 위한 작업 1
-//     await _firestore
-//         .collection('users')
-//         .doc(friendData.friendUID)
-//         .collection('chat')
-//         .doc(documentID)
-//         .set({
-//       'chatroomuid': chatRoomSimpleData.chatRoomUid,
-//       'chatroomcustomprofile': chatRoomSimpleData.chatRoomCustomProfile,
-//       'chatroomcustomname': chatRoomSimpleData.chatRoomCustomName,
-//       'lastchatmessage': chatRoomSimpleData.lastChatMessage,
-//       'readablemessage': chatRoomSimpleData.readableMessage,
-//       'lastchattime': chatRoomSimpleData.lastChatTime,
-//     });
-//
-//     // 채팅방 개인데이터를 개인DB에 저장하기 위한 작업 2
-//     await _firestore
-//         .collection('users')
-//         .doc(user?.uid)
-//         .collection('friend')
-//         .doc(friendData.friendUID)
-//         .update({
-//       'friendinherentchatroom': documentID,
-//     });
-//
-//     // 채팅방 개인데이터를 상대방 DB에 저장하기 위한 작업 2
-//     await _firestore
-//         .collection('users')
-//         .doc(friendData.friendUID)
-//         .collection('friend')
-//         .doc(user?.uid)
-//         .update({
-//       'friendinherentchatroom': documentID,
-//     });
-//   } catch (e) {
-//     print('createInherentChatRoom오류: $e');
-//   }
-// }
+Future<void> createChatRoom(ChatRoomData chatRoomData) async {
+  try {
+    DateTime dateTime = DateTime.now();
+
+    // 채팅방 생성 작업
+    await _firestore.collection('chat').doc(chatRoomData.chatRoomUid).set({
+      'chatroomuid': chatRoomData.chatRoomUid,
+      'chatroomname': chatRoomData.chatRoomName,
+      'chatroomprofile': chatRoomData.chatRoomProfile,
+      'chatroomcreatedate': chatRoomData.chatRoomCreateDate,
+      'chatroommanager': chatRoomData.chatRoomManager,
+      'chatroompassword': chatRoomData.chatRoomPassword,
+      'chatroomexplain': chatRoomData.chatRoomExplain,
+      'chatroompublic': chatRoomData.chatRoomPublic,
+      'peoplelist': chatRoomData.peopleList,
+    });
+
+    // 내 DB에 채팅방 데이터를 넣는 작업
+    await _firestore
+        .collection('users')
+        .doc(myData.myUID)
+        .collection('chat')
+        .doc(chatRoomData.chatRoomUid)
+        .set({
+      'chatroomuid': chatRoomData.chatRoomUid,
+      'chatroomcustomprofile': chatRoomData.chatRoomProfile,
+      'chatroomcustomname': chatRoomData.chatRoomName,
+      'lastchatmessage': '',
+      'readablemessage': 0,
+      'lastchattime': dateTime,
+    });
+
+    // 채팅방 인원 각각의 DB에 데이터를 저장하는 작업
+    for (var item in chatRoomData.peopleList) {
+      await _firestore
+          .collection('users')
+          .doc(item)
+          .collection('chat')
+          .doc(chatRoomData.chatRoomUid)
+          .set({
+        'chatroomuid': chatRoomData.chatRoomUid,
+        'chatroomcustomprofile': chatRoomData.chatRoomProfile,
+        'chatroomcustomname': chatRoomData.chatRoomName,
+        'lastchatmessage': '',
+        'readablemessage': 0,
+        'lastchattime': dateTime,
+      });
+    }
+
+    await getChatRoomData();
+    await getChatRoomDataList();
+  } catch (e) {
+    print('createInherentChatRoom오류: $e');
+  }
+}
+
+// 채팅방 UID가 중복되는지 확인하는 함수
+Future<bool> checkRoomUid(String uid) async {
+  try {
+    DocumentSnapshot documentSnapshot = await _firestore.collection('chat').doc(uid).get();
+
+    return documentSnapshot.exists;
+  } catch (e) {
+    print('Error checking document existence: $e');
+    return false;
+  }
+}

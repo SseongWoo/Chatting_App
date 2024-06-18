@@ -30,7 +30,6 @@ List<RequestData> requestReceivedList = []; //받은 요청 리스트
 Future<void> addFriendRequest(String friendUID, BuildContext context) async {
   try {
     FriendData? friendData;
-    User? user = _auth.currentUser;
     friendData = await getRequestFriendData(friendUID);
     String dateTime = DateFormat("yyyy-MM-dd").format(DateTime.now());
     bool friendCheck = await checkFriend(friendData!.friendUID); // 파이어베이스의 본인의 친구목록에 있는지 확인하는 변수
@@ -83,11 +82,13 @@ Future<void> addFriendRequest(String friendUID, BuildContext context) async {
       // 채팅방 생성 작업
       await _firestore.collection('chat').doc(documentID).set({
         'chatroomuid': documentID,
-        'chatroomname': "${myData.myNickName},${friendData.friendNickName}",
-        'chatroomprofile': "",
+        'chatroomname': '${myData.myNickName},${friendData.friendNickName}',
+        'chatroomprofile': '',
         'chatroomcreatedate': DateFormat("yyyy-MM-dd").format(DateTime.now()),
         'chatroommanager': myData.myNickName,
-        'chatroompassword': "",
+        'chatroompassword': '',
+        'chatroomexplain': '',
+        'chatroompublic': false,
         'peoplelist': peopleList,
       });
 

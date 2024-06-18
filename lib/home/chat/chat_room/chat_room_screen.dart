@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:chattingapp/home/chat/chat_data.dart';
-import 'package:chattingapp/home/friend/friend_data.dart';
+import 'package:chattingapp/home/chat/chat_room/add_person/add_person_screen.dart';
 import 'package:chattingapp/utils/image_viewer.dart';
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,13 +12,15 @@ import '../../../utils/date_check.dart';
 import '../../../utils/image_picker.dart';
 import '../../../utils/platform_check.dart';
 import '../../../utils/screen_size.dart';
+import '../create_chat/creat_chat_data.dart';
 import 'chat_room_data.dart';
 import 'chat_room_widget.dart';
 
 class ChatRoomScreen extends StatefulWidget {
   final ChatRoomSimpleData chatRoomSimpleData;
+  final List<ChatPeopleClass> chatPeopleList;
 
-  const ChatRoomScreen({super.key, required this.chatRoomSimpleData});
+  const ChatRoomScreen({super.key, required this.chatRoomSimpleData, required this.chatPeopleList});
 
   @override
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();
@@ -52,11 +54,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   late StreamSubscription _subscription;
 
+  late String chattingRoomUid;
+
+  final List<String> _peopleList = [];
+
+  List<ChatPeopleClass> chatPeopleList = [];
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     chatRoomSimpleData = widget.chatRoomSimpleData;
+    chatPeopleList = widget.chatPeopleList;
     scrollController.addListener(_scrollListener);
     _collectionRef = FirebaseFirestore.instance
         .collection('chat')
@@ -231,38 +240,71 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 color: mainColor,
               ),
             ),
-            const ListTile(
-              leading: Icon(Icons.people),
-              title: Text('채팅방 인원'),
+            Row(
+              children: [
+                const Expanded(
+                  child: ListTile(
+                    leading: Icon(Icons.people),
+                    title: Text('채팅방 인원'),
+                  ),
+                ),
+                SizedBox(
+                  width: screenSize.getWidthPerSize(15),
+                  child: IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddPersonScreen(
+                                    chatRoomSimpleData: chatRoomSimpleData,
+                                    chatPeopleList: chatPeopleList,
+                                  )),
+                        );
+                      },
+                      icon: Icon(Icons.add)),
+                )
+              ],
             ),
             Container(
-              height: screenSize.getHeightPerSize(6) *
-                  chatRoomDataList[chatRoomSimpleData.chatRoomUid]!.peopleList.length,
+              height: screenSize.getHeightPerSize(6) * chatPeopleList.length,
               margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
               decoration: BoxDecoration(
                   border: Border(top: BorderSide(width: 0.5), bottom: BorderSide(width: 0.5))),
               child: ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.zero,
-                itemCount: chatRoomDataList[chatRoomSimpleData.chatRoomUid]!.peopleList.length,
+                itemCount: chatPeopleList.length,
                 itemBuilder: (context, index) {
-                  String uid = chatRoomDataList[chatRoomSimpleData.chatRoomUid]!
-                      .peopleList[chatRoomDataSequence[index]]!;
-                  String name = friendListUidKey[uid]!;
+                  String? name = chatPeopleList[index].name;
+                  String proFile = chatPeopleList[index].profile;
 
                   return SizedBox(
                     height: screenSize.getHeightPerSize(6),
                     child: ListTile(
-                      leading: Icon(Icons.person),
-                      title: Text(name),
+                      leading: proFile.isNotEmpty
+                          ? CircleAvatar(
+                              backgroundImage: NetworkImage(
+                              proFile,
+                            ))
+                          : Icon(Icons.person),
+                      title: Text(name ?? '에러'),
+                      onTap: () {
+                        goDetailInfomation(context, chatPeopleList[index].uid,
+                            chatPeopleList[index].name, chatPeopleList[index].profile);
+                      },
                     ),
                   );
                 },
               ),
             ),
+            //j6OwaXM0iuSqFJubNrqt26Mezs32
+            //xoIlnIxqaPeYlDM9Os2tDbtlb933
+
             ListTile(
               leading: Icon(Icons.settings),
               title: Text('버튼 1'),
+              subtitle: Text('dsd'),
+              trailing: Icon(Icons.arrow_forward),
               onTap: () {},
             ),
             ListTile(

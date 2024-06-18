@@ -1,5 +1,6 @@
 import 'package:chattingapp/home/chat/chat_room/chat_room_widget.dart';
 import 'package:chattingapp/utils/color.dart';
+import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flutter/material.dart';
 
@@ -12,33 +13,41 @@ class TestScreen3 extends StatefulWidget {
 
 class _TestScreen3State extends State<TestScreen3> {
   late ScreenSize screenSize;
+  List<String> person = [
+    '홍길동',
+    '홍길동',
+    '홍길동',
+    '홍길동',
+    '홍길동',
+    '홍길동',
+  ];
 
   @override
   Widget build(BuildContext context) {
     screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
-        backgroundColor: mainBackgroundColor,
-        appBar: AppBar(),
-        body: Container(
-          height: screenSize.getHeightPerSize(8),
-          width: screenSize.getWidthPerSize(60),
-          color: Colors.blue,
-          child: Row(
-            children: [
-              Container(
-                width: screenSize.getWidthPerSize(15),
-                decoration: BoxDecoration(
-                  color: Colors.greenAccent,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.file_download_rounded,
-                  size: screenSize.getHeightPerSize(5),
-                ),
-              ),
-              Expanded(child: Text("다운로드 버튼을 클릭하여 동영상 파일을 다운로드하세요"))
-            ],
-          ),
-        ));
+      backgroundColor: mainBackgroundColor,
+      appBar: AppBar(),
+      body: addPersonMessage(screenSize, person),
+    );
   }
+}
+
+Widget addPersonMessage(ScreenSize screenSize, List<String> addPersonList) {
+  String message = '${myData.myNickName}님이';
+
+  for (var item in addPersonList) {
+    message = '$message $item님';
+  }
+  message = '$message을 초대하였습니다.';
+
+  return Container(
+      height: screenSize.getHeightPerSize(6),
+      width: screenSize.getWidthSize(),
+      color: Colors.blue,
+      child: Center(
+          child: Text(
+        message,
+        textAlign: TextAlign.center,
+      )));
 }
