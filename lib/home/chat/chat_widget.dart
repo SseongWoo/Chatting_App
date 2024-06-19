@@ -21,54 +21,68 @@ class ChatListWidget extends StatefulWidget {
 }
 
 class _ChatListWidgetState extends State<ChatListWidget> {
-  late ScreenSize screenSize;
-  late int index;
-  late ChatRoomSimpleData chatRoomSimpleData;
+  late ScreenSize _screenSize;
+  late int _index;
+  late ChatRoomSimpleData _chatRoomSimpleData;
   final String imagePath = 'assets/images/blank_profile.png';
+  String _profileUrl = '';
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    index = widget.index;
-    chatRoomSimpleData = chatRoomList[chatRoomSequence[index]]!;
+    _index = widget.index;
+    _chatRoomSimpleData = chatRoomList[chatRoomSequence[_index]]!;
+    _setProfile();
+  }
+
+  void _setProfile() {
+    if (_chatRoomSimpleData.chatRoomCustomProfile.isNotEmpty) {
+      _profileUrl = _chatRoomSimpleData.chatRoomCustomProfile;
+    } else if (chatRoomDataList[_chatRoomSimpleData.chatRoomUid]!.chatRoomProfile.isNotEmpty) {
+      _profileUrl = chatRoomDataList[_chatRoomSimpleData.chatRoomUid]!.chatRoomProfile;
+    } else {
+      _profileUrl = '';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    screenSize = ScreenSize(MediaQuery.of(context).size);
+    _screenSize = ScreenSize(MediaQuery.of(context).size);
     return GestureDetector(
       onTap: () async {
         EasyLoading.show();
-        await getChatData(chatRoomSimpleData.chatRoomUid);
-        List<ChatPeopleClass> chatPeople = await getPeopleData(chatRoomSimpleData.chatRoomUid);
+        await getChatData(_chatRoomSimpleData.chatRoomUid);
+        List<ChatPeopleClass> chatPeople = await getPeopleData(_chatRoomSimpleData.chatRoomUid);
         EasyLoading.dismiss();
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ChatRoomScreen(
-                      chatRoomSimpleData: chatRoomSimpleData,
-                      chatPeopleList: chatPeople,
-                    )));
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatRoomScreen(
+              chatRoomSimpleData: _chatRoomSimpleData,
+              chatPeopleList: chatPeople,
+            ),
+          ),
+        );
       },
       child: Container(
-        height: screenSize.getHeightPerSize(7),
+        height: _screenSize.getHeightPerSize(7),
         decoration: BoxDecoration(
             border: Border.all(color: Colors.grey, width: 0.5),
             borderRadius: BorderRadius.circular(20)),
         child: Row(
           children: [
             SizedBox(
-              width: screenSize.getWidthPerSize(4),
+              width: _screenSize.getWidthPerSize(4),
             ),
             SizedBox(
-              height: screenSize.getHeightPerSize(6),
-              width: screenSize.getHeightPerSize(6),
+              height: _screenSize.getHeightPerSize(6),
+              width: _screenSize.getHeightPerSize(6),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: chatRoomSimpleData.chatRoomCustomProfile.isNotEmpty
+                child: _profileUrl.isNotEmpty
                     ? Image.network(
-                        chatRoomSimpleData.chatRoomCustomProfile,
+                        _profileUrl,
                       )
                     : Image.asset(
                         imagePath,
@@ -76,33 +90,35 @@ class _ChatListWidgetState extends State<ChatListWidget> {
               ),
             ),
             SizedBox(
-              width: screenSize.getWidthPerSize(2),
+              width: _screenSize.getWidthPerSize(2),
             ),
             Expanded(
               child: Column(
                 children: [
                   SizedBox(
-                    height: screenSize.getHeightPerSize(3.5),
+                    height: _screenSize.getHeightPerSize(3.5),
                     child: Align(
                         alignment: Alignment.bottomLeft,
                         child: AutoSizeText(
-                          chatRoomSimpleData.chatRoomCustomName,
+                          _chatRoomSimpleData.chatRoomCustomName.isNotEmpty
+                              ? _chatRoomSimpleData.chatRoomCustomName
+                              : chatRoomDataList[_chatRoomSimpleData.chatRoomUid]!.chatRoomName,
                           maxLines: 1,
                           style: TextStyle(
-                              color: Colors.black, fontSize: screenSize.getHeightPerSize(1.7)),
+                              color: Colors.black, fontSize: _screenSize.getHeightPerSize(1.7)),
                         )),
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(0.5),
+                    height: _screenSize.getHeightPerSize(0.5),
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(2.8),
+                    height: _screenSize.getHeightPerSize(2.8),
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Text(
                         "채팅방",
                         style: TextStyle(
-                            color: Colors.grey, fontSize: screenSize.getHeightPerSize(1.5)),
+                            color: Colors.grey, fontSize: _screenSize.getHeightPerSize(1.5)),
                       ),
                     ),
                   ),
@@ -110,21 +126,21 @@ class _ChatListWidgetState extends State<ChatListWidget> {
               ),
             ),
             SizedBox(
-              width: screenSize.getWidthPerSize(2),
+              width: _screenSize.getWidthPerSize(2),
             ),
             SizedBox(
-              height: screenSize.getHeightPerSize(5),
-              width: screenSize.getWidthPerSize(16),
+              height: _screenSize.getHeightPerSize(5),
+              width: _screenSize.getWidthPerSize(16),
               child: Align(
                 alignment: Alignment.centerRight,
                 child: Text(
                   "8월 2일\n오전 11:08",
-                  style: TextStyle(color: Colors.grey, fontSize: screenSize.getHeightPerSize(1.5)),
+                  style: TextStyle(color: Colors.grey, fontSize: _screenSize.getHeightPerSize(1.5)),
                 ),
               ),
             ),
             SizedBox(
-              width: screenSize.getWidthPerSize(2),
+              width: _screenSize.getWidthPerSize(2),
             ),
           ],
         ),

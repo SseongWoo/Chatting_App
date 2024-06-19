@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'package:chattingapp/home/chat/chat_data.dart';
 import 'package:chattingapp/home/chat/chat_room/add_person/add_person_screen.dart';
+import 'package:chattingapp/home/chat/chat_room/setting_chat_room/setting_room.dart';
+import 'package:chattingapp/home/chat/chat_room/setting_chat_room/setting_room_manager.dart';
+import 'package:chattingapp/home/friend/request/friend_request_screen.dart';
+import 'package:chattingapp/home/home_screen.dart';
 import 'package:chattingapp/utils/image_viewer.dart';
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,6 +15,7 @@ import '../../../utils/color.dart';
 import '../../../utils/date_check.dart';
 import '../../../utils/image_picker.dart';
 import '../../../utils/platform_check.dart';
+import '../../../utils/screen_movement.dart';
 import '../../../utils/screen_size.dart';
 import '../create_chat/creat_chat_data.dart';
 import 'chat_room_data.dart';
@@ -32,6 +37,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   TextEditingController textEditingController = TextEditingController();
   bool selected = false;
   late ChatRoomSimpleData chatRoomSimpleData;
+  late ChatRoomData _chatRoomData;
   final scrollController = ScrollController();
   bool discontinuedText = false;
   bool keyBoardSelelted = false;
@@ -56,9 +62,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   late String chattingRoomUid;
 
-  final List<String> _peopleList = [];
-
   List<ChatPeopleClass> chatPeopleList = [];
+
+  bool _checkManager = false;
 
   @override
   void initState() {
@@ -71,6 +77,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         .collection('chat')
         .doc(chatRoomSimpleData.chatRoomUid)
         .collection('chat');
+
+    _chatRoomData = chatRoomDataList[chatRoomSimpleData.chatRoomUid]!;
+    managerCheck();
 
     _subscription = _collectionRef
         .orderBy('timestamp', descending: true)
@@ -105,9 +114,15 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     super.dispose();
   }
 
+  void managerCheck() {
+    if (chatRoomSimpleData.chatRoomUid.length <= 8 &&
+        chatRoomDataList[chatRoomSimpleData.chatRoomUid]?.chatRoomManager == myData.myUID) {
+      _checkManager = true;
+    }
+  }
+
   Future<void> onFieldSubmitted() async {
     await setChatData(chatRoomSimpleData.chatRoomUid, textEditingController.text, "text");
-    //await getChatData(chatRoomSimpleData.chatRoomUid);
     setState(() {});
     // 스크롤 위치를 맨 아래로 이동 시킴
     scrollController.animateTo(
@@ -207,35 +222,92 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     setState(() {});
   }
 
+  String _getManager() {
+    String managerName = '';
+    for (var item in chatPeopleList) {
+      if (_chatRoomData.chatRoomManager == item.uid) {
+        managerName = item.name;
+      }
+    }
+    return managerName;
+  }
+
   @override
   Widget build(BuildContext context) {
     screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text(chatRoomSimpleData.chatRoomCustomName),
-        // actions: [
-        //   IconButton(onPressed: () {}, icon: const Icon(Icons.menu)),
-        // ],
+        title: Text(chatRoomSimpleData.chatRoomCustomName.isNotEmpty
+            ? chatRoomSimpleData.chatRoomCustomName
+            : chatRoomDataList[chatRoomSimpleData.chatRoomUid]!.chatRoomName),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                screenMovementLeftToRight(const HomeScreen()),
+                (Route<dynamic> route) => false,
+              );
+            },
+            icon: const Icon(Icons.arrow_back_ios)),
       ),
       endDrawer: Drawer(
         child: Column(
           children: [
             UserAccountsDrawerHeader(
+              otherAccountsPictures: [
+                GestureDetector(
+                  onTap: () {
+                    if (chatRoomSimpleData.chatRoomCustomProfile.isNotEmpty) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ImageViewer(imageURL: chatRoomSimpleData.chatRoomCustomProfile)));
+                    }
+                  },
+                  child: CircleAvatar(
+                    backgroundImage: chatRoomSimpleData.chatRoomCustomProfile.isNotEmpty
+                        ? NetworkImage(chatRoomSimpleData.chatRoomCustomProfile) as ImageProvider
+                        : null,
+                    child: chatRoomSimpleData.chatRoomCustomProfile.isEmpty
+                        ? Icon(
+                            Icons.image,
+                            size: screenSize.getHeightPerSize(3.5),
+                            color: mainColor,
+                          )
+                        : null,
+                  ),
+                ),
+              ],
               currentAccountPicture: GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ImageViewer(imageURL: myData.myProfile)));
+                  if (_chatRoomData.chatRoomProfile.isNotEmpty) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ImageViewer(imageURL: _chatRoomData.chatRoomProfile)));
+                  }
                 },
                 child: CircleAvatar(
-                  //backgroundImage: AssetImage('assets/bunny.gif'),
-                  backgroundImage: NetworkImage(myData.myProfile),
+                  backgroundImage: _chatRoomData.chatRoomProfile.isNotEmpty
+                      ? NetworkImage(_chatRoomData.chatRoomProfile) as ImageProvider
+                      : null,
+                  child: _chatRoomData.chatRoomProfile.isEmpty
+                      ? Icon(
+                          Icons.image,
+                          size: screenSize.getHeightPerSize(6),
+                          color: mainColor,
+                        )
+                      : null,
                 ),
               ),
-              accountEmail: Text(myData.myEmail),
-              accountName: Text(myData.myNickName),
+              accountName: chatRoomSimpleData.chatRoomUid.length <= 8
+                  ? Text('${_chatRoomData.chatRoomName} (${_chatRoomData.chatRoomUid})')
+                  : const Text('1대1 채팅방'),
+              accountEmail: chatRoomSimpleData.chatRoomUid.length <= 8
+                  ? Text('매니저 : ${_getManager()}')
+                  : null,
               decoration: BoxDecoration(
                 color: mainColor,
               ),
@@ -261,55 +333,82 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   )),
                         );
                       },
-                      icon: Icon(Icons.add)),
+                      icon: const Icon(Icons.add)),
                 )
               ],
             ),
-            Container(
-              height: screenSize.getHeightPerSize(6) * chatPeopleList.length,
-              margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-              decoration: BoxDecoration(
-                  border: Border(top: BorderSide(width: 0.5), bottom: BorderSide(width: 0.5))),
-              child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.zero,
-                itemCount: chatPeopleList.length,
-                itemBuilder: (context, index) {
-                  String? name = chatPeopleList[index].name;
-                  String proFile = chatPeopleList[index].profile;
+            Expanded(
+              child: Container(
+                height: screenSize.getHeightPerSize(6) * chatPeopleList.length,
+                margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                decoration: const BoxDecoration(
+                    border: Border(top: BorderSide(width: 0.5), bottom: BorderSide(width: 0.5))),
+                child: ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.zero,
+                  itemCount: chatPeopleList.length,
+                  itemBuilder: (context, index) {
+                    String? name = chatPeopleList[index].name;
+                    String proFile = chatPeopleList[index].profile;
 
-                  return SizedBox(
-                    height: screenSize.getHeightPerSize(6),
-                    child: ListTile(
-                      leading: proFile.isNotEmpty
-                          ? CircleAvatar(
-                              backgroundImage: NetworkImage(
-                              proFile,
-                            ))
-                          : Icon(Icons.person),
-                      title: Text(name ?? '에러'),
-                      onTap: () {
-                        goDetailInfomation(context, chatPeopleList[index].uid,
-                            chatPeopleList[index].name, chatPeopleList[index].profile);
-                      },
-                    ),
-                  );
-                },
+                    return SizedBox(
+                      height: screenSize.getHeightPerSize(6),
+                      child: ListTile(
+                        leading: proFile.isNotEmpty
+                            ? CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                proFile,
+                              ))
+                            : const Icon(Icons.person),
+                        title: Text(name ?? '에러'),
+                        onTap: () {
+                          goDetailInfomation(context, chatPeopleList[index].uid,
+                              chatPeopleList[index].name, chatPeopleList[index].profile);
+                        },
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
             //j6OwaXM0iuSqFJubNrqt26Mezs32
             //xoIlnIxqaPeYlDM9Os2tDbtlb933
-
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('버튼 1'),
-              subtitle: Text('dsd'),
-              trailing: Icon(Icons.arrow_forward),
-              onTap: () {},
+            Visibility(
+              visible: _checkManager,
+              child: ListTile(
+                leading: Icon(Icons.settings),
+                title: const Text('채팅방 설정 (매니저 전용)'),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SettingRoomManager(
+                                chatRoomSimpleData: chatRoomSimpleData,
+                              )));
+                },
+              ),
             ),
             ListTile(
               leading: Icon(Icons.settings),
-              title: Text('버튼2'),
+              title: Text('채팅방 설정'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SettingRoom(
+                              chatRoomSimpleData: chatRoomSimpleData,
+                            )));
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.logout,
+                color: Colors.red,
+              ),
+              title: const Text(
+                '채팅방 나가기',
+                style: TextStyle(color: Colors.red),
+              ),
               onTap: () {},
             ),
           ],

@@ -1,9 +1,15 @@
+import 'package:chattingapp/home/chat/chat_room/chat_room_screen.dart';
 import 'package:chattingapp/utils/screen_size.dart';
+import 'package:chattingapp/utils/snackbar_message.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:search_choices/search_choices.dart';
+import '../../../../utils/get_people_data.dart';
+import '../../../../utils/my_data.dart';
 import '../../../friend/friend_data.dart';
 import '../../chat_data.dart';
 import '../../create_chat/creat_chat_data.dart';
+import '../chat_room_data.dart';
 
 class AddPersonScreen extends StatefulWidget {
   final ChatRoomSimpleData chatRoomSimpleData;
@@ -19,6 +25,41 @@ class AddPersonScreen extends StatefulWidget {
 class _AddPersonScreenState extends State<AddPersonScreen> {
   List<int> selectValueList = [];
   late ScreenSize screenSize;
+  late ChatRoomSimpleData chatRoomSimpleData;
+  List<ChatPeopleClass> chatPeopleList = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    chatRoomSimpleData = widget.chatRoomSimpleData;
+    chatPeopleList = widget.chatPeopleList;
+  }
+
+  void startAddPerson() async {
+    EasyLoading.show();
+
+    String message = '${myData.myNickName}님이';
+
+    for (int i = 0; i < selectValueList.length; i++) {
+      if (i == selectValueList.length - 1) {
+        message = '$message ${friendListSequence[selectValueList[i]]}님을 초대하였습니다.';
+      } else {
+        message = '$message ${friendListSequence[selectValueList[i]]}님,';
+      }
+    }
+
+    await setChatData(chatRoomSimpleData.chatRoomUid, message, "system");
+
+    List<ChatPeopleClass> chatPeople = await getPeopleData(chatRoomSimpleData.chatRoomUid);
+
+    EasyLoading.dismiss();
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+            builder: (context) =>
+                ChatRoomScreen(chatRoomSimpleData: chatRoomSimpleData, chatPeopleList: chatPeople)),
+        (route) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +69,13 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
         title: const Text('친구 추가'),
         actions: [
           TextButton(
-              onPressed: () {},
+              onPressed: () {
+                if (selectValueList.isNotEmpty) {
+                  startAddPerson();
+                } else {
+                  snackBarErrorMessage(context, '초대할 인원을 선택해 주세요.');
+                }
+              },
               child: Text(
                 '확인',
                 style: TextStyle(fontSize: screenSize.getHeightPerSize(2), color: Colors.black),
@@ -93,21 +140,6 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
                             icon: const Icon(Icons.close))),
                   ],
                 );
-                //
-                // return SizedBox(
-                //   height: screenSize.getHeightPerSize(6),
-                //   child: ListTile(
-                //     leading: proFile.isNotEmpty
-                //         ? CircleAvatar(
-                //         backgroundImage: NetworkImage(
-                //           proFile,
-                //         ))
-                //         : Icon(Icons.person),
-                //     title: Text(name ?? '에러'),
-                //     onTap: () {
-                //     },
-                //   ),
-                // );
               },
             ),
           )

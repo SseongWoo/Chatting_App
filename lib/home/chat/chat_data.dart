@@ -28,6 +28,14 @@ class ChatRoomData {
       this.peopleList);
 }
 
+class ChatRoomRealTimeData {
+  String lastChatMessage;
+  DateTime lastChatTime;
+  Map<String, int> readableMessage;
+
+  ChatRoomRealTimeData(this.lastChatMessage, this.lastChatTime, this.readableMessage);
+}
+
 class ChatRoomSimpleData {
   String chatRoomUid;
   String chatRoomCustomProfile;
@@ -55,8 +63,8 @@ Future<void> getChatRoomDataList() async {
     documentSnapshot = await _firestore.collection('chat').doc(uid).get();
     chatRoomDataList[documentSnapshot['chatroomuid']] = ChatRoomData(
       documentSnapshot['chatroomuid'],
-      documentSnapshot['chatroomprofile'],
       documentSnapshot['chatroomname'],
+      documentSnapshot['chatroomprofile'],
       documentSnapshot['chatroomcreatedate'],
       documentSnapshot['chatroommanager'],
       documentSnapshot['chatroompassword'],
@@ -81,7 +89,7 @@ Future<void> getChatRoomData() async {
   for (var data in chatRoomData) {
     chatRoomList[data['chatroomuid']] = ChatRoomSimpleData(
         data['chatroomuid'],
-        data['chatroomprofile'] ?? "",
+        data['chatroomcustomprofile'] ?? "",
         data['chatroomcustomname'],
         data['lastchatmessage'] ?? "",
         data['readablemessage'],
@@ -115,8 +123,8 @@ Future<void> createChatRoom(ChatRoomData chatRoomData) async {
         .doc(chatRoomData.chatRoomUid)
         .set({
       'chatroomuid': chatRoomData.chatRoomUid,
-      'chatroomcustomprofile': chatRoomData.chatRoomProfile,
-      'chatroomcustomname': chatRoomData.chatRoomName,
+      'chatroomcustomprofile': '',
+      'chatroomcustomname': '',
       'lastchatmessage': '',
       'readablemessage': 0,
       'lastchattime': dateTime,
@@ -131,8 +139,8 @@ Future<void> createChatRoom(ChatRoomData chatRoomData) async {
           .doc(chatRoomData.chatRoomUid)
           .set({
         'chatroomuid': chatRoomData.chatRoomUid,
-        'chatroomcustomprofile': chatRoomData.chatRoomProfile,
-        'chatroomcustomname': chatRoomData.chatRoomName,
+        'chatroomcustomprofile': '',
+        'chatroomcustomname': '',
         'lastchatmessage': '',
         'readablemessage': 0,
         'lastchattime': dateTime,
@@ -156,4 +164,26 @@ Future<bool> checkRoomUid(String uid) async {
     print('Error checking document existence: $e');
     return false;
   }
+}
+
+Future<void> updateChatData(ChatRoomSimpleData chatRoomSimpleData) async {
+  await _firestore
+      .collection('users')
+      .doc(myData.myUID)
+      .collection('chat')
+      .doc(chatRoomSimpleData.chatRoomUid)
+      .update({
+    'chatroomcustomprofile': chatRoomSimpleData.chatRoomCustomProfile,
+    'chatroomcustomname': chatRoomSimpleData.chatRoomCustomName,
+  });
+}
+
+Future<void> updateChatMainData(ChatRoomData chatRoomData) async {
+  await _firestore.collection('chat').doc(chatRoomData.chatRoomUid).update({
+    'chatroomname': chatRoomData.chatRoomName,
+    'chatroomprofile': chatRoomData.chatRoomProfile,
+    'chatroompassword': chatRoomData.chatRoomPassword,
+    'chatroomexplain': chatRoomData.chatRoomExplain,
+    'chatroompublic': chatRoomData.chatRoomPublic,
+  });
 }

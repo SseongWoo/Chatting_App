@@ -58,7 +58,7 @@ Widget messageWidget(BuildContext context, ScreenSize screenSize, MessageDataCla
       } else {
         return messageVideoType2(context, screenSize, messageDataClass, firstMessage, visCheck);
       }
-
+    case 'system':
     default:
       return Container();
   }
@@ -521,4 +521,15 @@ Widget messageVideoType2(BuildContext context, ScreenSize screenSize,
       ],
     ),
   );
+}
+
+Widget addPersonMessage(ScreenSize screenSize, MessageDataClass messageDataClass) {
+  return Container(
+      width: screenSize.getWidthSize(),
+      margin:
+          EdgeInsets.fromLTRB(screenSize.getWidthPerSize(5), 0, screenSize.getWidthPerSize(5), 0),
+      child: Text(
+        messageDataClass.message,
+        textAlign: TextAlign.center,
+      ));
 }

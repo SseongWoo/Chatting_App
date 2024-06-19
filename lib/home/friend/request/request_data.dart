@@ -99,8 +99,8 @@ Future<void> addFriendRequest(String friendUID, BuildContext context) async {
           .doc(documentID)
           .set({
         'chatroomuid': chatRoomSimpleData.chatRoomUid,
-        'chatroomcustomprofile': chatRoomSimpleData.chatRoomCustomProfile,
-        'chatroomcustomname': chatRoomSimpleData.chatRoomCustomName,
+        'chatroomcustomprofile': friendData.friendProfile,
+        'chatroomcustomname': friendData.friendNickName,
         'lastchatmessage': chatRoomSimpleData.lastChatMessage,
         'readablemessage': chatRoomSimpleData.readableMessage,
         'lastchattime': chatRoomSimpleData.lastChatTime,
@@ -114,8 +114,8 @@ Future<void> addFriendRequest(String friendUID, BuildContext context) async {
           .doc(documentID)
           .set({
         'chatroomuid': chatRoomSimpleData.chatRoomUid,
-        'chatroomcustomprofile': chatRoomSimpleData.chatRoomCustomProfile,
-        'chatroomcustomname': chatRoomSimpleData.chatRoomCustomName,
+        'chatroomcustomprofile': myData.myProfile,
+        'chatroomcustomname': myData.myNickName,
         'lastchatmessage': chatRoomSimpleData.lastChatMessage,
         'readablemessage': chatRoomSimpleData.readableMessage,
         'lastchattime': chatRoomSimpleData.lastChatTime,

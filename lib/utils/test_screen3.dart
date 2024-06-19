@@ -36,18 +36,21 @@ class _TestScreen3State extends State<TestScreen3> {
 Widget addPersonMessage(ScreenSize screenSize, List<String> addPersonList) {
   String message = '${myData.myNickName}님이';
 
-  for (var item in addPersonList) {
-    message = '$message $item님';
+  for (int i = 0; i < addPersonList.length; i++) {
+    if (i == addPersonList.length - 1) {
+      message = '$message ${addPersonList[i]}님을 초대하였습니다.';
+    } else {
+      message = '$message ${addPersonList[i]}님,';
+    }
   }
-  message = '$message을 초대하였습니다.';
 
   return Container(
-      height: screenSize.getHeightPerSize(6),
       width: screenSize.getWidthSize(),
       color: Colors.blue,
-      child: Center(
-          child: Text(
+      margin:
+          EdgeInsets.fromLTRB(screenSize.getWidthPerSize(5), 0, screenSize.getWidthPerSize(5), 0),
+      child: Text(
         message,
         textAlign: TextAlign.center,
-      )));
+      ));
 }
