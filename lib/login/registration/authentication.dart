@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:chattingapp/login/registration/registration_dialog.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:core';
 import 'package:intl/intl.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 FirebaseAuth _auth = FirebaseAuth.instance;
@@ -22,14 +22,14 @@ Future<String> createUserWithEmailAndPassword(String email, String password) asy
 
     User? user = FirebaseAuth.instance.currentUser;
     await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
-      "uid":user?.uid,
+      "uid": user?.uid,
       "email": email,
-      "creation_time":DateFormat("yyyy-MM-dd").format(DateTime.now()),
-      "category":{},
-      "category_sequence" : [],
+      "creation_time": DateFormat("yyyy-MM-dd").format(DateTime.now()),
+      "category": {},
+      "category_sequence": [],
     });
     await FirebaseFirestore.instance.collection('users_public').doc(user?.uid).set({
-      "uid":user?.uid,
+      "uid": user?.uid,
       "email": email,
     });
 
@@ -81,29 +81,33 @@ void signOut() async {
   await _auth.signOut();
 }
 
-
 Future<bool> checkEmailVerificationStatus() async {
   User? user = FirebaseAuth.instance.currentUser;
   if (user != null) {
     await user.reload(); // 사용자 데이터 새로 고침
-    return user.emailVerified;
+    if (user.emailVerified) {
+      return true;
+    } else {
+      await user.reload();
+      if (user.emailVerified) {
+        return true;
+      }
+    }
   }
   return false;
 }
 
-Future<void> saveUserImage(XFile? pickedFile, CroppedFile? croppedFile, String nickName, BuildContext context) async{
+Future<void> saveUserImage(CroppedFile? croppedFile, String nickName, BuildContext context) async {
   try {
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
       FirebaseStorage storage = FirebaseStorage.instance;
-      String downloadURL = "";
-      Reference ref = storage.ref("/userImage/${user.uid}").child("profileImage");
+      String downloadURL = '';
+      Reference ref = storage.ref('/userImage/${user.uid}').child('profileImage');
 
-      if (pickedFile != null) {
-        UploadTask uploadTask = ref.putFile(
-            croppedFile == null ? File(pickedFile.path) : File(croppedFile.path)
-        );
+      if (croppedFile != null) {
+        UploadTask uploadTask = ref.putFile(File(croppedFile!.path));
         await uploadTask.then((snapshot) {
           return snapshot.ref.getDownloadURL();
         }).then((url) {
@@ -112,17 +116,16 @@ Future<void> saveUserImage(XFile? pickedFile, CroppedFile? croppedFile, String n
       }
 
       await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-        "profile": downloadURL,
-        "nickname": nickName,
+        'profile': downloadURL,
+        'nickname': nickName,
       });
       await FirebaseFirestore.instance.collection('users_public').doc(user.uid).update({
-        "profile": downloadURL,
-        "nickname": nickName,
+        'profile': downloadURL,
+        'nickname': nickName,
       });
       finishRegistration(context);
     }
-  }
-  catch(e){
+  } catch (e) {
     //오류
   }
 }
@@ -135,11 +138,12 @@ Future<bool> isEmailRegistered(String email) async {
       password: 'temporary_password',
     );
     User? user = FirebaseAuth.instance.currentUser;
-    user?.delete();                                     // 등록되어 있던 이메일이 없을경우에 생긴 계정을 다시 삭제
+    user?.delete(); // 등록되어 있던 이메일이 없을경우에 생긴 계정을 다시 삭제
     print("삭제 완료");
     return false;
   } on FirebaseAuthException catch (e) {
-    if (e.code == 'email-already-in-use') { //이메일이 등록되어 있을경우
+    if (e.code == 'email-already-in-use') {
+      //이메일이 등록되어 있을경우
       return true;
     } else {
       return false;
@@ -152,4 +156,3 @@ Future<bool> isEmailRegistered(String email) async {
 Future<void> resetPassword(String email) async {
   await _auth.sendPasswordResetEmail(email: email);
 }
-

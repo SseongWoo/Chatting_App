@@ -7,8 +7,7 @@ class RequestSentWidget extends StatefulWidget {
   final ScreenSize screenSize;
   final int index;
 
-  const RequestSentWidget(
-      {super.key, required this.screenSize, required this.index});
+  const RequestSentWidget({super.key, required this.screenSize, required this.index});
 
   @override
   State<RequestSentWidget> createState() => _RequestSentWidgetState();
@@ -28,9 +27,11 @@ class _RequestSentWidgetState extends State<RequestSentWidget> {
   }
 
   Future<void> delete() async {
-    if(!deleteWidget){    // 거부된 요청이 아닐경우
+    if (!deleteWidget) {
+      // 거부된 요청이 아닐경우
       await deleteRequest(requestSendList[index].requestUID, true, true);
-    }else{                //거부된 요청일 경우
+    } else {
+      //거부된 요청일 경우
       await deleteRequest(requestSendList[index].requestUID, true, false);
     }
     setState(() {
@@ -63,6 +64,26 @@ class _RequestSentWidgetState extends State<RequestSentWidget> {
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
                         requestSendList[index].requestProfile,
+                        loadingBuilder:
+                            (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child; // 이미지 로드 완료
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          }
+                        },
+                        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                          return const Center(
+                            child: Text('Failed to load image'),
+                          );
+                        },
                       ),
                     )),
                 SizedBox(
@@ -77,22 +98,18 @@ class _RequestSentWidgetState extends State<RequestSentWidget> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           requestSendList[index].requestNickName,
-                          style: TextStyle(
-                              fontSize: screenSize.getHeightPerSize(2)),
+                          style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
                           textAlign: TextAlign.left,
                         ),
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          requestSendList[index].requestCheck
-                              ? "요청 거부됨"
-                              : "수락 대기중",
+                          requestSendList[index].requestCheck ? "요청 거부됨" : "수락 대기중",
                           style: TextStyle(
                               fontSize: screenSize.getHeightPerSize(1),
-                              color: requestSendList[index].requestCheck
-                                  ? Colors.red
-                                  : Colors.grey),
+                              color:
+                                  requestSendList[index].requestCheck ? Colors.red : Colors.grey),
                           textAlign: TextAlign.left,
                         ),
                       ),
@@ -112,9 +129,7 @@ class _RequestSentWidgetState extends State<RequestSentWidget> {
                         requestSendList[index].requestCheck ? "삭제" : "취소",
                         style: TextStyle(
                             fontSize: screenSize.getHeightPerSize(2),
-                            color: requestSendList[index].requestCheck
-                                ? Colors.red
-                                : Colors.black),
+                            color: requestSendList[index].requestCheck ? Colors.red : Colors.black),
                       )),
                 ),
                 SizedBox(
@@ -130,8 +145,7 @@ class RequestReceivedWidget extends StatefulWidget {
   final ScreenSize screenSize;
   final int index;
 
-  const RequestReceivedWidget(
-      {super.key, required this.screenSize, required this.index});
+  const RequestReceivedWidget({super.key, required this.screenSize, required this.index});
 
   @override
   State<RequestReceivedWidget> createState() => _RequestReceivedWidgetState();
@@ -141,7 +155,7 @@ class _RequestReceivedWidgetState extends State<RequestReceivedWidget> {
   late ScreenSize screenSize;
   late int index;
   bool deleteWidget = false; // 사용자가 조작을 한 상태인지 아닌지 구분해주는 변수
-  bool checkWidget = false;  // 수락한 요청인지, 거절한 요청인지 구분해주는 변수
+  bool checkWidget = false; // 수락한 요청인지, 거절한 요청인지 구분해주는 변수
 
   @override
   void initState() {
@@ -171,11 +185,13 @@ class _RequestReceivedWidgetState extends State<RequestReceivedWidget> {
             child: Positioned(
                 top: 0,
                 right: 0,
-                child: IconButton(onPressed: () {
-                  setState(() {
-                    deleteRequest(requestReceivedList[index].requestUID,true,false);
-                  });
-            }, icon: const Icon(Icons.close))),
+                child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        deleteRequest(requestReceivedList[index].requestUID, true, false);
+                      });
+                    },
+                    icon: const Icon(Icons.close))),
           ),
           Row(
             children: [
@@ -188,6 +204,26 @@ class _RequestReceivedWidgetState extends State<RequestReceivedWidget> {
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
                       requestReceivedList[index].requestProfile,
+                      loadingBuilder:
+                          (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child; // 이미지 로드 완료
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        }
+                      },
+                      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                        return Center(
+                          child: Text('Failed to load image'),
+                        );
+                      },
                     ),
                   )),
               SizedBox(
@@ -214,85 +250,81 @@ class _RequestReceivedWidgetState extends State<RequestReceivedWidget> {
                     ),
                     deleteWidget
                         ? Center(
-                      child: Text(
-                        checkWidget ? "수락한 요청입니다." : "거절한 요청입니다.",
-                        style: TextStyle(
-                            color: checkWidget
-                                ? Colors.greenAccent
-                                : Colors.redAccent),
-                      ),
-                    )
+                            child: Text(
+                              checkWidget ? "수락한 요청입니다." : "거절한 요청입니다.",
+                              style: TextStyle(
+                                  color: checkWidget ? Colors.greenAccent : Colors.redAccent),
+                            ),
+                          )
                         : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: screenSize.getWidthPerSize(36),
-                          height: screenSize.getHeightPerSize(4),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green[100],
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: screenSize.getWidthPerSize(36),
+                                height: screenSize.getHeightPerSize(4),
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green[100],
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                    onPressed: () async {
+                                      bool check =
+                                          await requestCheck(requestReceivedList[index].requestUID);
+                                      if (check) {
+                                        setState(() {
+                                          deleteWidget = true;
+                                          checkWidget = true;
+                                        });
+                                        addFriendRequest(
+                                            requestReceivedList[index].requestUID, context);
+                                      } else {
+                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                            content: Text("문제가 발생하였습니다. 다시 시도해 주세요")));
+                                      }
+                                    },
+                                    child: Text(
+                                      "수락",
+                                      style: TextStyle(
+                                          fontSize: screenSize.getHeightPerSize(1.5),
+                                          color: Colors.black),
+                                    )),
                               ),
-                              onPressed: () async{
-                                bool check = await requestCheck(requestReceivedList[index].requestUID);
-                                if(check){
-                                  setState(() {
-                                    deleteWidget = true;
-                                    checkWidget = true;
-                                  });
-                                  addFriendRequest(
-                                      requestReceivedList[index].requestUID,
-                                      context);
-                                }else{
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(content: Text("문제가 발생하였습니다. 다시 시도해 주세요")));
-                                }
-                              },
-                              child: Text(
-                                "수락",
-                                style: TextStyle(
-                                    fontSize:
-                                    screenSize.getHeightPerSize(1.5),
-                                    color: Colors.black),
-                              )),
-                        ),
-                        SizedBox(
-                          width: screenSize.getWidthPerSize(1),
-                        ),
-                        SizedBox(
-                          width: screenSize.getWidthPerSize(36),
-                          height: screenSize.getHeightPerSize(4),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red[100],
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
+                              SizedBox(
+                                width: screenSize.getWidthPerSize(1),
                               ),
-                              onPressed: () async{
-                                bool check = await requestCheck(requestReceivedList[index].requestUID);
-                                if(check){
-                                  setState(() {
-                                    deleteWidget = true;
-                                    checkWidget = false;
-                                  });
-                                  updateRequest(
-                                      requestReceivedList[index].requestUID);
-                                }else{
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(content: Text("문제가 발생하였습니다. 다시 시도해 주세요")));
-                                }
-                              },
-                              child: Text(
-                                "거절",
-                                style: TextStyle(
-                                    fontSize:
-                                    screenSize.getHeightPerSize(1.5),
-                                    color: Colors.black),
-                              )),
-                        ),
-                      ],
-                    ),
+                              SizedBox(
+                                width: screenSize.getWidthPerSize(36),
+                                height: screenSize.getHeightPerSize(4),
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red[100],
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                    onPressed: () async {
+                                      bool check =
+                                          await requestCheck(requestReceivedList[index].requestUID);
+                                      if (check) {
+                                        setState(() {
+                                          deleteWidget = true;
+                                          checkWidget = false;
+                                        });
+                                        updateRequest(requestReceivedList[index].requestUID);
+                                      } else {
+                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                            content: Text("문제가 발생하였습니다. 다시 시도해 주세요")));
+                                      }
+                                    },
+                                    child: Text(
+                                      "거절",
+                                      style: TextStyle(
+                                          fontSize: screenSize.getHeightPerSize(1.5),
+                                          color: Colors.black),
+                                    )),
+                              ),
+                            ],
+                          ),
                   ],
                 ),
               ),

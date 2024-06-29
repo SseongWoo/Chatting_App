@@ -29,36 +29,33 @@ class ChatRoomData {
 }
 
 class ChatRoomRealTimeData {
+  String chatRoomUid;
   String lastChatMessage;
   DateTime lastChatTime;
-  Map<String, int> readableMessage;
+  int readableMessage;
 
-  ChatRoomRealTimeData(this.lastChatMessage, this.lastChatTime, this.readableMessage);
+  ChatRoomRealTimeData(
+      this.chatRoomUid, this.lastChatMessage, this.lastChatTime, this.readableMessage);
 }
 
 class ChatRoomSimpleData {
   String chatRoomUid;
   String chatRoomCustomProfile;
   String chatRoomCustomName;
-  String lastChatMessage;
-  int readableMessage;
-  DateTime lastChatTime;
 
-  ChatRoomSimpleData(this.chatRoomUid, this.chatRoomCustomProfile, this.chatRoomCustomName,
-      this.lastChatMessage, this.readableMessage, this.lastChatTime);
+  ChatRoomSimpleData(this.chatRoomUid, this.chatRoomCustomProfile, this.chatRoomCustomName);
 }
 
 FirebaseAuth _auth = FirebaseAuth.instance;
 FirebaseFirestore _firestore = FirebaseFirestore.instance;
 Map<String, ChatRoomSimpleData> chatRoomList = {};
-List<String> chatRoomSequence = [];
 Map<String, ChatRoomData> chatRoomDataList = {};
-List<String> chatRoomDataSequence = [];
+List<String> chatRoomSequence = [];
+List<String> groupChatRoomSequence = [];
 
 Future<void> getChatRoomDataList() async {
   DocumentSnapshot documentSnapshot;
   chatRoomDataList.clear();
-  chatRoomDataSequence.clear();
   for (var uid in chatRoomSequence) {
     documentSnapshot = await _firestore.collection('chat').doc(uid).get();
     chatRoomDataList[documentSnapshot['chatroomuid']] = ChatRoomData(
@@ -72,7 +69,20 @@ Future<void> getChatRoomDataList() async {
       documentSnapshot['chatroompublic'],
       convertList(documentSnapshot['peoplelist']),
     );
-    chatRoomDataSequence.add(documentSnapshot['chatroomuid']);
+  }
+  for (var uid in groupChatRoomSequence) {
+    documentSnapshot = await _firestore.collection('chat').doc(uid).get();
+    chatRoomDataList[documentSnapshot['chatroomuid']] = ChatRoomData(
+      documentSnapshot['chatroomuid'],
+      documentSnapshot['chatroomname'],
+      documentSnapshot['chatroomprofile'],
+      documentSnapshot['chatroomcreatedate'],
+      documentSnapshot['chatroommanager'],
+      documentSnapshot['chatroompassword'],
+      documentSnapshot['chatroomexplain'],
+      documentSnapshot['chatroompublic'],
+      convertList(documentSnapshot['peoplelist']),
+    );
   }
 }
 
@@ -80,6 +90,7 @@ Future<void> getChatRoomDataList() async {
 Future<void> getChatRoomData() async {
   chatRoomList.clear();
   chatRoomSequence.clear();
+  groupChatRoomSequence.clear();
   User? user = _auth.currentUser;
   QuerySnapshot querySnapshot =
       await _firestore.collection('users').doc(user?.uid).collection('chat').get();
@@ -88,13 +99,13 @@ Future<void> getChatRoomData() async {
   }).toList();
   for (var data in chatRoomData) {
     chatRoomList[data['chatroomuid']] = ChatRoomSimpleData(
-        data['chatroomuid'],
-        data['chatroomcustomprofile'] ?? "",
-        data['chatroomcustomname'],
-        data['lastchatmessage'] ?? "",
-        data['readablemessage'],
-        (data['lastchattime'] as Timestamp).toDate());
-    chatRoomSequence.add(data['chatroomuid']);
+        data['chatroomuid'], data['chatroomcustomprofile'] ?? "", data['chatroomcustomname']);
+
+    if (chatRoomList[data['chatroomuid']]!.chatRoomUid.length <= 8) {
+      groupChatRoomSequence.add(data['chatroomuid']);
+    } else {
+      chatRoomSequence.add(data['chatroomuid']);
+    }
   }
 }
 
@@ -115,6 +126,17 @@ Future<void> createChatRoom(ChatRoomData chatRoomData) async {
       'peoplelist': chatRoomData.peopleList,
     });
 
+    await _firestore
+        .collection('chat')
+        .doc(chatRoomData.chatRoomUid)
+        .collection('realtime')
+        .doc('_lastmessage_')
+        .set({
+      'chatroomuid': chatRoomData.chatRoomUid,
+      'lastchatmessage': '',
+      'lastchattime': dateTime,
+    });
+
     // 내 DB에 채팅방 데이터를 넣는 작업
     await _firestore
         .collection('users')
@@ -124,10 +146,16 @@ Future<void> createChatRoom(ChatRoomData chatRoomData) async {
         .set({
       'chatroomuid': chatRoomData.chatRoomUid,
       'chatroomcustomprofile': '',
-      'chatroomcustomname': '',
-      'lastchatmessage': '',
+      'chatroomcustomname': ''
+    });
+
+    await _firestore
+        .collection('chat')
+        .doc(chatRoomData.chatRoomUid)
+        .collection('realtime')
+        .doc(myData.myUID)
+        .set({
       'readablemessage': 0,
-      'lastchattime': dateTime,
     });
 
     // 채팅방 인원 각각의 DB에 데이터를 저장하는 작업
@@ -141,9 +169,14 @@ Future<void> createChatRoom(ChatRoomData chatRoomData) async {
         'chatroomuid': chatRoomData.chatRoomUid,
         'chatroomcustomprofile': '',
         'chatroomcustomname': '',
-        'lastchatmessage': '',
+      });
+      await _firestore
+          .collection('chat')
+          .doc(chatRoomData.chatRoomUid)
+          .collection('realtime')
+          .doc(item)
+          .set({
         'readablemessage': 0,
-        'lastchattime': dateTime,
       });
     }
 

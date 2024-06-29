@@ -5,7 +5,7 @@ import 'package:chattingapp/login/registration/registration_first_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import '../home/chat/chat_data.dart';
+import '../home/chat/chat_list_data.dart';
 import '../home/friend/friend_data.dart';
 import '../home/home_screen.dart';
 import '../utils/my_data.dart';

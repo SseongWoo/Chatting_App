@@ -1,9 +1,10 @@
+import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/snackbar_message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../chat/chat_data.dart';
+import '../chat/chat_list_data.dart';
 
 class FriendData {
   String friendUID;
@@ -29,7 +30,7 @@ class FriendData {
 }
 
 FirebaseAuth _auth = FirebaseAuth.instance;
-FirebaseFirestore firestore = FirebaseFirestore.instance;
+FirebaseFirestore _firestore = FirebaseFirestore.instance;
 Map<String, FriendData> friendList = {};
 Map<String, String> friendListUidKey = {};
 List<String> friendListSequence = [];
@@ -84,6 +85,7 @@ Future<void> getFriendDataList() async {
 }
 
 Future<void> deleteFriend(BuildContext context, String friendUID) async {
+  String roomUid = '';
   try {
     User? user = _auth.currentUser;
     DocumentSnapshot documentSnapshotMy = await FirebaseFirestore.instance
@@ -100,13 +102,38 @@ Future<void> deleteFriend(BuildContext context, String friendUID) async {
         .get();
 
     if (user != null && documentSnapshotMy.exists && documentSnapshotFriend.exists) {
-      await firestore
+      roomUid = friendList[friendListUidKey[friendUID]]!.friendInherentChatRoom;
+
+      await _firestore
+          .collection("chat")
+          .doc(roomUid)
+          .collection('realtime')
+          .doc('_lastmessage_')
+          .delete();
+      await _firestore
+          .collection("chat")
+          .doc(roomUid)
+          .collection('realtime')
+          .doc(myData.myUID)
+          .delete();
+      await _firestore
+          .collection("chat")
+          .doc(roomUid)
+          .collection('realtime')
+          .doc(friendUID)
+          .delete();
+      await _firestore.collection("chat").doc(roomUid).delete();
+
+      await _firestore.collection("users").doc(user.uid).collection('chat').doc(roomUid).delete();
+      await _firestore.collection("users").doc(friendUID).collection('chat').doc(roomUid).delete();
+
+      await _firestore
           .collection("users")
           .doc(user.uid)
           .collection("friend")
           .doc(friendUID)
           .delete();
-      await firestore
+      await _firestore
           .collection("users")
           .doc(friendUID)
           .collection("friend")
@@ -132,7 +159,7 @@ Future<void> updateFriendName(FriendData friendData, String name) async {
     bool check = await checkFriend(friendData.friendUID);
 
     if (user != null && check) {
-      await firestore
+      await _firestore
           .collection("users")
           .doc(user.uid)
           .collection("friend")

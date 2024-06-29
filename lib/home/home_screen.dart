@@ -1,11 +1,11 @@
 import 'package:chattingapp/home/chat/create_chat/creat_chat_screen.dart';
 import 'package:chattingapp/home/friend/request/friend_request_screen.dart';
-import 'package:chattingapp/home/information_screen.dart';
+import 'package:chattingapp/home/information/information_screen.dart';
 import 'package:chattingapp/utils/color.dart';
-import 'package:chattingapp/utils/public_variable.dart';
+import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:chattingapp/utils/test_screen.dart';
 import 'package:flutter/material.dart';
-import 'chat/chat_screen.dart';
+import 'chat/chat_list_screen.dart';
 import 'friend/friend_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,8 +20,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   late TabController _tabController;
   final titles = {
     0: "친구",
-    1: "채팅",
-    2: "설정",
+    1: "개인 채팅",
+    2: "단체 채팅",
+    3: "설정",
   };
 
   @override
@@ -66,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 icon: const Icon(Icons.add),
                 tooltip: "친구 추가",
               ),
-            if (_tabController.index == 1)
+            if (_tabController.index == 1 || _tabController.index == 2)
               IconButton(
                 onPressed: () {
                   Navigator.push(
@@ -87,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               icon: const Icon(Icons.search),
               tooltip: "검색",
             ),
-            if (_tabController.index == 2)
+            if (_tabController.index == 3)
               IconButton(
                 onPressed: () {},
                 icon: const Icon(Icons.settings),
@@ -100,7 +101,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           physics: const NeverScrollableScrollPhysics(),
           children: const [
             FriendScreen(),
-            ChatScreen(),
+            ChatScreen(
+              groupChaeck: false,
+            ),
+            ChatScreen(
+              groupChaeck: true,
+            ),
             InformationScreen(),
           ],
         ),
@@ -124,7 +130,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 ),
                 Tab(
                   icon: Icon(Icons.chat),
-                  text: "채팅",
+                  text: "개인 채팅",
+                ),
+                Tab(
+                  icon: Icon(Icons.forum),
+                  text: "단체 채팅",
                 ),
                 Tab(
                   icon: Icon(Icons.person),

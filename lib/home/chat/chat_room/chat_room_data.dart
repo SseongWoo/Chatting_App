@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chattingapp/home/chat/chat_list_data.dart';
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -176,4 +177,38 @@ Future<String> uploadChatMultiImageV2(XFile xfile, String chatRoomUid, String ty
     print("uploadChatMultipleMedia오류 : $e");
   }
   return downloadURL;
+}
+
+Future<void> leaveChatRoom(String chatRoomUid) async {
+  try {
+    ChatRoomData? chatRoomData = chatRoomDataList[chatRoomUid];
+    List<String>? peopleList = chatRoomData!.peopleList;
+    peopleList.remove(myData.myUID);
+
+    await FirebaseFirestore.instance.collection('chat').doc(chatRoomUid).update({
+      'peoplelist': peopleList,
+    });
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(myData.myUID)
+        .collection('chat')
+        .doc(chatRoomUid)
+        .delete();
+
+    await FirebaseFirestore.instance
+        .collection('chat')
+        .doc(chatRoomUid)
+        .collection('realtime')
+        .doc(myData.myUID)
+        .delete();
+
+    await FirebaseStorage.instance.ref('/chat/$chatRoomUid/').delete();
+  } catch (e) {
+    //
+  }
+}
+
+Future<void> managerDelegation(String roomUid, String delegationUid) async {
+  await _firestore.collection('chat').doc(roomUid).update({'chatroommanager': delegationUid});
 }

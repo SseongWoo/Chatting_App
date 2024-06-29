@@ -1,4 +1,4 @@
-//import 'package:chattingapp/home/chat/chat_data.dart';
+//import 'package:chattingapp/home/chat/chat_list_data.dart';
 import 'package:chattingapp/home/friend/friend_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

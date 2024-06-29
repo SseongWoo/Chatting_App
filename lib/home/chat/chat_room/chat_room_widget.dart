@@ -5,9 +5,14 @@ import 'package:chattingapp/utils/color.dart';
 import 'package:chattingapp/utils/date_check.dart';
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/screen_size.dart';
+import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
+import '../../../utils/data_refresh.dart';
 import '../../../utils/image_viewer.dart';
+import '../../home_screen.dart';
+import '../../information/information_data.dart';
 
 void goDetailInfomation(BuildContext context, String userUid, String userName, String userProfile) {
   FriendData friendData;
@@ -26,7 +31,6 @@ void goDetailInfomation(BuildContext context, String userUid, String userName, S
       MaterialPageRoute(builder: (context) => DetailInformationScreen(friendData: friendData)),
     );
   } else {
-    print("1");
     friendData = FriendData(userUid, "", userName, userProfile, "", "", "", [], false);
     Navigator.push(
       context,
@@ -59,6 +63,7 @@ Widget messageWidget(BuildContext context, ScreenSize screenSize, MessageDataCla
         return messageVideoType2(context, screenSize, messageDataClass, firstMessage, visCheck);
       }
     case 'system':
+      return systemMessage(screenSize, messageDataClass);
     default:
       return Container();
   }
@@ -121,11 +126,14 @@ Widget messageTextType2(BuildContext context, ScreenSize screenSize,
                   ),
                   child: Container(
                     padding: EdgeInsets.all(screenSize.getWidthPerSize(2)),
-                    decoration:
-                        BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                    decoration: BoxDecoration(
+                        color: chatRoomColorMap['FriendChatColor'],
+                        borderRadius: BorderRadius.circular(10)),
                     child: Text(
                       messageDataClass.message,
-                      style: TextStyle(fontSize: screenSize.getHeightPerSize(1.6)),
+                      style: TextStyle(
+                          fontSize: screenSize.getHeightPerSize(1.6),
+                          color: chatRoomColorMap['FriendChatStringColor']),
                       maxLines: null, // 줄바꿈을 허용
                       overflow: TextOverflow.visible, // 텍스트가 넘어갈 경우 줄바꿈
                     ),
@@ -179,11 +187,13 @@ Widget messageTextType1(ScreenSize screenSize, MessageDataClass messageDataClass
           ),
           child: Container(
             padding: EdgeInsets.all(screenSize.getWidthPerSize(2)),
-            decoration:
-                BoxDecoration(color: mainLightColor, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(
+                color: chatRoomColorMap['MyChatColor'], borderRadius: BorderRadius.circular(10)),
             child: Text(
               messageDataClass.message,
-              style: TextStyle(fontSize: screenSize.getHeightPerSize(1.6)),
+              style: TextStyle(
+                  fontSize: screenSize.getHeightPerSize(1.6),
+                  color: chatRoomColorMap['MyChatStringColor']),
               maxLines: null, // 줄바꿈을 허용
               overflow: TextOverflow.visible, // 텍스트가 넘어갈 경우 줄바꿈
             ),
@@ -415,13 +425,16 @@ Widget messageVideoType1(
           ),
           child: Container(
             padding: EdgeInsets.all(screenSize.getWidthPerSize(2)),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(
+                color: chatRoomColorMap['MyChatColor'], borderRadius: BorderRadius.circular(10)),
             child: Row(
               children: [
                 IconButton(onPressed: () {}, icon: Icon(Icons.file_download_rounded)),
                 Text(
                   '다운로드 버튼을 클릭하여\n동영상 파일을 다운로드하세요',
-                  style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
+                  style: TextStyle(
+                      fontSize: screenSize.getHeightPerSize(1.5),
+                      color: chatRoomColorMap['MyChatStringColor']),
                 ),
               ],
             ),
@@ -488,14 +501,17 @@ Widget messageVideoType2(BuildContext context, ScreenSize screenSize,
                   ),
                   child: Container(
                     padding: EdgeInsets.all(screenSize.getWidthPerSize(2)),
-                    decoration:
-                        BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                    decoration: BoxDecoration(
+                        color: chatRoomColorMap['FriendChatColor'],
+                        borderRadius: BorderRadius.circular(10)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(
                           '다운로드 버튼을 클릭하여\n동영상 파일을 다운로드하세요',
-                          style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
+                          style: TextStyle(
+                              fontSize: screenSize.getHeightPerSize(1.5),
+                              color: chatRoomColorMap['FriendChatStringColor']),
                         ),
                         IconButton(onPressed: () {}, icon: const Icon(Icons.file_download_rounded)),
                       ],
@@ -523,7 +539,7 @@ Widget messageVideoType2(BuildContext context, ScreenSize screenSize,
   );
 }
 
-Widget addPersonMessage(ScreenSize screenSize, MessageDataClass messageDataClass) {
+Widget systemMessage(ScreenSize screenSize, MessageDataClass messageDataClass) {
   return Container(
       width: screenSize.getWidthSize(),
       margin:
@@ -532,4 +548,78 @@ Widget addPersonMessage(ScreenSize screenSize, MessageDataClass messageDataClass
         messageDataClass.message,
         textAlign: TextAlign.center,
       ));
+}
+
+void leaveChatRoomDialog(BuildContext getContext, String roomUid) {
+  showDialog(
+    context: getContext,
+    barrierDismissible: true,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("채팅방 삭제"),
+        content: const Text('정말로 채팅방을 삭제하시겠습니까?'),
+        actions: <Widget>[
+          TextButton(
+              onPressed: () async {
+                EasyLoading.show();
+                await leaveChatRoom(roomUid);
+                await refreshData();
+                EasyLoading.dismiss();
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const HomeScreen()), (route) => false);
+              },
+              child: const Text(
+                '삭제',
+                style: TextStyle(color: Colors.red),
+              )),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                '취소',
+                style: TextStyle(color: Colors.black),
+              )),
+        ],
+      );
+    },
+  );
+}
+
+class ManagerDelegationDialog extends StatelessWidget {
+  final String chatRoomUid;
+  final String delegationUid;
+  final Function(String) refresh;
+  const ManagerDelegationDialog(
+      {super.key, required this.chatRoomUid, required this.delegationUid, required this.refresh});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("매니저 위임"),
+      content: const Text('매니저를 위임하시겠습니까?'),
+      actions: <Widget>[
+        TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              '취소',
+              style: TextStyle(color: Colors.black),
+            )),
+        TextButton(
+            onPressed: () async {
+              EasyLoading.show();
+              await managerDelegation(chatRoomUid, delegationUid);
+              refresh(delegationUid);
+              EasyLoading.dismiss();
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              '확인',
+              style: TextStyle(color: Colors.black),
+            )),
+      ],
+    );
+  }
 }

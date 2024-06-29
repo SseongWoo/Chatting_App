@@ -10,7 +10,7 @@ import '../../utils/get_people_data.dart';
 import '../../utils/image_viewer.dart';
 import '../../utils/screen_movement.dart';
 import '../../utils/screen_size.dart';
-import '../chat/chat_data.dart';
+import '../chat/chat_list_data.dart';
 import '../chat/chat_room/chat_room_data.dart';
 import '../chat/chat_room/chat_room_screen.dart';
 import '../chat/create_chat/creat_chat_data.dart';
@@ -107,6 +107,27 @@ class _FriendWidgetState extends State<FriendWidget> {
                           borderRadius: BorderRadius.circular(10),
                           child: Image.network(
                             friendData.friendProfile,
+                            loadingBuilder: (BuildContext context, Widget child,
+                                ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) {
+                                return child; // 이미지 로드 완료
+                              } else {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                );
+                              }
+                            },
+                            errorBuilder:
+                                (BuildContext context, Object error, StackTrace? stackTrace) {
+                              return const Center(
+                                child: Text('Failed to load image'),
+                              );
+                            },
                           ),
                         ),
                       ),

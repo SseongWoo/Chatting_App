@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:chattingapp/home/chat/chat_data.dart';
+import 'package:chattingapp/home/chat/chat_list_data.dart';
 import 'package:chattingapp/home/friend/friend_data.dart';
 import 'package:chattingapp/home/home_screen.dart';
 import 'package:chattingapp/utils/my_data.dart';
@@ -31,12 +31,19 @@ class _CreateChatState extends State<CreateChat> {
   final TextEditingController _controllerPassword = TextEditingController();
   final TextEditingController _controllerExplain = TextEditingController();
   final GlobalKey<FormState> _creatChatKey = GlobalKey<FormState>();
-  late ScreenSize screenSize;
+  late ScreenSize _screenSize;
   bool _isChecked = false;
   bool _error = false;
   List<int> selectValueList = [];
   late CroppedFile? _croppedProFile;
   bool _getImageState = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _croppedProFile = null;
+  }
 
   @override
   void dispose() {
@@ -71,6 +78,7 @@ class _CreateChatState extends State<CreateChat> {
   }
 
   void startCreatChatRoom() async {
+    String profileUrl = '';
     EasyLoading.show();
     List<String> invitationList = [];
 
@@ -80,7 +88,9 @@ class _CreateChatState extends State<CreateChat> {
       invitationList.add(friendList[friendListSequence[index]]!.friendUID);
     }
 
-    String profileUrl = await uploadChatRoomProfile(_croppedProFile, _controllerCode.text);
+    if (_croppedProFile != null) {
+      profileUrl = await uploadChatRoomProfile(_croppedProFile, _controllerCode.text);
+    }
 
     ChatRoomData chatRoomData = ChatRoomData(
         _controllerCode.text,
@@ -103,7 +113,7 @@ class _CreateChatState extends State<CreateChat> {
 
   @override
   Widget build(BuildContext context) {
-    screenSize = ScreenSize(MediaQuery.of(context).size);
+    _screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       appBar: AppBar(
         title: const Text('채팅방 생성'),
@@ -111,7 +121,7 @@ class _CreateChatState extends State<CreateChat> {
       body: SingleChildScrollView(
         child: Center(
           child: SizedBox(
-            width: screenSize.getWidthPerSize(90),
+            width: _screenSize.getWidthPerSize(90),
             child: Form(
               key: _creatChatKey,
               child: Column(
@@ -121,10 +131,10 @@ class _CreateChatState extends State<CreateChat> {
                   Text(
                     '채팅방 프로필',
                     style: TextStyle(
-                        fontSize: screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
+                        fontSize: _screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(1),
+                    height: _screenSize.getHeightPerSize(1),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -132,8 +142,8 @@ class _CreateChatState extends State<CreateChat> {
                     },
                     child: Center(
                       child: SizedBox(
-                        height: screenSize.getHeightPerSize(15),
-                        width: screenSize.getHeightPerSize(15),
+                        height: _screenSize.getHeightPerSize(15),
+                        width: _screenSize.getHeightPerSize(15),
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
@@ -151,8 +161,8 @@ class _CreateChatState extends State<CreateChat> {
                               right: -10,
                               bottom: -10,
                               child: Container(
-                                  height: screenSize.getHeightPerSize(4),
-                                  width: screenSize.getHeightPerSize(4),
+                                  height: _screenSize.getHeightPerSize(4),
+                                  width: _screenSize.getHeightPerSize(4),
                                   decoration:
                                       BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                                   child: const Icon(
@@ -172,8 +182,8 @@ class _CreateChatState extends State<CreateChat> {
                                     });
                                   },
                                   child: Container(
-                                      height: screenSize.getHeightPerSize(4),
-                                      width: screenSize.getHeightPerSize(4),
+                                      height: _screenSize.getHeightPerSize(4),
+                                      width: _screenSize.getHeightPerSize(4),
                                       decoration: const BoxDecoration(
                                           color: Colors.red, shape: BoxShape.circle),
                                       child: const Icon(
@@ -189,7 +199,7 @@ class _CreateChatState extends State<CreateChat> {
                     ),
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(2),
+                    height: _screenSize.getHeightPerSize(2),
                   ),
                   /* 프로필 */
 
@@ -197,10 +207,10 @@ class _CreateChatState extends State<CreateChat> {
                   Text(
                     '채팅방 이름(필수)',
                     style: TextStyle(
-                        fontSize: screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
+                        fontSize: _screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(1),
+                    height: _screenSize.getHeightPerSize(1),
                   ),
                   TextFormField(
                     decoration: InputDecoration(
@@ -220,7 +230,7 @@ class _CreateChatState extends State<CreateChat> {
                         borderSide: BorderSide(color: Colors.red, width: 2.0), // 포커스된 에러 상태의 외곽선
                       ),
                     ),
-                    style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
+                    style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
                     controller: _controllerName,
                     onTapOutside: (event) {
                       FocusManager.instance.primaryFocus?.unfocus();
@@ -232,7 +242,7 @@ class _CreateChatState extends State<CreateChat> {
                     maxLength: 20,
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(2),
+                    height: _screenSize.getHeightPerSize(2),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -240,7 +250,7 @@ class _CreateChatState extends State<CreateChat> {
                       Text(
                         '채팅방 코드(필수)',
                         style: TextStyle(
-                            fontSize: screenSize.getHeightPerSize(1.7),
+                            fontSize: _screenSize.getHeightPerSize(1.7),
                             fontWeight: FontWeight.bold),
                       ),
                       InkWell(
@@ -251,13 +261,13 @@ class _CreateChatState extends State<CreateChat> {
                         },
                         child: Text(
                           '자동 생성',
-                          style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
+                          style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.5)),
                         ),
                       ),
                     ],
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(1),
+                    height: _screenSize.getHeightPerSize(1),
                   ),
                   /* 이름 */
 
@@ -280,7 +290,7 @@ class _CreateChatState extends State<CreateChat> {
                         borderSide: BorderSide(color: Colors.red, width: 2.0), // 포커스된 에러 상태의 외곽선
                       ),
                     ),
-                    style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
+                    style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
                     controller: _controllerCode,
                     onTapOutside: (event) {
                       FocusManager.instance.primaryFocus?.unfocus();
@@ -292,7 +302,7 @@ class _CreateChatState extends State<CreateChat> {
                     maxLength: 8,
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(2),
+                    height: _screenSize.getHeightPerSize(2),
                   ),
                   /* 코드 */
 
@@ -306,13 +316,13 @@ class _CreateChatState extends State<CreateChat> {
                           Text(
                             '채팅방 공개 설정',
                             style: TextStyle(
-                                fontSize: screenSize.getHeightPerSize(1.7),
+                                fontSize: _screenSize.getHeightPerSize(1.7),
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(
                             '채팅방을 검색할때 검색에 보이지 않게 합니다.',
                             style: TextStyle(
-                                fontSize: screenSize.getHeightPerSize(1.5),
+                                fontSize: _screenSize.getHeightPerSize(1.5),
                                 color: Colors.grey.shade800),
                           ),
                         ],
@@ -330,7 +340,7 @@ class _CreateChatState extends State<CreateChat> {
                     ],
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(2),
+                    height: _screenSize.getHeightPerSize(2),
                   ),
                   /* 공개 설정 */
 
@@ -338,10 +348,10 @@ class _CreateChatState extends State<CreateChat> {
                   Text(
                     '채팅방 암호',
                     style: TextStyle(
-                        fontSize: screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
+                        fontSize: _screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(1),
+                    height: _screenSize.getHeightPerSize(1),
                   ),
                   TextFormField(
                     decoration: InputDecoration(
@@ -361,7 +371,7 @@ class _CreateChatState extends State<CreateChat> {
                         borderSide: BorderSide(color: Colors.red, width: 2.0), // 포커스된 에러 상태의 외곽선
                       ),
                     ),
-                    style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
+                    style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
                     keyboardType: TextInputType.visiblePassword,
                     controller: _controllerPassword,
                     onTapOutside: (event) {
@@ -370,7 +380,7 @@ class _CreateChatState extends State<CreateChat> {
                     maxLength: 12,
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(2),
+                    height: _screenSize.getHeightPerSize(2),
                   ),
                   /* 암호 */
 
@@ -378,10 +388,10 @@ class _CreateChatState extends State<CreateChat> {
                   Text(
                     '채팅방 설명',
                     style: TextStyle(
-                        fontSize: screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
+                        fontSize: _screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(1),
+                    height: _screenSize.getHeightPerSize(1),
                   ),
                   TextFormField(
                     decoration: InputDecoration(
@@ -401,7 +411,7 @@ class _CreateChatState extends State<CreateChat> {
                         borderSide: BorderSide(color: Colors.red, width: 2.0), // 포커스된 에러 상태의 외곽선
                       ),
                     ),
-                    style: TextStyle(fontSize: screenSize.getHeightPerSize(1.3)),
+                    style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.3)),
                     controller: _controllerExplain,
                     onTapOutside: (event) {
                       FocusManager.instance.primaryFocus?.unfocus();
@@ -409,7 +419,7 @@ class _CreateChatState extends State<CreateChat> {
                     maxLines: 10,
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(2),
+                    height: _screenSize.getHeightPerSize(2),
                   ),
                   /* 설명 */
 
@@ -417,7 +427,7 @@ class _CreateChatState extends State<CreateChat> {
                   Text(
                     '채팅방 유저 목록',
                     style: TextStyle(
-                        fontSize: screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
+                        fontSize: _screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
                   ),
                   // SizedBox(
                   //   height: screenSize.getHeightPerSize(2),
@@ -452,19 +462,19 @@ class _CreateChatState extends State<CreateChat> {
                     child: Text(
                       '초대할 친구들을 한명이상 선택해주세요',
                       style:
-                          TextStyle(fontSize: screenSize.getHeightPerSize(1.4), color: errorColor),
+                          TextStyle(fontSize: _screenSize.getHeightPerSize(1.4), color: errorColor),
                     ),
                   ),
 
                   SizedBox(
-                    height: screenSize.getHeightPerSize(2),
+                    height: _screenSize.getHeightPerSize(2),
                   ),
                   /* 유저 목록 */
 
                   /* 완료 버튼 */
                   SizedBox(
-                    width: screenSize.getWidthPerSize(90),
-                    height: screenSize.getHeightPerSize(6),
+                    width: _screenSize.getWidthPerSize(90),
+                    height: _screenSize.getHeightPerSize(6),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: mainColor,
@@ -490,12 +500,12 @@ class _CreateChatState extends State<CreateChat> {
                       child: Text(
                         "완료",
                         style: TextStyle(
-                            fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
+                            fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
                       ),
                     ),
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(3),
+                    height: _screenSize.getHeightPerSize(3),
                   ),
                   /* 완료 버튼 */
                 ],

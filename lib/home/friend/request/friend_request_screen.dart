@@ -1,7 +1,7 @@
 import 'package:chattingapp/home/friend/request/friend_add_dialog.dart';
 import 'package:chattingapp/home/friend/request/request_widget.dart';
 import 'package:chattingapp/utils/color.dart';
-import 'package:chattingapp/utils/public_variable.dart';
+import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';

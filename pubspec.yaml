@@ -54,6 +54,8 @@ dependencies:
   flutter_easyloading: ^3.0.5   # 로딩창
   uuid:                         # 랜덤한 UID를 생성
   search_choices:               # 검색창
+  shared_preferences:           # 데이터 저장 패키지
+  flex_color_picker: ^3.5.0     # 색상 선택 패키지
 
 dev_dependencies:
   flutter_test:

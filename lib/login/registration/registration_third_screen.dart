@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../utils/image_picker.dart';
+import '../../utils/my_data.dart';
 import '../../utils/screen_size.dart';
 import 'authentication.dart';
 
@@ -16,66 +17,42 @@ class RegistrationThirdScreen extends StatefulWidget {
 }
 
 class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
-  TextEditingController controllerNickName = TextEditingController();
-  final FocusNode focusNodeNickName = FocusNode();
-  late ScreenSize screenSize;
-  bool loadingState = false;
-  bool pikerState = false;
-  bool cropState = false;
-  late Size size;
+  final TextEditingController _controllerNickName = TextEditingController();
+  final FocusNode _focusNodeNickName = FocusNode();
+  late ScreenSize _screenSize;
   final _registrationThirdFormKey = GlobalKey<FormState>();
-  bool isVisibility = false;
-  double visibilityAnimated = 0.0;
 
   // 카메라 또는 갤러리의 이미지를 저장할 변수
-  XFile? _imageFile;
   CroppedFile? _croppedFile;
 
   @override
   void dispose() {
-    controllerNickName.dispose();
+    _controllerNickName.dispose();
     super.dispose();
   }
 
   void _imagePicker(ImageSource imageSource) async {
-    setState(() {
-      pikerState = true;
-    });
-    XFile? imageFile = await getImage(imageSource); // getImage 함수 비동기 호출
-    setState(() {
-      _imageFile = imageFile; // 비동기 호출이 완료되면 상태 변경
-      pikerState = false;
-      isVisibility = true;
-    });
-  }
-
-  void _imageCropped() async {
-    setState(() {
-      cropState = true;
-    });
-    if (_imageFile != null) {
-      CroppedFile? croppedFile = await cropImage(_imageFile);
+    XFile? imageFile = await getImage(imageSource);
+    if (imageFile != null) {
+      CroppedFile? croppedFile = await cropImage(imageFile);
       setState(() {
-        _croppedFile = croppedFile;
-        cropState = false;
-        isVisibility = true;
+        if (croppedFile != null) {
+          _croppedFile = croppedFile;
+        }
       });
     }
   }
 
   void saveData(BuildContext context) async {
-    setState(() {
-      loadingState = true;
-    });
-    await saveUserImage(_imageFile, _croppedFile, controllerNickName.text, context);
-    setState(() {
-      loadingState = false;
-    });
+    EasyLoading.show();
+    await saveUserImage(_croppedFile, _controllerNickName.text, context);
+    await getMyData();
+    EasyLoading.dismiss();
   }
 
   @override
   Widget build(BuildContext context) {
-    screenSize = ScreenSize(MediaQuery.of(context).size);
+    _screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -84,59 +61,102 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
       body: Stack(
         children: [
           SizedBox(
-            height: screenSize.getHeightSize(),
+            height: _screenSize.getHeightSize(),
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   Container(
-                    height: screenSize.getHeightPerSize(5),
+                    height: _screenSize.getHeightPerSize(5),
                   ),
                   SizedBox(
-                    width: screenSize.getWidthPerSize(80),
+                    width: _screenSize.getWidthPerSize(80),
                     child: Text(
                       "계정 설정\n",
-                      style: TextStyle(fontSize: screenSize.getHeightPerSize(4)),
+                      style: TextStyle(fontSize: _screenSize.getHeightPerSize(4)),
                     ),
                   ),
                   SizedBox(
-                    width: screenSize.getWidthPerSize(80),
+                    width: _screenSize.getWidthPerSize(80),
                     child: Text(
                       "마지막 단계입니다!\n사용할 사용자의 닉네임과 프로필 사진을 등록해주세요. 이 정보들은 나중에 변경할 수 있습니다.",
-                      style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
+                      style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
                     ),
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(5),
+                    height: _screenSize.getHeightPerSize(5),
                   ),
-                  SizedBox(
-                      width: screenSize.getHeightPerSize(60),
-                      height: screenSize.getHeightPerSize(15),
-                      child: _imageFile != null
-                          // 불러온 이미지가 있으면 출력
-                          ? Center(
-                              child: Image.file(
-                                _croppedFile != null
-                                    ? File(_croppedFile!.path)
-                                    : File(_imageFile!.path),
+                  GestureDetector(
+                    onTap: () {
+                      _imagePicker(ImageSource.gallery);
+                    },
+                    child: Center(
+                      child: SizedBox(
+                        height: _screenSize.getHeightPerSize(20),
+                        width: _screenSize.getHeightPerSize(20),
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: _croppedFile != null
+                                  ? Image.file(
+                                      File(_croppedFile!.path),
+                                    )
+                                  : Image.asset(
+                                      'assets/images/blank_profile.png',
+                                    ),
+                            ),
+                            Positioned(
+                              right: -10,
+                              bottom: -10,
+                              child: Container(
+                                  height: _screenSize.getHeightPerSize(4),
+                                  width: _screenSize.getHeightPerSize(4),
+                                  decoration:
+                                      BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                                  child: const Icon(
+                                    Icons.photo_camera,
+                                  )),
+                            ),
+                            Visibility(
+                              visible: _croppedFile != null,
+                              child: Positioned(
+                                right: -10,
+                                top: -10,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _croppedFile = null;
+                                    });
+                                  },
+                                  child: Container(
+                                      height: _screenSize.getHeightPerSize(4),
+                                      width: _screenSize.getHeightPerSize(4),
+                                      decoration: const BoxDecoration(
+                                          color: Colors.red, shape: BoxShape.circle),
+                                      child: const Icon(
+                                        Icons.close,
+                                        color: Colors.white,
+                                      )),
+                                ),
                               ),
-                            )
-                          // 불러온 이미지가 없으면 텍스트 출력
-                          : const Center(
-                              child: Text("불러온 이미지가 없습니다."),
-                            )
-                      //Container(color: Colors.blue,)
+                            ),
+                          ],
+                        ),
                       ),
-                  SizedBox(
-                    height: screenSize.getHeightPerSize(2),
+                    ),
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(10),
-                    width: screenSize.getWidthPerSize(60),
+                    height: _screenSize.getHeightPerSize(2),
+                  ),
+                  SizedBox(
+                    height: _screenSize.getHeightPerSize(10),
+                    width: _screenSize.getWidthPerSize(60),
                     child: Form(
                       key: _registrationThirdFormKey,
                       child: TextFormField(
-                        focusNode: focusNodeNickName,
-                        controller: controllerNickName,
+                        focusNode: _focusNodeNickName,
+                        controller: _controllerNickName,
                         textAlign: TextAlign.center,
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9a-zA-Zㄱ-ㅎ가-힣]')),
@@ -150,100 +170,6 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                       ),
                     ),
                   ),
-                  AnimatedOpacity(
-                    opacity:
-                        _imageFile != null ? visibilityAnimated = 1.0 : visibilityAnimated = 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                    onEnd: () {
-                      setState(() {
-                        if (visibilityAnimated == 0.0) {
-                          isVisibility = false;
-                        } else {
-                          isVisibility = true;
-                        }
-                      });
-                    },
-                    child: Visibility(
-                      visible: isVisibility,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: screenSize.getHeightPerSize(4),
-                            width: screenSize.getWidthPerSize(30),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.lightBlueAccent,
-                                shape: const BeveledRectangleBorder(),
-                              ),
-                              onPressed: () {
-                                _imageCropped();
-                              },
-                              child: cropState
-                                  ? const SpinKitThreeInOut(
-                                      color: Colors.white,
-                                    )
-                                  : Text(
-                                      "프로필 편집",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: screenSize.getHeightPerSize(1.5)),
-                                    ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenSize.getHeightPerSize(4),
-                            width: screenSize.getWidthPerSize(30),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.lightBlueAccent,
-                                shape: const BeveledRectangleBorder(),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _imageFile = null;
-                                  _croppedFile = null;
-                                });
-                              },
-                              child: cropState
-                                  ? const SpinKitThreeInOut(
-                                      color: Colors.white,
-                                    )
-                                  : Text(
-                                      "프로필 제거",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: screenSize.getHeightPerSize(1.5)),
-                                    ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: screenSize.getHeightPerSize(4),
-                    width: screenSize.getWidthPerSize(60),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightBlue,
-                        shape: const BeveledRectangleBorder(),
-                      ),
-                      onPressed: () {
-                        _imagePicker(ImageSource.gallery);
-                      },
-                      child: pikerState
-                          ? const SpinKitThreeInOut(
-                              color: Colors.white,
-                            )
-                          : Text(
-                              "앨범",
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: screenSize.getHeightPerSize(1.8)),
-                            ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -251,10 +177,10 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
           AnimatedPositioned(
             duration: Duration(microseconds: Platform.isIOS ? 300000 : 130000),
             curve: Curves.easeInOut,
-            bottom: focusNodeNickName.hasFocus ? -screenSize.getHeightPerSize(8) : 0,
+            bottom: _focusNodeNickName.hasFocus ? -_screenSize.getHeightPerSize(8) : 0,
             child: SizedBox(
-              height: screenSize.getHeightPerSize(8),
-              width: screenSize.getWidthPerSize(100),
+              height: _screenSize.getHeightPerSize(8),
+              width: _screenSize.getWidthPerSize(100),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
@@ -266,19 +192,14 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                   ),
                 ),
                 onPressed: () {
-                  if (_registrationThirdFormKey.currentState!.validate() && loadingState == false) {
+                  if (_registrationThirdFormKey.currentState!.validate()) {
                     saveData(context);
                   }
                 },
-                child: loadingState
-                    ? const SpinKitThreeInOut(
-                        color: Colors.white,
-                      )
-                    : Text(
-                        "완료",
-                        style: TextStyle(
-                            fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
-                      ),
+                child: Text(
+                  "완료",
+                  style: TextStyle(fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
+                ),
               ),
             ),
           ),

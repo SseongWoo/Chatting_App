@@ -14,7 +14,7 @@ import '../../../../utils/image_picker.dart';
 import '../../../../utils/screen_movement.dart';
 import '../../../../utils/screen_size.dart';
 import '../../../friend/request/friend_add_dialog.dart';
-import '../../chat_data.dart';
+import '../../chat_list_data.dart';
 import '../../create_chat/creat_chat_data.dart';
 import '../chat_room_data.dart';
 import '../chat_room_screen.dart';

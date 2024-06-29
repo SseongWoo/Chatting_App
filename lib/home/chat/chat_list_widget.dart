@@ -1,5 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:chattingapp/home/chat/chat_data.dart';
+import 'package:chattingapp/home/chat/chat_list_data.dart';
+import 'package:chattingapp/home/friend/friend_data.dart';
+import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -9,11 +11,11 @@ import 'chat_room/chat_room_screen.dart';
 import 'create_chat/creat_chat_data.dart';
 
 class ChatListWidget extends StatefulWidget {
-  final int index;
+  final ChatRoomSimpleData chatRoomSimpleData;
 
   const ChatListWidget({
     super.key,
-    required this.index,
+    required this.chatRoomSimpleData,
   });
 
   @override
@@ -22,25 +24,59 @@ class ChatListWidget extends StatefulWidget {
 
 class _ChatListWidgetState extends State<ChatListWidget> {
   late ScreenSize _screenSize;
-  late int _index;
   late ChatRoomSimpleData _chatRoomSimpleData;
+  late ChatRoomData _chatRoomData;
   final String imagePath = 'assets/images/blank_profile.png';
   String _profileUrl = '';
+  String _name = '';
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _index = widget.index;
-    _chatRoomSimpleData = chatRoomList[chatRoomSequence[_index]]!;
-    _setProfile();
+    _chatRoomSimpleData = widget.chatRoomSimpleData;
+    _chatRoomData = chatRoomDataList[_chatRoomSimpleData.chatRoomUid]!;
+
+    if (_chatRoomSimpleData.chatRoomUid.length > 8 && _chatRoomData.peopleList.length <= 2) {
+      _checkInherent();
+    } else {
+      _setProfile();
+      _setName();
+    }
+  }
+
+  // 개인 채팅방인지 확인하여 개인채팅방일 경우 채팅방 데이터를 개인데이터로 덮어씌우는 작업
+  void _checkInherent() {
+    FriendData? friendData;
+    for (var item in _chatRoomData.peopleList) {
+      if (item != myData.myUID) {
+        friendData = friendList[friendListUidKey[item]];
+      }
+    }
+    if (friendData != null) {
+      _profileUrl = friendData.friendProfile;
+      _name = friendData.friendNickName;
+    } else {
+      _profileUrl = '';
+      _name = '';
+    }
+  }
+
+  void _setName() {
+    if (_chatRoomSimpleData.chatRoomCustomName.isNotEmpty) {
+      _name = _chatRoomSimpleData.chatRoomCustomName;
+    } else if (_chatRoomData.chatRoomName.isNotEmpty) {
+      _name = _chatRoomData.chatRoomName;
+    } else {
+      _name = '';
+    }
   }
 
   void _setProfile() {
     if (_chatRoomSimpleData.chatRoomCustomProfile.isNotEmpty) {
       _profileUrl = _chatRoomSimpleData.chatRoomCustomProfile;
-    } else if (chatRoomDataList[_chatRoomSimpleData.chatRoomUid]!.chatRoomProfile.isNotEmpty) {
-      _profileUrl = chatRoomDataList[_chatRoomSimpleData.chatRoomUid]!.chatRoomProfile;
+    } else if (_chatRoomData.chatRoomProfile.isNotEmpty) {
+      _profileUrl = _chatRoomData.chatRoomProfile;
     } else {
       _profileUrl = '';
     }
@@ -83,6 +119,26 @@ class _ChatListWidgetState extends State<ChatListWidget> {
                 child: _profileUrl.isNotEmpty
                     ? Image.network(
                         _profileUrl,
+                        loadingBuilder:
+                            (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child; // 이미지 로드 완료
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          }
+                        },
+                        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                          return Center(
+                            child: Text('Failed to load image'),
+                          );
+                        },
                       )
                     : Image.asset(
                         imagePath,
@@ -100,9 +156,7 @@ class _ChatListWidgetState extends State<ChatListWidget> {
                     child: Align(
                         alignment: Alignment.bottomLeft,
                         child: AutoSizeText(
-                          _chatRoomSimpleData.chatRoomCustomName.isNotEmpty
-                              ? _chatRoomSimpleData.chatRoomCustomName
-                              : chatRoomDataList[_chatRoomSimpleData.chatRoomUid]!.chatRoomName,
+                          _name,
                           maxLines: 1,
                           style: TextStyle(
                               color: Colors.black, fontSize: _screenSize.getHeightPerSize(1.7)),

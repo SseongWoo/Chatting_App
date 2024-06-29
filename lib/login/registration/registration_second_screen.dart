@@ -1,28 +1,25 @@
 import 'package:chattingapp/login/registration/registration_dialog.dart';
 import 'package:chattingapp/login/registration/registration_third_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../utils/screen_size.dart';
-import '../login_screen.dart';
 import 'authentication.dart';
 
 class RegistrationSecondScreen extends StatefulWidget {
   final String email;
   final String password;
 
-  const RegistrationSecondScreen(
-      {super.key, required this.email, required this.password});
+  const RegistrationSecondScreen({super.key, required this.email, required this.password});
 
   @override
-  State<RegistrationSecondScreen> createState() =>
-      _RegistrationSecondScreenState();
+  State<RegistrationSecondScreen> createState() => _RegistrationSecondScreenState();
 }
 
 class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
-  late ScreenSize screenSize;
+  late ScreenSize _screenSize;
   late String email;
   late String password;
-  bool loadingState = false;
 
   @override
   void initState() {
@@ -32,79 +29,65 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
   }
 
   Future<void> _checkEmail(context) async {
-    if (mounted) {
-      setState(() {
-        loadingState = true;
-      });
-    }
+    EasyLoading.show();
     bool isEmailVerified = await checkEmailVerificationStatus();
     if (isEmailVerified) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-            builder: (context) => const RegistrationThirdScreen()),
+        MaterialPageRoute(builder: (context) => const RegistrationThirdScreen()),
       );
     } else {
       emailAuthFail(context);
     }
-    // 마운트된 상태에서만 setState 실행
-    if (mounted) {
-      setState(() {
-        loadingState = false;
-      });
-    }
+    EasyLoading.dismiss();
   }
 
   @override
   Widget build(BuildContext context) {
-    screenSize = ScreenSize(MediaQuery.of(context).size);
+    _screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios_new)),
+            onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back_ios_new)),
       ),
       body: Stack(
         children: [
           SizedBox(
-            height: screenSize.getHeightSize(),
+            height: _screenSize.getHeightSize(),
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   Container(
-                    height: screenSize.getHeightPerSize(5),
+                    height: _screenSize.getHeightPerSize(5),
                   ),
                   SizedBox(
-                    width: screenSize.getWidthPerSize(80),
+                    width: _screenSize.getWidthPerSize(80),
                     child: Text(
                       "계정 인증\n",
-                      style:
-                          TextStyle(fontSize: screenSize.getHeightPerSize(4)),
+                      style: TextStyle(fontSize: _screenSize.getHeightPerSize(4)),
                     ),
                   ),
                   SizedBox(
-                    width: screenSize.getWidthPerSize(80),
+                    width: _screenSize.getWidthPerSize(80),
                     child: Text(
                       "회원가입이 완료되었습니다!\n인증 메일이 성공적으로 전송되었습니다. 아래 이메일 주소로 전송된 링크를 클릭하여 인증을 완료해 주세요. ",
-                      style:
-                          TextStyle(fontSize: screenSize.getHeightPerSize(2)),
+                      style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
                     ),
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(5),
+                    height: _screenSize.getHeightPerSize(5),
                   ),
                   SizedBox(
                     child: Text(
                       email,
-                      style:
-                          TextStyle(fontSize: screenSize.getHeightPerSize(2)),
+                      style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
                     ),
                   ),
                   SizedBox(
-                    height: screenSize.getHeightPerSize(5),
+                    height: _screenSize.getHeightPerSize(5),
                   ),
                   SizedBox(
-                    width: screenSize.getWidthPerSize(50),
+                    width: _screenSize.getWidthPerSize(50),
                     child: ElevatedButton(
                         onPressed: () {
                           signInWithVerifyEmailAndPassword(email, password);
@@ -112,8 +95,7 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
                         child: Text(
                           "이메일 다시 보내기",
                           style: TextStyle(
-                              fontSize: screenSize.getHeightPerSize(2),
-                              color: Colors.black),
+                              fontSize: _screenSize.getHeightPerSize(2), color: Colors.black),
                         )),
                   )
                 ],
@@ -123,8 +105,8 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
           Positioned(
             bottom: 0,
             child: SizedBox(
-              height: screenSize.getHeightPerSize(8),
-              width: screenSize.getWidthPerSize(100),
+              height: _screenSize.getHeightPerSize(8),
+              width: _screenSize.getWidthPerSize(100),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
@@ -136,16 +118,10 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
                   ),
                 ),
                 onPressed: () => _checkEmail(context),
-                child: loadingState
-                    ? const SpinKitThreeInOut(
-                        color: Colors.white,
-                      )
-                    : Text(
-                        "다음",
-                        style: TextStyle(
-                            fontSize: screenSize.getHeightPerSize(3),
-                            color: Colors.black),
-                      ),
+                child: Text(
+                  "다음",
+                  style: TextStyle(fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
+                ),
               ),
             ),
           ),

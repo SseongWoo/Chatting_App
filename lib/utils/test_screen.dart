@@ -1,18 +1,14 @@
-//import 'package:chattingapp/home/chat/chat_room/chat_room_screen.dart';
-import 'package:chattingapp/home/friend/category/category_data.dart';
-import 'package:chattingapp/home/friend/friend_widget.dart';
+import 'package:chattingapp/home/information/delete_user_information/delete_user_information_screen.dart';
+import 'package:chattingapp/home/information/update_information/update_information_screen.dart';
 import 'package:chattingapp/utils/color.dart';
-import 'package:chattingapp/utils/image_viewer.dart';
-import 'package:chattingapp/utils/platform_check.dart';
-import 'package:chattingapp/utils/screen_movement.dart';
 import 'package:chattingapp/utils/screen_size.dart';
-import 'package:chattingapp/utils/test_screen2.dart';
-import 'package:chattingapp/utils/test_screen3.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:chattingapp/utils/shared_preferences.dart';
+import 'package:chattingapp/utils/snackbar_message.dart';
 import 'package:flutter/material.dart';
-import '../home/friend/friend_data.dart';
-import '../login/login_screen.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import '../home/information/information_data.dart';
 import '../login/registration/authentication.dart';
+import 'color_picker.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});
@@ -43,10 +39,10 @@ class _TestScreenState extends State<TestScreen> {
             ElevatedButton(
                 onPressed: () {
                   signOut();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => const ChatRoomChangeColorScreen()),
+                  // );
                 },
                 child: Text("로그아웃")),
             ElevatedButton(
@@ -59,16 +55,40 @@ class _TestScreenState extends State<TestScreen> {
                 child: Text("테스트 버튼 1 (채팅창 스크린)")),
             ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => TestScreen3()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => DeleteUserInformationScreen()));
                 },
                 child: Text("테스트 버튼 2 (메세지 위젯)")),
             ElevatedButton(
                 onPressed: () {
+                  snackBarErrorMessage(context, '그룹채팅방중 사용자가 방장인 그룹채팅방이 있습니다. 방장을 위임해주고 다시 시도해주세요');
                   // Navigator.of(context).pushAndRemoveUntil(screenMovementLeftToRight(const TestScreen3()),
                   //       (Route<dynamic> route) => false,
                   // );
+                  // showDialog(
+                  //   context: context,
+                  //   builder: (BuildContext context) {
+                  //     return StatefulColorPickerDialog(
+                  //       type: 'MyChatColor',
+                  //     );
+                  //   },
+                  // );
                 },
                 child: Text("테스트 버튼 3")),
+            ElevatedButton(
+                onPressed: () async {
+                  // EasyLoading.show();
+                  // await setSharedPreferencese();
+                  // EasyLoading.dismiss();
+                },
+                child: Text("set")),
+            ElevatedButton(
+                onPressed: () async {
+                  EasyLoading.show();
+                  await getSharedPreferencese();
+                  EasyLoading.dismiss();
+                },
+                child: Text("get")),
             SizedBox(
               height: screenSize.getHeightPerSize(10),
             ),

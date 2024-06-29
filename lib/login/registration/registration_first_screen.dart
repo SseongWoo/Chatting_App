@@ -1,6 +1,7 @@
 import 'package:chattingapp/login/registration/registration_dialog.dart';
 import 'package:chattingapp/login/registration/registration_second_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../utils/screen_size.dart';
 import 'authentication.dart';
@@ -14,60 +15,55 @@ class RegistrationFirstScreen extends StatefulWidget {
 }
 
 class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
-  late ScreenSize screenSize;
+  late ScreenSize _screenSize;
   final _registrationFirstFormKey = GlobalKey<FormState>();
-  TextEditingController controllerID = TextEditingController();
-  TextEditingController controllerPW = TextEditingController();
-  TextEditingController controllerPWCheck = TextEditingController();
-  final FocusNode focusNodeID = FocusNode();
-  final FocusNode focusNodePW = FocusNode();
-  final FocusNode focusNodePWCheck = FocusNode();
-  bool loadingState = false;
+  final TextEditingController _controllerID = TextEditingController();
+  final TextEditingController _controllerPW = TextEditingController();
+  final TextEditingController _controllerPWCheck = TextEditingController();
+  final FocusNode _focusNodeID = FocusNode();
+  final FocusNode _focusNodePW = FocusNode();
+  final FocusNode _focusNodePWCheck = FocusNode();
 
   @override
   dispose() {
-    controllerID.dispose();
-    controllerPW.dispose();
+    _controllerID.dispose();
+    _controllerPW.dispose();
     super.dispose();
   }
 
   void checkAccount() async {
-    setState(() {
-      loadingState = true;
-    });
+    EasyLoading.show();
     if (_registrationFirstFormKey.currentState!.validate()) {
-      String message = await createUserWithEmailAndPassword(controllerID.text, controllerPW.text);
+      String message = await createUserWithEmailAndPassword(_controllerID.text, _controllerPW.text);
       if (mounted) {
         if (message == "") {
+          EasyLoading.dismiss();
           Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => RegistrationSecondScreen(
-                      email: controllerID.text,
-                      password: controllerPW.text,
+                      email: _controllerID.text,
+                      password: _controllerPW.text,
                     )),
           );
         } else {
           firebaseAuthError(context, message);
         }
       }
-    } else {
-      setState(() {
-        loadingState = false;
-      });
     }
+    EasyLoading.dismiss();
   }
 
   @override
   Widget build(BuildContext context) {
-    screenSize = ScreenSize(MediaQuery.of(context).size);
+    _screenSize = ScreenSize(MediaQuery.of(context).size);
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close)),
       ),
       body: SizedBox(
-        height: screenSize.getHeightSize(),
+        height: _screenSize.getHeightSize(),
         child: Stack(
           children: [
             Form(
@@ -76,24 +72,24 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                 child: Column(
                   children: [
                     Container(
-                      height: screenSize.getHeightPerSize(5),
+                      height: _screenSize.getHeightPerSize(5),
                     ),
                     SizedBox(
-                      width: screenSize.getWidthPerSize(80),
+                      width: _screenSize.getWidthPerSize(80),
                       child: Text(
                         "회원정보를\n입력해주세요",
-                        style: TextStyle(fontSize: screenSize.getHeightPerSize(4)),
+                        style: TextStyle(fontSize: _screenSize.getHeightPerSize(4)),
                       ),
                     ),
                     SizedBox(
-                      height: screenSize.getHeightPerSize(5),
+                      height: _screenSize.getHeightPerSize(5),
                     ),
                     SizedBox(
-                      height: screenSize.getHeightPerSize(12),
-                      width: screenSize.getWidthPerSize(80),
+                      height: _screenSize.getHeightPerSize(12),
+                      width: _screenSize.getWidthPerSize(80),
                       child: TextFormField(
-                        focusNode: focusNodeID,
-                        controller: controllerID,
+                        focusNode: _focusNodeID,
+                        controller: _controllerID,
                         decoration:
                             const InputDecoration(labelText: '이메일', border: OutlineInputBorder()),
                         keyboardType: TextInputType.emailAddress,
@@ -108,11 +104,11 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: screenSize.getHeightPerSize(12),
-                      width: screenSize.getWidthPerSize(80),
+                      height: _screenSize.getHeightPerSize(12),
+                      width: _screenSize.getWidthPerSize(80),
                       child: TextFormField(
-                        focusNode: focusNodePW,
-                        controller: controllerPW,
+                        focusNode: _focusNodePW,
+                        controller: _controllerPW,
                         decoration: const InputDecoration(
                             labelText: '비밀번호',
                             border: OutlineInputBorder(),
@@ -128,11 +124,11 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: screenSize.getHeightPerSize(12),
-                      width: screenSize.getWidthPerSize(80),
+                      height: _screenSize.getHeightPerSize(12),
+                      width: _screenSize.getWidthPerSize(80),
                       child: TextFormField(
-                        focusNode: focusNodePWCheck,
-                        controller: controllerPWCheck,
+                        focusNode: _focusNodePWCheck,
+                        controller: _controllerPWCheck,
                         decoration: const InputDecoration(
                           labelText: '비밀번호 확인',
                           border: OutlineInputBorder(),
@@ -141,7 +137,7 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                         textInputAction: TextInputAction.done,
                         onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                         validator: (String? value) {
-                          if (value != controllerPW.text) {
+                          if (value != _controllerPW.text) {
                             return "비밀번호가 동일하지 않습니다.";
                           }
                           return null;
@@ -155,12 +151,12 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
             AnimatedPositioned(
               duration: Duration(microseconds: Platform.isIOS ? 300000 : 130000),
               curve: Curves.easeInOut,
-              bottom: focusNodeID.hasFocus || focusNodePW.hasFocus || focusNodePWCheck.hasFocus
-                  ? -screenSize.getHeightPerSize(8)
+              bottom: _focusNodeID.hasFocus || _focusNodePW.hasFocus || _focusNodePWCheck.hasFocus
+                  ? -_screenSize.getHeightPerSize(8)
                   : 0,
               child: SizedBox(
-                height: screenSize.getHeightPerSize(8),
-                width: screenSize.getWidthPerSize(100),
+                height: _screenSize.getHeightPerSize(8),
+                width: _screenSize.getWidthPerSize(100),
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
@@ -172,19 +168,13 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                       ),
                     ),
                     onPressed: () {
-                      if (!loadingState) {
-                        checkAccount();
-                      }
+                      checkAccount();
                     },
-                    child: loadingState
-                        ? const SpinKitThreeInOut(
-                            color: Colors.white,
-                          )
-                        : Text(
-                            "다음",
-                            style: TextStyle(
-                                fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
-                          )),
+                    child: Text(
+                      "다음",
+                      style:
+                          TextStyle(fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
+                    )),
               ),
             )
           ],

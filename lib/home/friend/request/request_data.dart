@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../utils/my_data.dart';
-import '../../chat/chat_data.dart';
+import '../../chat/chat_list_data.dart';
 import '../friend_data.dart';
 
 class RequestData {
@@ -37,13 +37,13 @@ Future<void> addFriendRequest(String friendUID, BuildContext context) async {
 
     CollectionReference creatCollectionUid = _firestore.collection('chat');
     String documentID = creatCollectionUid.doc().id;
-    ChatRoomSimpleData chatRoomSimpleData = ChatRoomSimpleData(
-        documentID, "", "${myData.myNickName},${friendData.friendNickName}", "", 0, DateTime.now());
+    ChatRoomSimpleData chatRoomSimpleData =
+        ChatRoomSimpleData(documentID, "", "${myData.myNickName},${friendData.friendNickName}");
     chatRoomList[documentID] = chatRoomSimpleData;
-    Map<String, String> peopleList = {
-      myData.myUID: myData.myNickName,
-      friendData.friendUID: friendData.friendNickName
-    };
+    List<String> peopleList = [myData.myUID, friendData.friendUID];
+
+    ChatRoomData chatRoomData =
+        ChatRoomData(documentID, '1대1 채팅방', '', dateTime, myData.myUID, '', '', false, peopleList);
 
     if (!friendCheck) {
       await _firestore
@@ -79,48 +79,7 @@ Future<void> addFriendRequest(String friendUID, BuildContext context) async {
         "bookmark": false,
       });
 
-      // 채팅방 생성 작업
-      await _firestore.collection('chat').doc(documentID).set({
-        'chatroomuid': documentID,
-        'chatroomname': '${myData.myNickName},${friendData.friendNickName}',
-        'chatroomprofile': '',
-        'chatroomcreatedate': DateFormat("yyyy-MM-dd").format(DateTime.now()),
-        'chatroommanager': myData.myNickName,
-        'chatroompassword': '',
-        'chatroomexplain': '',
-        'chatroompublic': false,
-        'peoplelist': peopleList,
-      });
-
-      await _firestore
-          .collection('users')
-          .doc(myData.myUID)
-          .collection('chat')
-          .doc(documentID)
-          .set({
-        'chatroomuid': chatRoomSimpleData.chatRoomUid,
-        'chatroomcustomprofile': friendData.friendProfile,
-        'chatroomcustomname': friendData.friendNickName,
-        'lastchatmessage': chatRoomSimpleData.lastChatMessage,
-        'readablemessage': chatRoomSimpleData.readableMessage,
-        'lastchattime': chatRoomSimpleData.lastChatTime,
-      });
-
-      // 채팅방 개인데이터를 상대방 DB에 저장하기 위한 작업 1
-      await _firestore
-          .collection('users')
-          .doc(friendData.friendUID)
-          .collection('chat')
-          .doc(documentID)
-          .set({
-        'chatroomuid': chatRoomSimpleData.chatRoomUid,
-        'chatroomcustomprofile': myData.myProfile,
-        'chatroomcustomname': myData.myNickName,
-        'lastchatmessage': chatRoomSimpleData.lastChatMessage,
-        'readablemessage': chatRoomSimpleData.readableMessage,
-        'lastchattime': chatRoomSimpleData.lastChatTime,
-      });
-
+      await createChatRoom(chatRoomData);
       await deleteRequest(friendUID, true, true);
       await getFriendDataList();
       await getChatRoomData();

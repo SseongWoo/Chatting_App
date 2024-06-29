@@ -3,10 +3,11 @@ import 'package:chattingapp/home/home_screen.dart';
 import 'package:chattingapp/login/login_screen.dart';
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/screen_size.dart';
+import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'home/chat/chat_data.dart';
+import 'home/chat/chat_list_data.dart';
 import 'home/friend/friend_data.dart';
 import 'login/registration/authentication.dart';
 
@@ -72,6 +73,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await getMyData();
     await getChatRoomData();
     await getChatRoomDataList();
+    await getSharedPreferencese();
   }
 
   @override
