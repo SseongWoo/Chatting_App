@@ -5,7 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../home/friend/category/category_data.dart';
 import 'convert_array.dart';
+import 'logger.dart';
 
+// 사용자의 데이터 클래스
 FirebaseAuth _auth = FirebaseAuth.instance;
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -24,21 +26,31 @@ class MyData {
 
 late MyData myData;
 
-Future<void> getMyData() async {
-  User? user = _auth.currentUser;
-  DocumentSnapshot documentSnapshot =
-      await FirebaseFirestore.instance.collection("users").doc(user?.uid).get();
+// 사용자의 데이터를 DB에서 가져오는 함수
+Future<bool> getMyData() async {
+  try {
+    User? user = _auth.currentUser;
 
-  categoryList = convertMap(documentSnapshot.get('category'));
-  categorySequence = convertList(documentSnapshot.get('category_sequence'));
+    if (user != null) {
+      DocumentSnapshot documentSnapshot =
+          await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
 
-  myData = MyData(
-    documentSnapshot["uid"],
-    documentSnapshot["email"],
-    documentSnapshot["nickname"],
-    documentSnapshot["profile"],
-    documentSnapshot["creation_time"],
-    categoryList,
-    categorySequence,
-  );
+      categoryList = convertMap(documentSnapshot.get('category'));
+      categorySequence = convertList(documentSnapshot.get('category_sequence'));
+
+      myData = MyData(
+        documentSnapshot['uid'],
+        documentSnapshot['email'],
+        documentSnapshot['nickname'],
+        documentSnapshot['profile'],
+        documentSnapshot['creation_time'],
+        categoryList,
+        categorySequence,
+      );
+      return true;
+    }
+  } catch (e) {
+    logger.e('getMyData오류 : $e');
+  }
+  return false;
 }

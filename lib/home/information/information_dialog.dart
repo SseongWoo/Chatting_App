@@ -9,11 +9,13 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../login/login_screen.dart';
 import '../../login/registration/authentication.dart';
+import '../../utils/color.dart';
 import '../../utils/image_picker.dart';
 import '../../utils/shared_preferences.dart';
 import 'information_data.dart';
 import 'information_widget.dart';
 
+// 사용자 이름 변경 다이얼로그
 class UpdateMyNameDialog extends StatelessWidget {
   final Function(String) onRefresh;
 
@@ -24,7 +26,7 @@ class UpdateMyNameDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("닉네임 변경"),
+      title: const Text('닉네임 변경'),
       content: TextField(
         controller: _controller,
         decoration: const InputDecoration(
@@ -51,13 +53,14 @@ class UpdateMyNameDialog extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text("취소"),
+          child: const Text('취소'),
         ),
       ],
     );
   }
 }
 
+// 사용자 프로필 사진 변경 다이얼로그
 class UpdateMyProfileDialog extends StatefulWidget {
   final Function(String) onRefresh;
 
@@ -96,7 +99,7 @@ class _UpdateMyProfileDialogState extends State<UpdateMyProfileDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("프로필 사진 변경"),
+      title: const Text('프로필 사진 변경'),
       content: GestureDetector(
         onTap: () {
           _imagePicker(ImageSource.gallery);
@@ -144,13 +147,14 @@ class _UpdateMyProfileDialogState extends State<UpdateMyProfileDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text("취소"),
+          child: const Text('취소'),
         ),
       ],
     );
   }
 }
 
+// 채팅방 글자 크기 변경 다이얼로그
 class ChatStringSizeDialog extends StatefulWidget {
   final Function(double) reflashSize;
   final ScreenSize screenSize;
@@ -161,8 +165,8 @@ class ChatStringSizeDialog extends StatefulWidget {
 }
 
 class _ChatStringSizeDialogState extends State<ChatStringSizeDialog> {
-  late double _chatStringSize;
   final TextEditingController _controllerSize = TextEditingController();
+  late double _chatStringSize;
   late ScreenSize _screenSize;
   late double _oldSize;
 
@@ -179,7 +183,7 @@ class _ChatStringSizeDialogState extends State<ChatStringSizeDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Center(child: Text("글자 크기 변경")),
+      title: const Center(child: Text('글자 크기 변경')),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -252,7 +256,7 @@ class _ChatStringSizeDialogState extends State<ChatStringSizeDialog> {
                   _controllerSize.text = _chatStringSize.round().toString();
                 });
               },
-              child: const Text("초기화"),
+              child: const Text('초기화'),
             ),
             const Spacer(),
             TextButton(
@@ -260,7 +264,7 @@ class _ChatStringSizeDialogState extends State<ChatStringSizeDialog> {
                 chatStringSize = _oldSize;
                 Navigator.of(context).pop();
               },
-              child: const Text("취소"),
+              child: const Text('취소'),
             ),
             TextButton(
               onPressed: () async {
@@ -279,6 +283,7 @@ class _ChatStringSizeDialogState extends State<ChatStringSizeDialog> {
   }
 }
 
+// 이메일 인증 다이얼로그
 class EmailCheckDialog extends StatefulWidget {
   EmailCheckDialog({super.key});
 
@@ -289,13 +294,13 @@ class EmailCheckDialog extends StatefulWidget {
 class _EmailCheckDialogState extends State<EmailCheckDialog> {
   late ScreenSize _screenSize;
   String _message = '인증 메일이 성공적으로 전송되었습니다.\n아래 이메일 주소로 전송된 링크를 클릭하여 인증을 완료해 주세요.';
-  User? _user = FirebaseAuth.instance.currentUser;
+  final User? _user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
     _screenSize = ScreenSize(MediaQuery.of(context).size);
     return AlertDialog(
-      title: const Text("이메일 인증"),
+      title: const Text('이메일 인증'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -333,7 +338,7 @@ class _EmailCheckDialogState extends State<EmailCheckDialog> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text("취소"),
+              child: const Text('취소'),
             ),
             TextButton(
               onPressed: () async {
@@ -350,7 +355,7 @@ class _EmailCheckDialogState extends State<EmailCheckDialog> {
                   EasyLoading.dismiss();
                 }
               },
-              child: const Text("확인"),
+              child: const Text('확인'),
             ),
           ],
         ),
@@ -359,6 +364,7 @@ class _EmailCheckDialogState extends State<EmailCheckDialog> {
   }
 }
 
+// 비밀번호 변경 다이얼로그
 class UpdatePassWordDialog extends StatefulWidget {
   UpdatePassWordDialog({super.key});
 
@@ -373,7 +379,7 @@ class _UpdatePassWordDialogState extends State<UpdatePassWordDialog> {
   Widget build(BuildContext context) {
     _screenSize = ScreenSize(MediaQuery.of(context).size);
     return AlertDialog(
-      title: const Text("비밀번호 변경"),
+      title: const Text('비밀번호 변경'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -415,13 +421,14 @@ class _UpdatePassWordDialogState extends State<UpdatePassWordDialog> {
   }
 }
 
+// 로그아웃 다이얼로그
 class LogOutDialog extends StatelessWidget {
   const LogOutDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("로그아웃"),
+      title: const Text('로그아웃'),
       content: const Text('정말로 로그아웃 하시겠습니까?'),
       actions: [
         TextButton(
@@ -438,9 +445,35 @@ class LogOutDialog extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const LoginScreen()),
             );
           },
-          child: const Text("확인"),
+          child: const Text('확인'),
         ),
       ],
     );
   }
+}
+
+// 업데이트 확인 다이얼로그
+AlertDialog updateInformationDialog(BuildContext context) {
+  String message = '';
+
+  return AlertDialog(
+    title: const Text('업데이트 정보'),
+    content: Text(message),
+    actions: <Widget>[
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: mainLightColor),
+              onPressed: () async {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                '확인',
+                style: TextStyle(color: Colors.black),
+              )),
+        ],
+      )
+    ],
+  );
 }

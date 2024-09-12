@@ -1,9 +1,8 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'color.dart';
+
+// 데이터를 내부 기기에 저장하는 기능들
 
 // home_screen의 탭뷰 위치 설정 변수
 int homeTap = 1;
@@ -21,6 +20,11 @@ Map<String, Color> chatRoomColorMap = {
 };
 
 double chatStringSize = 1.6;
+
+void initializationTap() {
+  homeTap = 1;
+  requestTap = 0;
+}
 
 Future<void> setColorSharedPreferencese(String type, Color color) async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -54,9 +58,14 @@ Future<void> setSizeSharedPreferencese() async {
 }
 
 Future<void> setSharedPreferencese() async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setInt('homeTap', homeTap);
-  await prefs.setInt('requestTap', requestTap);
+  try {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('homeTap', homeTap);
+    await prefs.setInt('requestTap', requestTap);
+  } catch (e) {
+    //
+  }
+
   //await prefs.setDouble('chatStringSize', chatStringSize);
   // for (var entry in chatRoomColorMap.entries) {
   //   await prefs.setString(entry.key, entry.value.value.toRadixString(16).padLeft(8, '0'));

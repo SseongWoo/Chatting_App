@@ -1,14 +1,12 @@
 import 'package:chattingapp/home/information/delete_user_information/delete_user_information_screen.dart';
-import 'package:chattingapp/home/information/update_information/update_information_screen.dart';
 import 'package:chattingapp/utils/color.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:chattingapp/utils/snackbar_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import '../home/information/information_data.dart';
 import '../login/registration/authentication.dart';
-import 'color_picker.dart';
+import 'launch_browser.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});
@@ -77,6 +75,7 @@ class _TestScreenState extends State<TestScreen> {
                 child: Text("테스트 버튼 3")),
             ElevatedButton(
                 onPressed: () async {
+                  await launchBrowser();
                   // EasyLoading.show();
                   // await setSharedPreferencese();
                   // EasyLoading.dismiss();
@@ -94,7 +93,7 @@ class _TestScreenState extends State<TestScreen> {
             ),
             Container(
               color: subBackgroundColor2,
-            )
+            ),
           ],
         ),
       ),

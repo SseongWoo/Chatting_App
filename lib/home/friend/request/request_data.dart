@@ -1,8 +1,8 @@
-import 'package:chattingapp/utils/snackbar_message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../../utils/logger.dart';
 import '../../../utils/my_data.dart';
 import '../../chat/chat_list_data.dart';
 import '../friend_data.dart';
@@ -31,52 +31,50 @@ Future<void> addFriendRequest(String friendUID, BuildContext context) async {
   try {
     FriendData? friendData;
     friendData = await getRequestFriendData(friendUID);
-    String dateTime = DateFormat("yyyy-MM-dd").format(DateTime.now());
+    String dateTime = DateFormat('yyyy-MM-dd').format(DateTime.now());
     bool friendCheck = await checkFriend(friendData!.friendUID); // 파이어베이스의 본인의 친구목록에 있는지 확인하는 변수
     List<String> category = [];
 
     CollectionReference creatCollectionUid = _firestore.collection('chat');
     String documentID = creatCollectionUid.doc().id;
-    ChatRoomSimpleData chatRoomSimpleData =
-        ChatRoomSimpleData(documentID, "", "${myData.myNickName},${friendData.friendNickName}");
-    chatRoomList[documentID] = chatRoomSimpleData;
     List<String> peopleList = [myData.myUID, friendData.friendUID];
 
     ChatRoomData chatRoomData =
         ChatRoomData(documentID, '1대1 채팅방', '', dateTime, myData.myUID, '', '', false, peopleList);
 
+    // 친구 목록에 없을경우 친구 등록 작업 실행
     if (!friendCheck) {
       await _firestore
-          .collection("users")
+          .collection('users')
           .doc(myData.myUID)
-          .collection("friend")
+          .collection('friend')
           .doc(friendData.friendUID)
           .set({
-        "frienduid": friendData.friendUID,
-        "friendemail": friendData.friendEmail,
-        "friendprofile": friendData.friendProfile,
-        "friendnickname": friendData.friendNickName,
-        "firenddate": dateTime,
-        "friendcustomname": "",
-        "friendinherentchatroom": documentID,
-        "category": category,
-        "bookmark": false,
+        'frienduid': friendData.friendUID,
+        'friendemail': friendData.friendEmail,
+        'friendprofile': friendData.friendProfile,
+        'friendnickname': friendData.friendNickName,
+        'firenddate': dateTime,
+        'friendcustomname': '',
+        'friendinherentchatroom': documentID,
+        'category': category,
+        'bookmark': false,
       });
       await _firestore
-          .collection("users")
+          .collection('users')
           .doc(friendData.friendUID)
-          .collection("friend")
+          .collection('friend')
           .doc(myData.myUID)
           .set({
-        "frienduid": myData.myUID,
-        "friendemail": myData.myEmail,
-        "friendprofile": myData.myProfile,
-        "friendnickname": myData.myNickName,
-        "firenddate": dateTime,
-        "friendcustomname": "",
-        "friendinherentchatroom": documentID,
-        "category": category,
-        "bookmark": false,
+        'frienduid': myData.myUID,
+        'friendemail': myData.myEmail,
+        'friendprofile': myData.myProfile,
+        'friendnickname': myData.myNickName,
+        'firenddate': dateTime,
+        'friendcustomname': '',
+        'friendinherentchatroom': documentID,
+        'category': category,
+        'bookmark': false,
       });
 
       await createChatRoom(chatRoomData);
@@ -85,17 +83,18 @@ Future<void> addFriendRequest(String friendUID, BuildContext context) async {
       await getChatRoomData();
       await getChatRoomDataList();
 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("친구 추가에 성공하였습니다.")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('친구 추가에 성공하였습니다.')));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("친구 추가에 실패히였습니다.")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('친구 추가에 실패히였습니다.')));
     }
   } on FirebaseAuthException catch (e) {
-    print("addFriend 에러");
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("친구 추가에 실패히였습니다.")));
+    logger.e('addFriend오류 : $e');
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('친구 추가에 실패히였습니다.')));
   }
 }
 
 // Request데이터들을 파이어베이스에 저장하는 작업
+// 보낸 요청 데이터를 사용자와 상대방 DB에 저장
 Future<void> sendRequest(String friendUID, BuildContext context) async {
   FriendData? friendData;
   FriendData? myData;
@@ -114,63 +113,63 @@ Future<void> sendRequest(String friendUID, BuildContext context) async {
         !requestSendCheck &&
         !requestReceivedCheck &&
         friendData.friendUID != user.uid) {
-      dateTime = DateFormat("yyyy-MM-dd").format(DateTime.now());
+      dateTime = DateFormat('yyyy-MM-dd').format(DateTime.now());
       // 자신 DB의 request 에 저장할 데이터를 저장하는 작업
       await _firestore
-          .collection("users")
+          .collection('users')
           .doc(user.uid)
-          .collection("request")
+          .collection('request')
           .doc(friendData.friendUID)
           .set({
-        "requestuid": friendData.friendUID,
-        "requestemail": friendData.friendEmail,
-        "requestnickname": friendData.friendNickName,
-        "requestprofile": friendData.friendProfile,
-        "requesttime": dateTime,
-        "requestkey": "oneself",
-        "requestcheck": false,
-        "deletecheck": false,
+        'requestuid': friendData.friendUID,
+        'requestemail': friendData.friendEmail,
+        'requestnickname': friendData.friendNickName,
+        'requestprofile': friendData.friendProfile,
+        'requesttime': dateTime,
+        'requestkey': 'oneself',
+        'requestcheck': false,
+        'deletecheck': false,
       });
 
       // 상대방 DB의 request 에 저장할 데이터를 저장하는 작업
       await _firestore
-          .collection("users")
+          .collection('users')
           .doc(friendData.friendUID)
-          .collection("request")
+          .collection('request')
           .doc(user.uid)
           .set({
-        "requestuid": myData?.friendUID,
-        "requestemail": myData?.friendEmail,
-        "requestnickname": myData?.friendNickName,
-        "requestprofile": myData?.friendProfile,
-        "requesttime": dateTime,
-        "requestkey": "another",
-        "requestcheck": false,
-        "deletecheck": false,
+        'requestuid': myData?.friendUID,
+        'requestemail': myData?.friendEmail,
+        'requestnickname': myData?.friendNickName,
+        'requestprofile': myData?.friendProfile,
+        'requesttime': dateTime,
+        'requestkey': 'another',
+        'requestcheck': false,
+        'deletecheck': false,
       });
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("친구 요청에 성공하였습니다.")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('친구 요청에 성공하였습니다.')));
     } else {
       if (friendCheck) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("이미 등록되어있는 사용자 입니다.")));
+            .showSnackBar(const SnackBar(content: Text('이미 등록되어있는 사용자 입니다.')));
       } else if (requestSendCheck) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("이미 요청중인 사용자 입니다.")));
+            .showSnackBar(const SnackBar(content: Text('이미 요청중인 사용자 입니다.')));
       } else if (requestReceivedCheck) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("이미 요청받은 사용자 입니다.")));
+            .showSnackBar(const SnackBar(content: Text('이미 요청받은 사용자 입니다.')));
       } else if (friendData.friendUID == user.uid) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("자신의 코드를 입력할 수 없습니다.")));
+            .showSnackBar(const SnackBar(content: Text('자신의 코드를 입력할 수 없습니다.')));
       } else {
         ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("친구 요청에 문제가 발생했습니다. 나중에 다시 시도해 주세요")));
+            .showSnackBar(const SnackBar(content: Text('친구 요청에 문제가 발생했습니다. 나중에 다시 시도해 주세요')));
       }
     }
   } on FirebaseAuthException catch (e) {
-    print("sendRequest 에러");
+    logger.e('sendRequest오류 : $e');
     ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text("친구 요청에 문제가 발생했습니다. 나중에 다시 시도해 주세요")));
+        .showSnackBar(const SnackBar(content: Text('친구 요청에 문제가 발생했습니다. 나중에 다시 시도해 주세요')));
   }
 }
 
@@ -181,82 +180,91 @@ Future<void> acceptRequest() async {
   try {
     User? user = _auth.currentUser;
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection("users")
+        .collection('users')
         .doc(user?.uid)
-        .collection("request")
+        .collection('request')
         .get();
     for (var doc in querySnapshot.docs) {
       dynamic result = doc.data();
       addRequestList(result);
     }
   } catch (e) {
-    print('acceptRequest오류 $e');
+    logger.e('acceptRequest오류 : $e');
   }
 }
 
+// 파이어베이스에서 가져온 Request데이터를 보낸요청과 받은요청으로 분류하는 작업
 void addRequestList(dynamic result) {
-  if (result["requestkey"] == "oneself") {
+  if (result['requestkey'] == 'oneself') {
     requestSendList.add(RequestData(
-      result["requestuid"],
-      result["requestemail"],
-      result["requestnickname"],
-      result["requestprofile"],
-      result["requesttime"],
-      result["requestkey"],
-      result["requestcheck"],
-      result["deletecheck"],
+      result['requestuid'],
+      result['requestemail'],
+      result['requestnickname'],
+      result['requestprofile'],
+      result['requesttime'],
+      result['requestkey'],
+      result['requestcheck'],
+      result['deletecheck'],
     ));
   } else {
     requestReceivedList.add(RequestData(
-      result["requestuid"],
-      result["requestemail"],
-      result["requestnickname"],
-      result["requestprofile"],
-      result["requesttime"],
-      result["requestkey"],
-      result["requestcheck"],
-      result["deletecheck"],
+      result['requestuid'],
+      result['requestemail'],
+      result['requestnickname'],
+      result['requestprofile'],
+      result['requesttime'],
+      result['requestkey'],
+      result['requestcheck'],
+      result['deletecheck'],
     ));
   }
 }
 
 // 가져온 문자데이터를 이메일형식 또는 UID형식인지 구분뒤 친구 데이터를 확인후 가져오는 작업
 Future<FriendData?> getRequestFriendData(String friendUID) async {
-  bool emailChcek = friendUID.contains("@");
+  bool emailChcek = friendUID.contains('@');
 
   if (emailChcek) {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection("users_public") // 원하는 컬렉션
-          .where("email", isEqualTo: friendUID) // 필터링할 필드와 값
+          .collection('users_public')
+          .where('email', isEqualTo: friendUID) // 필터링할 필드와 값
           .get();
       var result = querySnapshot.docs.first;
-      return FriendData(result["uid"], result["email"], result["nickname"], result["profile"], "",
-          "", "", [], false);
+      return FriendData(result['uid'], result['email'], result['nickname'], result['profile'], '',
+          '', '', [], false);
     } catch (e) {
       return null;
     }
   } else {
     try {
-      var result = await _firestore.collection("users_public").doc(friendUID).get();
-      return FriendData(result["uid"], result["email"], result["nickname"], result["profile"], "",
-          "", "", [], false);
+      var result = await _firestore.collection('users_public').doc(friendUID).get();
+      return FriendData(result['uid'], result['email'], result['nickname'], result['profile'], '',
+          '', '', [], false);
     } catch (e) {
+      logger.e('getRequestFriendData오류 : $e');
       return null;
     }
   }
 }
 
+//
 Future<bool> checkRequest(String aUID, String bUID) async {
-  DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
-      .collection("users")
-      .doc(aUID)
-      .collection("request")
-      .doc(bUID)
-      .get();
-  return documentSnapshot.exists;
+  try {
+    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(aUID)
+        .collection('request')
+        .doc(bUID)
+        .get();
+    return documentSnapshot.exists;
+  } catch (e) {
+    logger.e('checkRequest오류 : $e');
+    return false;
+  }
 }
 
+// 사용자가 받은 요청을 수락하거나 거절했을 경우 상대방에게 확인했다는 표시를 주기 위한 함수
 Future<void> updateRequest(
   String friendUID,
 ) async {
@@ -267,86 +275,54 @@ Future<void> updateRequest(
 
     if (checkMyData && checkFriendData) {
       await FirebaseFirestore.instance
-          .collection("users")
+          .collection('users')
           .doc(user.uid)
-          .collection("request")
+          .collection('request')
           .doc(friendUID)
           .update({
-        "requestcheck": true,
+        'requestcheck': true,
       });
       await FirebaseFirestore.instance
-          .collection("users")
+          .collection('users')
           .doc(friendUID)
-          .collection("request")
+          .collection('request')
           .doc(user.uid)
           .update({
-        "requestcheck": true,
+        'requestcheck': true,
       });
     }
   } catch (e) {
-    print("deleteRequest오류");
-  }
-}
-
-Future<void> updateDeleteRequest(
-  String friendUID,
-) async {
-  try {
-    User? user = _auth.currentUser;
-    bool checkMyData = await checkRequest(user!.uid, friendUID);
-    bool checkFriendData = await checkRequest(friendUID, user.uid);
-
-    if (checkMyData && checkFriendData) {
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(user.uid)
-          .collection("request")
-          .doc(friendUID)
-          .update({
-        "deletecheck": true,
-      });
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(friendUID)
-          .collection("request")
-          .doc(user.uid)
-          .update({
-        "deletecheck": true,
-      });
-    }
-  } catch (e) {
-    print("updateDeleteRequest오류");
+    logger.e('updateRequest오류 : $e');
   }
 }
 
 // 상대방 혹은 나의 요청데이터를 삭제하기 위한 함수
 Future<void> deleteRequest(String friendUID, bool deleteA, bool deleteB) async {
   try {
-    User? user = _auth.currentUser;
     if (deleteA) {
-      bool checkMyData = await checkRequest(user!.uid, friendUID);
+      bool checkMyData = await checkRequest(myData.myUID, friendUID);
       if (checkMyData) {
         await FirebaseFirestore.instance
-            .collection("users")
-            .doc(user.uid)
-            .collection("request")
+            .collection('users')
+            .doc(myData.myUID)
+            .collection('request')
             .doc(friendUID)
             .delete();
       }
     }
     if (deleteB) {
-      bool checkFriendData = await checkRequest(friendUID, user!.uid);
+      bool checkFriendData = await checkRequest(friendUID, myData.myUID);
       if (checkFriendData) {
         await FirebaseFirestore.instance
-            .collection("users")
+            .collection('users')
             .doc(friendUID)
-            .collection("request")
-            .doc(user.uid)
+            .collection('request')
+            .doc(myData.myUID)
             .delete();
       }
     }
   } catch (e) {
-    print("deleteRequest오류");
+    logger.e('deleteRequest오류 : $e');
   }
 }
 
@@ -367,4 +343,44 @@ Future<bool> requestCheck(String friendUID) async {
   } else {
     return false;
   }
+}
+
+// 친구 추가 다이얼로그
+void addFriendDialog(BuildContext getContext) {
+  TextEditingController controller = TextEditingController();
+  FocusNode focusNode = FocusNode();
+  showDialog(
+    context: getContext,
+    barrierDismissible: true,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('친구 추가'),
+        content: TextField(
+          focusNode: focusNode,
+          controller: controller,
+          decoration: const InputDecoration(
+            hintText: 'UID 또는 이메일을 입력해 주세요',
+          ),
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+        ),
+        actions: <Widget>[
+          TextButton(
+              onPressed: () {
+                sendRequest(controller.text, getContext);
+                focusNode.dispose();
+                Navigator.of(context).pop();
+              },
+              child: const Text('요청 보내기')),
+          TextButton(
+              onPressed: () {
+                focusNode.dispose();
+                Navigator.of(context).pop();
+              },
+              child: const Text('취소')),
+        ],
+      );
+    },
+  );
 }

@@ -56,6 +56,14 @@ dependencies:
   search_choices:               # 검색창
   shared_preferences:           # 데이터 저장 패키지
   flex_color_picker: ^3.5.0     # 색상 선택 패키지
+  url_launcher: ^6.3.0          # 외부 브라우저 실행 패키지
+  package_info_plus: ^8.0.0     # 앱의 정보 제공 패키지
+  firebase_remote_config:       # 파이어베이스 remote_config 패키지
+  rxdart: ^0.28.0               # streamzip등등 다양한 기능의 패키지
+  logger: ^2.4.0                # 로그 패키지
+  path_provider: ^2.1.4         # 파일 시스템 접근 패키지
+  permission_handler: ^11.3.1   # 권한 요청 패키지
+
 
 dev_dependencies:
   flutter_test:

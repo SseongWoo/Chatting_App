@@ -1,11 +1,9 @@
 import 'package:chattingapp/home/chat/chat_list_data.dart';
 import 'package:chattingapp/home/friend/friend_data.dart';
-import 'package:chattingapp/utils/color.dart';
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:chattingapp/utils/snackbar_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../login/login_screen.dart';
@@ -17,6 +15,7 @@ import 'delete_user_information/delete_user_information_screen.dart';
 import 'information_dialog.dart';
 import 'information_widget.dart';
 
+// 설정 화면
 class InformationScreen extends StatefulWidget {
   const InformationScreen({super.key});
 
@@ -27,30 +26,35 @@ class InformationScreen extends StatefulWidget {
 class _InformationScreenState extends State<InformationScreen> {
   late ScreenSize _screenSize;
 
+  // 하위 문서에서 setState을 사용하기 위한 함수
   void _refreshSize(double newSize) {
     setState(() {
       chatStringSize = newSize;
     });
   }
 
+  // 하위 문서에서 setState을 사용하기 위한 함수
   void _refreshColor(String type, Color color) {
     setState(() {
       chatRoomColorMap[type] = color;
     });
   }
 
+  // 하위 문서에서 setState을 사용하기 위한 함수
   void _refreshName(String newData) {
     setState(() {
       myData.myNickName = newData;
     });
   }
 
+  // 하위 문서에서 setState을 사용하기 위한 함수
   void _refreshProfile(String newData) {
     setState(() {
       myData.myProfile = newData;
     });
   }
 
+  // 이름 변경 다이얼로그를 실행하는 함수
   void _updateName() {
     showDialog(
       context: context,
@@ -60,6 +64,7 @@ class _InformationScreenState extends State<InformationScreen> {
     );
   }
 
+  // 프로필 변경 다이얼로그를 실행하는 함수
   void _updateProfile() {
     showDialog(
       context: context,
@@ -69,6 +74,7 @@ class _InformationScreenState extends State<InformationScreen> {
     );
   }
 
+  // 이메일 인증 다이얼로그를 실행하는 다이얼로그, 인증이 안되어있는 계정일 경우에만 실행
   void _updateAuthEmail() {
     EasyLoading.show();
     User? user = FirebaseAuth.instance.currentUser;
@@ -89,6 +95,7 @@ class _InformationScreenState extends State<InformationScreen> {
     EasyLoading.dismiss();
   }
 
+  // 비밀번호 변경 다이얼로그 실행 함수
   void _updatePassWord() async {
     User? user = FirebaseAuth.instance.currentUser;
     EasyLoading.show();
@@ -107,6 +114,7 @@ class _InformationScreenState extends State<InformationScreen> {
     }
   }
 
+  // 로그아웃 다이얼로그 실행 함수
   void _signOut() {
     showDialog(
       context: context,
@@ -116,6 +124,7 @@ class _InformationScreenState extends State<InformationScreen> {
     );
   }
 
+  // 계정 삭제 다이얼로그 실행 함수
   void _deleteUser() {
     Navigator.push(
       context,
@@ -301,12 +310,6 @@ class _InformationScreenState extends State<InformationScreen> {
                 title: '글자 크기 설정',
                 location: 'bottom',
               ),
-
-              // informationMenuWidget(
-              //   _screenSize,
-              //   '글자 크기 설정',
-              //   'bottom',
-              // ),
               SizedBox(
                 height: _screenSize.getHeightPerSize(1),
               ),
@@ -352,7 +355,7 @@ class _InformationScreenState extends State<InformationScreen> {
                       },
                     );
                   },
-                  child: Text("테스트")),
+                  child: Text('테스트')),
               ElevatedButton(
                   onPressed: () {
                     signOut();
@@ -361,7 +364,7 @@ class _InformationScreenState extends State<InformationScreen> {
                       MaterialPageRoute(builder: (context) => const LoginScreen()),
                     );
                   },
-                  child: Text("로그아웃")),
+                  child: Text('로그아웃')),
             ],
           ),
         ),

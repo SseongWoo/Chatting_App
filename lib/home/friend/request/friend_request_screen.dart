@@ -1,21 +1,19 @@
-import 'package:chattingapp/home/friend/request/friend_add_dialog.dart';
 import 'package:chattingapp/home/friend/request/request_widget.dart';
 import 'package:chattingapp/utils/color.dart';
 import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../../utils/date_check.dart';
 import '../../../utils/screen_movement.dart';
 import '../../home_screen.dart';
 import 'request_data.dart';
 
-bool loadingState = false;
 late ScreenSize screenSize;
 late DateTime now;
 late String toDay;
 
+// 친구 추가 화면
 class FriendManagementScreen extends StatefulWidget {
   const FriendManagementScreen({super.key});
 
@@ -25,8 +23,6 @@ class FriendManagementScreen extends StatefulWidget {
 
 class _FriendManagementScreenState extends State<FriendManagementScreen>
     with SingleTickerProviderStateMixin {
-  // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  // final FirebaseAuth _auth = FirebaseAuth.instance;
   bool newAddFriend = false;
   bool newRequestFriend = false;
   int barIndex = 0;
@@ -56,13 +52,9 @@ class _FriendManagementScreenState extends State<FriendManagementScreen>
   }
 
   Future<void> getRequestList() async {
-    setState(() {
-      loadingState = true;
-    });
+    EasyLoading.show();
     await acceptRequest();
-    setState(() {
-      loadingState = false;
-    });
+    EasyLoading.dismiss();
   }
 
   // //요청이 들어왔을때 실시간으로 받는 함수
@@ -122,17 +114,9 @@ class _FriendManagementScreenState extends State<FriendManagementScreen>
           body: Stack(children: [
             TabBarView(
               controller: _tabController,
-              children: [
-                loadingState
-                    ? SpinKitFadingCircle(
-                        color: mainColor,
-                      )
-                    : const RequestReceivedScreen(),
-                loadingState
-                    ? SpinKitFadingCircle(
-                        color: mainColor,
-                      )
-                    : const RequestSentScreen(),
+              children: const [
+                RequestReceivedScreen(),
+                RequestSentScreen(),
               ],
             ),
             Positioned(
@@ -145,21 +129,17 @@ class _FriendManagementScreenState extends State<FriendManagementScreen>
                   minWidth: screenSize.getHeightPerSize(7),
                   minHeight: screenSize.getHeightPerSize(7),
                 ),
-                child: loadingState
-                    ? const SpinKitRing(
-                        color: Colors.white,
-                      )
-                    : IconButton(
-                        onPressed: () {
-                          addFriendDialogTest(context);
-                        },
-                        icon: Icon(
-                          Icons.add,
-                          size: screenSize.getHeightPerSize(4),
-                          color: Colors.black,
-                        ),
-                        tooltip: "친구 추가",
-                      ),
+                child: IconButton(
+                  onPressed: () {
+                    addFriendDialog(context);
+                  },
+                  icon: Icon(
+                    Icons.add,
+                    size: screenSize.getHeightPerSize(4),
+                    color: Colors.black,
+                  ),
+                  tooltip: "친구 추가",
+                ),
               ),
             ),
           ]),
@@ -181,7 +161,7 @@ class _FriendManagementScreenState extends State<FriendManagementScreen>
                       children: [
                         const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [Icon(Icons.move_to_inbox), Text("받은 요청")],
+                          children: [Icon(Icons.move_to_inbox), Text('받은 요청')],
                         ),
                         Visibility(
                           visible: newRequestFriend,
@@ -207,7 +187,7 @@ class _FriendManagementScreenState extends State<FriendManagementScreen>
                       children: [
                         const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [Icon(Icons.send), Text("보낸 요청")],
+                          children: [Icon(Icons.send), Text('보낸 요청')],
                         ),
                         Visibility(
                           visible: newAddFriend,
@@ -235,6 +215,7 @@ class _FriendManagementScreenState extends State<FriendManagementScreen>
   }
 }
 
+// 친구 화면 속 보낸 요청 탭 화면
 class RequestSentScreen extends StatefulWidget {
   const RequestSentScreen({super.key});
 
@@ -269,7 +250,7 @@ class _RequestSentScreenState extends State<RequestSentScreen> {
               visible: requestSendList.isEmpty,
               child: Center(
                 child: Text(
-                  "보낸 요청이 없습니다.",
+                  '보낸 요청이 없습니다.',
                   style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
                 ),
               ),
@@ -281,6 +262,7 @@ class _RequestSentScreenState extends State<RequestSentScreen> {
   }
 }
 
+// 친구 화면 속 받은 요청 탭 화면
 class RequestReceivedScreen extends StatefulWidget {
   const RequestReceivedScreen({super.key});
 
@@ -333,7 +315,7 @@ class _RequestReceivedScreenState extends State<RequestReceivedScreen> {
               visible: requestReceivedList.isEmpty,
               child: Center(
                 child: Text(
-                  "받은 요청이 없습니다.",
+                  '받은 요청이 없습니다.',
                   style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
                 ),
               ),

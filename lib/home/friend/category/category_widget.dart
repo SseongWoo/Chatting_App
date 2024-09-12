@@ -1,12 +1,12 @@
 import 'package:chattingapp/home/friend/category/category_setting_screen.dart';
 import 'package:chattingapp/utils/screen_size.dart';
-import 'package:chattingapp/utils/snackbar_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../utils/color.dart';
 import '../../../utils/screen_movement.dart';
 import 'category_data.dart';
 
+// 카테고리 설정 화면의 리스트 위젯
 class CategoryWidget extends StatefulWidget {
   final ScreenSize screenSize;
   final String categoryName;
@@ -32,56 +32,58 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: screenSize.getWidthSize(),
-        height: screenSize.getHeightPerSize(6),
-        margin: EdgeInsets.fromLTRB(
-            0, screenSize.getHeightPerSize(0.5), 0, screenSize.getHeightPerSize(0.5)),
-        decoration: BoxDecoration(
-          color: mainLightColor,
-          border: Border.all(color: Colors.grey, width: 0.5),
-          borderRadius: BorderRadius.circular(15),
+      width: screenSize.getWidthSize(),
+      height: screenSize.getHeightPerSize(6),
+      margin: EdgeInsets.fromLTRB(
+          0, screenSize.getHeightPerSize(0.5), 0, screenSize.getHeightPerSize(0.5)),
+      decoration: BoxDecoration(
+        color: mainLightColor,
+        border: Border.all(color: Colors.grey, width: 0.5),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Padding(
+        padding:
+            EdgeInsets.fromLTRB(screenSize.getWidthPerSize(4), 0, screenSize.getWidthPerSize(2), 0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              categoryName,
+              style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
+            ),
+            Row(
+              children: [
+                IconButton(
+                    tooltip: "이름 변경",
+                    onPressed: () {
+                      renameCategoryDialog(context, categoryName);
+                    },
+                    icon: const Icon(Icons.edit)),
+                IconButton(
+                    tooltip: "순서 변경",
+                    onPressed: () {
+                      showSequenceCategoryDialog(context, categoryName);
+                    },
+                    icon: const Icon(Icons.swap_vert)),
+                IconButton(
+                    tooltip: "삭제",
+                    onPressed: () {
+                      deleteCategoryDialog(context, categoryName);
+                    },
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    )),
+              ],
+            ),
+          ],
         ),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(
-              screenSize.getWidthPerSize(4), 0, screenSize.getWidthPerSize(2), 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                categoryName,
-                style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
-              ),
-              Row(
-                children: [
-                  IconButton(
-                      tooltip: "이름 변경",
-                      onPressed: () {
-                        renameCategoryDialog(context, categoryName);
-                      },
-                      icon: const Icon(Icons.edit)),
-                  IconButton(
-                      tooltip: "순서 변경",
-                      onPressed: () {
-                        showSequenceCategoryDialog(context, categoryName);
-                      },
-                      icon: const Icon(Icons.swap_vert)),
-                  IconButton(
-                      tooltip: "삭제",
-                      onPressed: () {
-                        deleteCategoryDialog(context, categoryName);
-                      },
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                      )),
-                ],
-              ),
-            ],
-          ),
-        ));
+      ),
+    );
   }
 }
 
+// 카테고리 이름 변경 다이얼로그
 void renameCategoryDialog(BuildContext getContext, String categoryName) {
   final renameFormKey = GlobalKey<FormState>();
   TextEditingController controller = TextEditingController();
@@ -113,29 +115,34 @@ void renameCategoryDialog(BuildContext getContext, String categoryName) {
         ),
         actions: <Widget>[
           TextButton(
-              onPressed: () {
-                if (renameFormKey.currentState!.validate()) {
-                  reNameCategory(categoryName, controller.text);
-                  Navigator.of(context).pushAndRemoveUntil(
-                    screenMovementZero(const CategorySettingScreen(
+            onPressed: () {
+              if (renameFormKey.currentState!.validate()) {
+                reNameCategory(categoryName, controller.text);
+                Navigator.of(context).pushAndRemoveUntil(
+                  screenMovementZero(
+                    const CategorySettingScreen(
                       checkData: true,
-                    )),
-                    (Route<dynamic> route) => false,
-                  );
-                }
-              },
-              child: const Text("변경")),
+                    ),
+                  ),
+                  (Route<dynamic> route) => false,
+                );
+              }
+            },
+            child: const Text("변경"),
+          ),
           TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("취소")),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("취소"),
+          ),
         ],
       );
     },
   );
 }
 
+// 카테고리 삭제 다이얼로그
 void deleteCategoryDialog(BuildContext getContext, String categoryName) {
   showDialog(
     context: getContext,
@@ -146,28 +153,32 @@ void deleteCategoryDialog(BuildContext getContext, String categoryName) {
         content: const Text("정말로 삭제하시겠습니까?"),
         actions: <Widget>[
           TextButton(
-              onPressed: () {
-                deleteCategory(categoryName);
-                Navigator.of(context).pushAndRemoveUntil(
-                  screenMovementZero(const CategorySettingScreen(
+            onPressed: () {
+              deleteCategory(categoryName);
+              Navigator.of(context).pushAndRemoveUntil(
+                screenMovementZero(
+                  const CategorySettingScreen(
                     checkData: true,
-                  )),
-                  (Route<dynamic> route) => false,
-                );
-              },
-              child: const Text("삭제")),
+                  ),
+                ),
+                (Route<dynamic> route) => false,
+              );
+            },
+            child: const Text("삭제"),
+          ),
           TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("취소")),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("취소"),
+          ),
         ],
       );
     },
   );
 }
 
-//순서변경 기능부터 시작
+// 카테고리 순서 변경 다이얼로그
 class SequenceCategoryDialog extends StatefulWidget {
   final String categoryName;
 
@@ -193,6 +204,7 @@ class _SequenceCategoryDialogState extends State<SequenceCategoryDialog> {
     _controller.text = newIndex.toString();
   }
 
+  // Icons.remove 아이콘 버튼을 눌렀을 떄 실행되는 함수, 값 감소
   void _decrementValue() {
     setState(() {
       int currentValue = int.parse(_controller.text);
@@ -203,6 +215,7 @@ class _SequenceCategoryDialogState extends State<SequenceCategoryDialog> {
     });
   }
 
+  // Icons.add 아이콘 버튼을 눌렀을 때 실행되는 함수, 값 증가
   void _incrementValue() {
     setState(() {
       int currentValue = int.parse(_controller.text);
@@ -291,6 +304,7 @@ class _SequenceCategoryDialogState extends State<SequenceCategoryDialog> {
   }
 }
 
+// 순서변경 다이얼로그 실행 함수
 void showSequenceCategoryDialog(BuildContext context, String categoryName) {
   showDialog(
     context: context,

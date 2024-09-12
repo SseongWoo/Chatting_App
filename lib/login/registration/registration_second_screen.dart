@@ -2,10 +2,10 @@ import 'package:chattingapp/login/registration/registration_dialog.dart';
 import 'package:chattingapp/login/registration/registration_third_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../utils/screen_size.dart';
 import 'authentication.dart';
 
+// 계정 생성 두번째 화면
 class RegistrationSecondScreen extends StatefulWidget {
   final String email;
   final String password;
@@ -28,6 +28,7 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
     password = widget.password;
   }
 
+  // 이메일인증을 완료하였을때 다음화면으로 넘어가는 함수
   Future<void> _checkEmail(context) async {
     EasyLoading.show();
     bool isEmailVerified = await checkEmailVerificationStatus();
@@ -63,14 +64,14 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
                   SizedBox(
                     width: _screenSize.getWidthPerSize(80),
                     child: Text(
-                      "계정 인증\n",
+                      '계정 인증\n',
                       style: TextStyle(fontSize: _screenSize.getHeightPerSize(4)),
                     ),
                   ),
                   SizedBox(
                     width: _screenSize.getWidthPerSize(80),
                     child: Text(
-                      "회원가입이 완료되었습니다!\n인증 메일이 성공적으로 전송되었습니다. 아래 이메일 주소로 전송된 링크를 클릭하여 인증을 완료해 주세요. ",
+                      '회원가입이 완료되었습니다!\n인증 메일이 성공적으로 전송되었습니다. 아래 이메일 주소로 전송된 링크를 클릭하여 인증을 완료해 주세요. ',
                       style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
                     ),
                   ),
@@ -93,7 +94,7 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
                           signInWithVerifyEmailAndPassword(email, password);
                         },
                         child: Text(
-                          "이메일 다시 보내기",
+                          '이메일 다시 보내기',
                           style: TextStyle(
                               fontSize: _screenSize.getHeightPerSize(2), color: Colors.black),
                         )),
@@ -119,7 +120,7 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
                 ),
                 onPressed: () => _checkEmail(context),
                 child: Text(
-                  "다음",
+                  '다음',
                   style: TextStyle(fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
                 ),
               ),

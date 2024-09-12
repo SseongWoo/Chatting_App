@@ -1,5 +1,4 @@
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
-import 'package:chattingapp/home/friend/request/friend_request_screen.dart';
 import 'package:chattingapp/home/home_screen.dart';
 import 'package:chattingapp/utils/color.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +9,7 @@ import '../../../utils/snackbar_message.dart';
 import 'category_data.dart';
 import 'category_widget.dart';
 
+// 카테고리 설정 화면
 class CategorySettingScreen extends StatefulWidget {
   final bool checkData;
 
@@ -43,10 +43,11 @@ class _CategorySettingScreenState extends State<CategorySettingScreen>
     super.dispose();
   }
 
+  // 스크린이 종료되거나 추가 버튼을 눌렀을때 실행되는 함수,
+  // 서버에 데이터 업데이트 후 홈 화면으로 이동
   void _popScope() async {
     EasyLoading.show(status: '로딩 중입니다...');
     if (categoryControlCheck || widget.checkData) {
-      print("_popScope 실행");
       await setCategory();
     }
     EasyLoading.dismiss();
@@ -61,7 +62,7 @@ class _CategorySettingScreenState extends State<CategorySettingScreen>
     screenSize = ScreenSize(MediaQuery.of(context).size);
     return PopScope(
       canPop: true,
-      onPopInvoked: (didPop) => _popScope(),
+      onPopInvoked: (didPop) => _popScope(), // 뒤로가기 버튼을 눌렀을때 실행
       child: Scaffold(
         appBar: AppBar(
           title: const Text("카테고리 설정"),
@@ -92,37 +93,39 @@ class _CategorySettingScreenState extends State<CategorySettingScreen>
                         }),
                   ),
                   Expanded(
-                      child: ElevatedButton(
-                          onPressed: () {
-                            nameChcek = categoryList.containsKey(controllerName.text);
-                            if (!nameChcek &&
-                                controllerName.text.isNotEmpty &&
-                                categorySequence.length < 11 &&
-                                controllerName.text.length > 1 &&
-                                controllerName.text.length <= 10) {
-                              addCategory(controllerName.text);
-                              snackBarMessage(context, "카테고리를 추가하였습니다.");
-                              Navigator.of(context).pushAndRemoveUntil(
-                                screenMovementZero(const CategorySettingScreen(
-                                  checkData: true,
-                                )),
-                                (Route<dynamic> route) => false,
-                              );
-                            } else if (categorySequence.length >= 11) {
-                              snackBarErrorMessage(context, "최대 10개의 카테고리만 추가할 수 있습니다.");
-                            } else if (nameChcek) {
-                              snackBarErrorMessage(context, "이미 존재하는 이름입니다.");
-                            } else if (controllerName.text.isEmpty) {
-                              snackBarErrorMessage(context, "입력값이 없습니다.");
-                            } else {
-                              snackBarErrorMessage(context, "2글자 이상 10글자 이하의 이름을 입력해주세요");
-                            }
-                          },
-                          child: Text(
-                            "추가",
-                            style: TextStyle(
-                                color: Colors.black, fontSize: screenSize.getHeightPerSize(1.5)),
-                          )))
+                    child: ElevatedButton(
+                      onPressed: () {
+                        nameChcek = categoryList.containsKey(controllerName.text);
+                        if (!nameChcek &&
+                            controllerName.text.isNotEmpty &&
+                            categorySequence.length < 11 &&
+                            controllerName.text.length > 1 &&
+                            controllerName.text.length <= 10) {
+                          addCategory(controllerName.text);
+                          snackBarMessage(context, "카테고리를 추가하였습니다.");
+                          Navigator.of(context).pushAndRemoveUntil(
+                            screenMovementZero(const CategorySettingScreen(
+                              checkData: true,
+                            )),
+                            (Route<dynamic> route) => false,
+                          );
+                        } else if (categorySequence.length >= 11) {
+                          snackBarErrorMessage(context, "최대 10개의 카테고리만 추가할 수 있습니다.");
+                        } else if (nameChcek) {
+                          snackBarErrorMessage(context, "이미 존재하는 이름입니다.");
+                        } else if (controllerName.text.isEmpty) {
+                          snackBarErrorMessage(context, "입력값이 없습니다.");
+                        } else {
+                          snackBarErrorMessage(context, "2글자 이상 10글자 이하의 이름을 입력해주세요");
+                        }
+                      },
+                      child: Text(
+                        "추가",
+                        style: TextStyle(
+                            color: Colors.black, fontSize: screenSize.getHeightPerSize(1.5)),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -143,19 +146,22 @@ class _CategorySettingScreenState extends State<CategorySettingScreen>
                       itemCount: categorySequence.length,
                       itemBuilder: (context, index) {
                         return Container(
-                            //decoration: BoxDecoration(shape: BoxShape.circle,color: mainColor),
-                            margin: EdgeInsets.fromLTRB(0, screenSize.getHeightPerSize(0.5), 0,
-                                screenSize.getHeightPerSize(0.5)),
-                            height: screenSize.getHeightPerSize(6),
-                            child: Center(
-                                child: Text(
+                          //decoration: BoxDecoration(shape: BoxShape.circle,color: mainColor),
+                          margin: EdgeInsets.fromLTRB(0, screenSize.getHeightPerSize(0.5), 0,
+                              screenSize.getHeightPerSize(0.5)),
+                          height: screenSize.getHeightPerSize(6),
+                          child: Center(
+                            child: Text(
                               (index + 1).toString(),
                               style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
-                            )));
+                            ),
+                          ),
+                        );
                       },
                     ),
                   ),
                   Expanded(
+                    // animated_reorderable_list 패키지, 애니메이션 리스트, 드래그로 아이템의 순서를 변경 가능
                     child: AnimatedReorderableListView(
                       controller: _scrollController,
                       padding: const EdgeInsets.fromLTRB(0, 5, 10, 10),
@@ -171,6 +177,7 @@ class _CategorySettingScreenState extends State<CategorySettingScreen>
                       exitTransition: [SlideInDown()],
                       insertDuration: const Duration(milliseconds: 300),
                       removeDuration: const Duration(milliseconds: 300),
+                      // 순서를 변경했을 때 실행
                       onReorder: (int oldIndex, int newIndex) {
                         setState(() {
                           if (newIndex > oldIndex && newIndex > categorySequence.length) {

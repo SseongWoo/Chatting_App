@@ -1,3 +1,4 @@
+// Map 데이터를 변환하는 함수
 Map<String, List<String>> convertMap(Map<String, dynamic> mapData) {
   return mapData.map((key, value) {
     return MapEntry(key, List<String>.from(value));

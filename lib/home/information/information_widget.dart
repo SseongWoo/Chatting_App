@@ -1,12 +1,12 @@
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
-
 import '../../utils/color.dart';
 import '../../utils/color_picker.dart';
 import '../../utils/shared_preferences.dart';
 import 'information_dialog.dart';
 
+// 설정 위젯중 사용자의 정보를 표시해주는 위젯
 Widget informationMyDataSubWidget(ScreenSize screenSize, String title, String content) {
   return SizedBox(
     width: screenSize.getWidthPerSize(30),
@@ -26,6 +26,7 @@ Widget informationMyDataSubWidget(ScreenSize screenSize, String title, String co
   );
 }
 
+// 설정 제목 위젯
 Widget informationTitleWidget(ScreenSize screenSize, String title) {
   return Container(
     margin: EdgeInsets.fromLTRB(screenSize.getHeightPerSize(3), screenSize.getHeightPerSize(0.5),
@@ -37,6 +38,7 @@ Widget informationTitleWidget(ScreenSize screenSize, String title) {
   );
 }
 
+// 설정 메뉴 위젯
 class InformationMenuWidget extends StatefulWidget {
   final String title;
   final String location;
@@ -98,6 +100,7 @@ class _InformationMenuWidgetState extends State<InformationMenuWidget> {
   }
 }
 
+// 설정 메뉴 위젯의 오른쪽에 색 표현을 나타낸 위젯
 class InformationColorMenuWidget extends StatefulWidget {
   final Function(String, Color) reflashColor;
   final ScreenSize screenSize;
@@ -182,6 +185,7 @@ class _InformationColorMenuWidgetState extends State<InformationColorMenuWidget>
   }
 }
 
+// 설정 메뉴 위젯의 오른쪽에 글자 크기를 나타낸 위젯
 class InformationSizeMenuWidget extends StatefulWidget {
   final Function(double) reflashSize;
   final ScreenSize screenSize;
@@ -254,6 +258,7 @@ class _InformationSizeMenuWidget extends State<InformationSizeMenuWidget> {
   }
 }
 
+// 채팅방 색, 글자 크기 설정 다이얼로그에서 미리보기 화면으로 채팅방을 보여주기 위한 위젯
 Container previewWidget(ScreenSize screenSize) {
   return Container(
     width: screenSize.getWidthPerSize(60),

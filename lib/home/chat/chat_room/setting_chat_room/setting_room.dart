@@ -15,6 +15,7 @@ import '../../chat_list_data.dart';
 import '../../create_chat/creat_chat_data.dart';
 import '../chat_room_data.dart';
 
+// 채팅방 개인 설정 화면
 class SettingRoom extends StatefulWidget {
   final ChatRoomSimpleData chatRoomSimpleData;
   const SettingRoom({super.key, required this.chatRoomSimpleData});
@@ -25,13 +26,12 @@ class SettingRoom extends StatefulWidget {
 
 class _SettingRoomState extends State<SettingRoom> {
   late ScreenSize screenSize;
-  final GlobalKey<FormState> _settingChatKey = GlobalKey<FormState>();
   final TextEditingController _controllerName = TextEditingController();
   late CroppedFile? _croppedProFile;
-  bool _getImageState = false;
   late ChatRoomSimpleData _chatRoomSimpleData;
   late ChatRoomData _chatRoomData;
   String _imageUrl = '';
+  bool _getImageState = false;
 
   @override
   void initState() {
@@ -43,6 +43,7 @@ class _SettingRoomState extends State<SettingRoom> {
     _getImageUrl();
   }
 
+  // 이미지 위젯을 사용자가 설정한 이미지가 있을경우 그 이미지로 생성, 아닐경우 채팅방 기본 이미지로 생성
   void _getImageUrl() {
     if (_chatRoomSimpleData.chatRoomCustomProfile.isNotEmpty) {
       _imageUrl = _chatRoomSimpleData.chatRoomCustomProfile;
@@ -51,6 +52,7 @@ class _SettingRoomState extends State<SettingRoom> {
     }
   }
 
+  // 이미지를 사용자 갤러기에서 가져와서 설정 후 등록하는 작업
   void _imagePicker(ImageSource imageSource) async {
     XFile? imageFile = await getImage(imageSource);
     if (imageFile != null) {
@@ -64,6 +66,7 @@ class _SettingRoomState extends State<SettingRoom> {
     }
   }
 
+  // 이름과 프로필 사진중 변경된 값이 있을경우 정보 업데이트 후 채팅방으로 되돌아가는 함수
   void _updateChatRoomCustomSetting() async {
     if (_controllerName.text == _chatRoomSimpleData.chatRoomCustomName &&
         _chatRoomSimpleData.chatRoomCustomProfile == _imageUrl) {
@@ -106,7 +109,6 @@ class _SettingRoomState extends State<SettingRoom> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /* 프로필 */
                 Text(
                   '채팅방 프로필',
                   style: TextStyle(
@@ -133,7 +135,31 @@ class _SettingRoomState extends State<SettingRoom> {
                                     File(_croppedProFile!.path),
                                   )
                                 : _imageUrl.isNotEmpty
-                                    ? Image.network(_imageUrl)
+                                    ? Image.network(
+                                        _imageUrl,
+                                        // 이미지 로딩
+                                        loadingBuilder: (BuildContext context, Widget child,
+                                            ImageChunkEvent? loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            return child; // 이미지 로드 완료
+                                          } else {
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value: loadingProgress.expectedTotalBytes != null
+                                                    ? loadingProgress.cumulativeBytesLoaded /
+                                                        loadingProgress.expectedTotalBytes!
+                                                    : null,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        errorBuilder: (BuildContext context, Object error,
+                                            StackTrace? stackTrace) {
+                                          return const Center(
+                                            child: Text('이미지 로딩 실패'),
+                                          );
+                                        },
+                                      )
                                     : Image.asset(
                                         'assets/images/blank_profile.png',
                                       ),
@@ -144,8 +170,8 @@ class _SettingRoomState extends State<SettingRoom> {
                             child: Container(
                                 height: screenSize.getHeightPerSize(4),
                                 width: screenSize.getHeightPerSize(4),
-                                decoration:
-                                    BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                                decoration: const BoxDecoration(
+                                    color: Colors.white, shape: BoxShape.circle),
                                 child: const Icon(
                                   Icons.photo_camera,
                                 )),
@@ -158,6 +184,7 @@ class _SettingRoomState extends State<SettingRoom> {
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
+                                    // 클릭시 화면에 보여지고 있는 이미지 제거
                                     _croppedProFile = null;
                                     _getImageState = false;
                                   });
@@ -182,9 +209,6 @@ class _SettingRoomState extends State<SettingRoom> {
                 SizedBox(
                   height: screenSize.getHeightPerSize(2),
                 ),
-                /* 프로필 */
-
-                /* 이름 */
                 Text(
                   '채팅방 이름',
                   style: TextStyle(
@@ -228,8 +252,6 @@ class _SettingRoomState extends State<SettingRoom> {
                 SizedBox(
                   height: screenSize.getHeightPerSize(2),
                 ),
-
-                /* 완료 버튼 */
                 SizedBox(
                   width: screenSize.getWidthPerSize(90),
                   height: screenSize.getHeightPerSize(6),
@@ -252,7 +274,6 @@ class _SettingRoomState extends State<SettingRoom> {
                 SizedBox(
                   height: screenSize.getHeightPerSize(3),
                 ),
-                /* 완료 버튼 */
               ],
             ),
           ),

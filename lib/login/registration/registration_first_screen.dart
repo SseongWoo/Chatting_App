@@ -2,11 +2,11 @@ import 'package:chattingapp/login/registration/registration_dialog.dart';
 import 'package:chattingapp/login/registration/registration_second_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../utils/screen_size.dart';
 import 'authentication.dart';
 import 'dart:io';
 
+// 계정 생성 첫번째 화면
 class RegistrationFirstScreen extends StatefulWidget {
   const RegistrationFirstScreen({super.key});
 
@@ -31,12 +31,13 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
     super.dispose();
   }
 
-  void checkAccount() async {
+  // 생성할 이메일이 이상이 없을 경우 해당 이메일에 이메일을 발송후 다음화면으로 넘어가는 함수
+  void _checkAccount() async {
     EasyLoading.show();
     if (_registrationFirstFormKey.currentState!.validate()) {
       String message = await createUserWithEmailAndPassword(_controllerID.text, _controllerPW.text);
       if (mounted) {
-        if (message == "") {
+        if (message == '') {
           EasyLoading.dismiss();
           Navigator.push(
             context,
@@ -57,7 +58,6 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
   @override
   Widget build(BuildContext context) {
     _screenSize = ScreenSize(MediaQuery.of(context).size);
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close)),
@@ -77,7 +77,7 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                     SizedBox(
                       width: _screenSize.getWidthPerSize(80),
                       child: Text(
-                        "회원정보를\n입력해주세요",
+                        '회원정보를\n입력해주세요',
                         style: TextStyle(fontSize: _screenSize.getHeightPerSize(4)),
                       ),
                     ),
@@ -97,8 +97,9 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                         onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                         validator: (String? value) {
                           if (value?.isEmpty ?? true) return '이메일을 입력해 주세요';
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value!))
-                            return "이메일 형식이 아닙니다.";
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value!)) {
+                            return '이메일 형식이 아닙니다.';
+                          }
                           return null;
                         },
                       ),
@@ -112,13 +113,13 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                         decoration: const InputDecoration(
                             labelText: '비밀번호',
                             border: OutlineInputBorder(),
-                            hintText: "8글자 이상의 비밀번호를 만들어 주세요"),
+                            hintText: '8글자 이상의 비밀번호를 만들어 주세요'),
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.next,
                         onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                         validator: (String? value) {
-                          if (value?.isEmpty ?? true) return "비밀번호를 입력해 주세요";
-                          if (value!.length < 7) return "비밀번호를 8글자 이상 입력해주세요";
+                          if (value?.isEmpty ?? true) return '비밀번호를 입력해 주세요';
+                          if (value!.length < 7) return '비밀번호를 8글자 이상 입력해주세요';
                           return null;
                         },
                       ),
@@ -138,7 +139,7 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                         onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                         validator: (String? value) {
                           if (value != _controllerPW.text) {
-                            return "비밀번호가 동일하지 않습니다.";
+                            return '비밀번호가 동일하지 않습니다.';
                           }
                           return null;
                         },
@@ -158,23 +159,24 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                 height: _screenSize.getHeightPerSize(8),
                 width: _screenSize.getWidthPerSize(100),
                 child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0),
-                        ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0),
                       ),
                     ),
-                    onPressed: () {
-                      checkAccount();
-                    },
-                    child: Text(
-                      "다음",
-                      style:
-                          TextStyle(fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
-                    )),
+                  ),
+                  onPressed: () {
+                    _checkAccount();
+                  },
+                  child: Text(
+                    '다음',
+                    style:
+                        TextStyle(fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
+                  ),
+                ),
               ),
             )
           ],

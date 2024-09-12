@@ -1,8 +1,7 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:chattingapp/home/chat/chat_list_data.dart';
+import 'package:chattingapp/home/chat/chat_room/chat_room_screen.dart';
 import 'package:chattingapp/home/friend/friend_data.dart';
-import 'package:chattingapp/home/home_screen.dart';
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:chattingapp/utils/snackbar_message.dart';
@@ -12,10 +11,10 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:search_choices/search_choices.dart';
-import 'package:uuid/uuid.dart';
 import '../../../utils/color.dart';
+import '../../../utils/get_people_data.dart';
 import '../../../utils/image_picker.dart';
-import '../../../utils/screen_movement.dart';
+import '../chat_room/chat_room_data.dart';
 import 'creat_chat_data.dart';
 
 class CreateChat extends StatefulWidget {
@@ -26,16 +25,16 @@ class CreateChat extends StatefulWidget {
 }
 
 class _CreateChatState extends State<CreateChat> {
-  final TextEditingController _controllerName = TextEditingController();
-  final TextEditingController _controllerCode = TextEditingController();
-  final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerExplain = TextEditingController();
+  final TextEditingController _controllerName = TextEditingController(); //이름 텍스트필드 컨트롤러
+  final TextEditingController _controllerCode = TextEditingController(); //uid 텍스트필드 컨트롤러
+  final TextEditingController _controllerPassword = TextEditingController(); //암호 텍스트필드 컨트롤러
+  final TextEditingController _controllerExplain = TextEditingController(); //설명 텍스트필드 컨트롤러
   final GlobalKey<FormState> _creatChatKey = GlobalKey<FormState>();
   late ScreenSize _screenSize;
+  late CroppedFile? _croppedProFile;
   bool _isChecked = false;
   bool _error = false;
-  List<int> selectValueList = [];
-  late CroppedFile? _croppedProFile;
+  List<int> selectValueList = []; //드롭다운 메뉴중 선택한 아이템 리스트
   bool _getImageState = false;
 
   @override
@@ -55,10 +54,13 @@ class _CreateChatState extends State<CreateChat> {
     super.dispose();
   }
 
+  // 채팅방 프로필 사진을 등록하기 위해 이미지를 가져와서 수정하는 함수
   void _imagePicker(ImageSource imageSource) async {
-    XFile? imageFile = await getImage(imageSource);
+    XFile? imageFile = await getImage(imageSource); // 이미지를 카메라나 갤러리에서 가져오는 기능
     if (imageFile != null) {
       _croppedProFile = await cropImage(imageFile);
+
+      // 이미지를 가져와서 _croppedProFile변수가 비어있지 않을 경우 화면을 새로고침해서 이미지를 화면에 띄움
       if (_croppedProFile != null) {
         setState(() {
           _getImageState = true;
@@ -67,17 +69,9 @@ class _CreateChatState extends State<CreateChat> {
     }
   }
 
-  String createRandomCode() {
-    Random random = Random();
-    var uuid = const Uuid();
-    String fullUuid = uuid.v4();
-    int rand = random.nextInt(fullUuid.length - 9);
-    String shortUuid = fullUuid.substring(rand, rand + 8); // 첫 8문자 사용
-
-    return shortUuid;
-  }
-
-  void startCreatChatRoom() async {
+  // 채팅방을 만들기 위한 정보들을 다 입력하고 완료 버튼을 눌렀을경우 실행되는 함수
+  // 채팅방 데이터를 서버에 등록후 해당 채팅방으로 이동
+  void _startCreatChatRoom() async {
     String profileUrl = '';
     EasyLoading.show();
     List<String> invitationList = [];
@@ -96,7 +90,7 @@ class _CreateChatState extends State<CreateChat> {
         _controllerCode.text,
         _controllerName.text,
         profileUrl,
-        DateFormat("yyyy-MM-dd").format(DateTime.now()),
+        DateFormat('yyyy-MM-dd').format(DateTime.now()),
         myData.myUID,
         _controllerPassword.text,
         _controllerExplain.text,
@@ -104,10 +98,20 @@ class _CreateChatState extends State<CreateChat> {
         invitationList);
 
     await createChatRoom(chatRoomData);
+    if (_isChecked) {
+      await setChatPublicData(chatRoomData);
+    }
+    await getChatData(chatRoomData.chatRoomUid);
+    List<ChatPeopleClass> chatPeople = await getPeopleData(chatRoomData.chatRoomUid);
     EasyLoading.dismiss();
-    Navigator.of(context).pushAndRemoveUntil(
-      screenMovementLeftToRight(const HomeScreen()),
-      (Route<dynamic> route) => false,
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatRoomScreen(
+          chatRoomSimpleData: ChatRoomSimpleData(chatRoomData.chatRoomUid, '', ''),
+          chatPeopleList: chatPeople,
+        ),
+      ),
     );
   }
 
@@ -127,7 +131,6 @@ class _CreateChatState extends State<CreateChat> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /* 프로필 */
                   Text(
                     '채팅방 프로필',
                     style: TextStyle(
@@ -201,9 +204,6 @@ class _CreateChatState extends State<CreateChat> {
                   SizedBox(
                     height: _screenSize.getHeightPerSize(2),
                   ),
-                  /* 프로필 */
-
-                  /* 이름 */
                   Text(
                     '채팅방 이름(필수)',
                     style: TextStyle(
@@ -269,9 +269,6 @@ class _CreateChatState extends State<CreateChat> {
                   SizedBox(
                     height: _screenSize.getHeightPerSize(1),
                   ),
-                  /* 이름 */
-
-                  /* 코드 */
                   TextFormField(
                     decoration: InputDecoration(
                       hintText: '채팅방 코드를 설정해주세요',
@@ -304,9 +301,6 @@ class _CreateChatState extends State<CreateChat> {
                   SizedBox(
                     height: _screenSize.getHeightPerSize(2),
                   ),
-                  /* 코드 */
-
-                  /* 공개 설정 */
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -342,9 +336,6 @@ class _CreateChatState extends State<CreateChat> {
                   SizedBox(
                     height: _screenSize.getHeightPerSize(2),
                   ),
-                  /* 공개 설정 */
-
-                  /* 암호 */
                   Text(
                     '채팅방 암호',
                     style: TextStyle(
@@ -382,9 +373,6 @@ class _CreateChatState extends State<CreateChat> {
                   SizedBox(
                     height: _screenSize.getHeightPerSize(2),
                   ),
-                  /* 암호 */
-
-                  /* 설명 */
                   Text(
                     '채팅방 설명',
                     style: TextStyle(
@@ -421,17 +409,11 @@ class _CreateChatState extends State<CreateChat> {
                   SizedBox(
                     height: _screenSize.getHeightPerSize(2),
                   ),
-                  /* 설명 */
-
-                  /* 유저 목록 */
                   Text(
                     '채팅방 유저 목록',
                     style: TextStyle(
                         fontSize: _screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
                   ),
-                  // SizedBox(
-                  //   height: screenSize.getHeightPerSize(2),
-                  // ),
                   SearchChoices.multiple(
                     items: friendListSequence.map((String value) {
                       return DropdownMenuItem<String>(
@@ -452,26 +434,22 @@ class _CreateChatState extends State<CreateChat> {
                     },
                     closeButton: (selectedItems) {
                       return (selectedItems.isNotEmpty
-                          ? "${selectedItems.length == 1 ? '"${friendListSequence[selectedItems.first]}"' : '${selectedItems.length}명'} 저장"
-                          : "선택하지 않고 저장");
+                          ? '${selectedItems.length == 1 ? '"${friendListSequence[selectedItems.first]}"' : '${selectedItems.length}명'} 저장'
+                          : '선택하지 않고 저장');
                     },
                     isExpanded: true,
                   ),
                   Visibility(
                     visible: _error,
                     child: Text(
-                      '초대할 친구들을 한명이상 선택해주세요',
+                      '현재 채팅방에 추가할 수 있는 인원 수를 초과했습니다. 최대 100명까지 초대할 수 있습니다.',
                       style:
                           TextStyle(fontSize: _screenSize.getHeightPerSize(1.4), color: errorColor),
                     ),
                   ),
-
                   SizedBox(
                     height: _screenSize.getHeightPerSize(2),
                   ),
-                  /* 유저 목록 */
-
-                  /* 완료 버튼 */
                   SizedBox(
                     width: _screenSize.getWidthPerSize(90),
                     height: _screenSize.getHeightPerSize(6),
@@ -483,14 +461,15 @@ class _CreateChatState extends State<CreateChat> {
                       ),
                       onPressed: () async {
                         EasyLoading.show();
-                        if (_creatChatKey.currentState!.validate() && selectValueList.isNotEmpty) {
+                        if (_creatChatKey.currentState!.validate() &&
+                            selectValueList.length <= 100) {
                           bool checkRoomCode = await checkRoomUid(_controllerName.text);
                           if (!checkRoomCode) {
-                            startCreatChatRoom();
+                            _startCreatChatRoom();
                           } else {
                             snackBarErrorMessage(context, '이미 사용 중인 코드입니다. 다른 코드를 입력해 주세요');
                           }
-                        } else if (selectValueList.isEmpty) {
+                        } else if (selectValueList.length > 100) {
                           setState(() {
                             _error = true;
                           });
@@ -498,7 +477,7 @@ class _CreateChatState extends State<CreateChat> {
                         EasyLoading.dismiss();
                       },
                       child: Text(
-                        "완료",
+                        '완료',
                         style: TextStyle(
                             fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
                       ),
@@ -507,7 +486,6 @@ class _CreateChatState extends State<CreateChat> {
                   SizedBox(
                     height: _screenSize.getHeightPerSize(3),
                   ),
-                  /* 완료 버튼 */
                 ],
               ),
             ),

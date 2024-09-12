@@ -49,5 +49,12 @@
     <string>갤러리를 사용하기 위한 권한</string>
     <key>NSCameraUsageDescription</key>
     <string>카메라를 사용하기 위한 권한</string>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>sms</string>
+      <string>tel</string>
+      <string>외부 브라우저를 사용하기 위한 권한</string>
+    </array>
+    
 </dict>
 </plist>

@@ -21,9 +21,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
   final FocusNode _focusNodeNickName = FocusNode();
   late ScreenSize _screenSize;
   final _registrationThirdFormKey = GlobalKey<FormState>();
-
-  // 카메라 또는 갤러리의 이미지를 저장할 변수
-  CroppedFile? _croppedFile;
+  CroppedFile? _croppedFile; // 카메라 또는 갤러리의 이미지를 저장할 변수
 
   @override
   void dispose() {
@@ -31,6 +29,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
     super.dispose();
   }
 
+  // 사용자의 프로필사진을 등록하기 위해 이미지를 가져와서 수정해 저장하는 함수
   void _imagePicker(ImageSource imageSource) async {
     XFile? imageFile = await getImage(imageSource);
     if (imageFile != null) {
@@ -43,7 +42,8 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
     }
   }
 
-  void saveData(BuildContext context) async {
+  // 저장된 이미지를 외부 DB와 저장소에 저장하는 함수
+  void _saveData(BuildContext context) async {
     EasyLoading.show();
     await saveUserImage(_croppedFile, _controllerNickName.text, context);
     await getMyData();
@@ -71,14 +71,14 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                   SizedBox(
                     width: _screenSize.getWidthPerSize(80),
                     child: Text(
-                      "계정 설정\n",
+                      '계정 설정\n',
                       style: TextStyle(fontSize: _screenSize.getHeightPerSize(4)),
                     ),
                   ),
                   SizedBox(
                     width: _screenSize.getWidthPerSize(80),
                     child: Text(
-                      "마지막 단계입니다!\n사용할 사용자의 닉네임과 프로필 사진을 등록해주세요. 이 정보들은 나중에 변경할 수 있습니다.",
+                      '마지막 단계입니다!\n사용할 사용자의 닉네임과 프로필 사진을 등록해주세요. 이 정보들은 나중에 변경할 수 있습니다.',
                       style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
                     ),
                   ),
@@ -193,11 +193,11 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                 ),
                 onPressed: () {
                   if (_registrationThirdFormKey.currentState!.validate()) {
-                    saveData(context);
+                    _saveData(context);
                   }
                 },
                 child: Text(
-                  "완료",
+                  '완료',
                   style: TextStyle(fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
                 ),
               ),

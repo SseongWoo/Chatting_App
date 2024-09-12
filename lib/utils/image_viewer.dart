@@ -2,6 +2,7 @@ import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
+// 전달받은 이미지의 url을 사용해서 화면에 이미지를 띄워주는 화면
 class ImageViewer extends StatefulWidget {
   final String imageURL;
   const ImageViewer({super.key, required this.imageURL});
@@ -19,7 +20,7 @@ class _ImageViewerState extends State<ImageViewer> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-      PhotoView(imageProvider: NetworkImage(widget.imageURL)),
+          PhotoView(imageProvider: NetworkImage(widget.imageURL)),
           Positioned(
             top: screenSize.getHeightPerSize(4),
             left: screenSize.getWidthPerSize(2),

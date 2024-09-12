@@ -2,9 +2,9 @@ import 'package:chattingapp/home/chat/chat_room/setting_chat_room/setting_room_d
 import 'package:chattingapp/utils/data_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-
 import '../../../home_screen.dart';
 
+// 채팅방 삭제할때 생성되는 다이얼로그
 void deleteChatRoomDialog(BuildContext getContext, String roomUid) {
   showDialog(
     context: getContext,

@@ -3,10 +3,7 @@ import 'package:chattingapp/home/chat/chat_list_data.dart';
 import 'package:chattingapp/home/chat/chat_room/add_person/add_person_screen.dart';
 import 'package:chattingapp/home/chat/chat_room/setting_chat_room/setting_room.dart';
 import 'package:chattingapp/home/chat/chat_room/setting_chat_room/setting_room_manager.dart';
-import 'package:chattingapp/home/chat/chat_room/setting_chat_room/setting_room_widget.dart';
-import 'package:chattingapp/home/friend/request/friend_request_screen.dart';
 import 'package:chattingapp/home/home_screen.dart';
-import 'package:chattingapp/utils/data_refresh.dart';
 import 'package:chattingapp/utils/image_viewer.dart';
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/shared_preferences.dart';
@@ -25,8 +22,10 @@ import '../../../utils/screen_movement.dart';
 import '../../../utils/screen_size.dart';
 import '../create_chat/creat_chat_data.dart';
 import 'chat_room_data.dart';
+import 'chat_room_dialog.dart';
 import 'chat_room_widget.dart';
 
+// 채팅방 화면
 class ChatRoomScreen extends StatefulWidget {
   final ChatRoomSimpleData chatRoomSimpleData;
   final List<ChatPeopleClass> chatPeopleList;
@@ -39,39 +38,36 @@ class ChatRoomScreen extends StatefulWidget {
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
   late ScreenSize _screenSize;
-  late CollectionReference _collectionRef;
+  late CollectionReference _collectionRef; // 실시간으로 데이터를 파이어베이스에서 받기 위한 변수
   final TextEditingController _textEditingController = TextEditingController();
-  bool _selected = false;
+  final _scrollController = ScrollController();
   late ChatRoomSimpleData _chatRoomSimpleData;
   late ChatRoomData _chatRoomData;
-  final _scrollController = ScrollController();
+  late MessageDataClass _messageDataClass;
+  late StreamSubscription _subscription;
+  int _chatLength = 50;
+  bool _selected = false;
   bool _discontinuedText = false;
   bool _keyBoardSelelted = false;
   bool _firstMessagebool = false;
-
-  late MessageDataClass _messageDataClass;
-  String _messageBefore = "";
-  String _message = "";
-  String _messageAfter = "";
-
-  String _uidBefore = "";
-  String _uid = "";
-  String _uidAfter = "";
-
-  String _timeBefore = "";
-  String _time = "";
-  String _timeAfter = "";
-
-  late StreamSubscription _subscription;
-
   List<ChatPeopleClass> _chatPeopleList = [];
-
   bool _checkManager = false;
   bool _checkGroup = false;
-
   String _managerName = '';
   String _managerUid = '';
 
+  // 메세지 프로필 사진과 시간을 연속적으로 나타내지 않기 위한 변수들
+  String _messageBefore = '';
+  String _message = '';
+  String _messageAfter = '';
+  String _uidBefore = '';
+  String _uid = '';
+  String _uidAfter = '';
+  String _timeBefore = '';
+  String _time = '';
+  String _timeAfter = '';
+
+  // ManagerDelegationDialog에서 setState를 사용하기 위한 함수
   void _refresh(String delegationUid) {
     setState(() {
       chatRoomDataList[_chatRoomData.chatRoomUid]?.chatRoomManager = delegationUid;
@@ -79,9 +75,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     });
   }
 
-  void refreshMember() async {
-    setState(() async {
-      _chatPeopleList = await getPeopleData(_chatRoomSimpleData.chatRoomUid);
+  // 맴버가 변경되었을때 화면을 새로고침하기 위한 함수
+  void _refreshMember() async {
+    List<ChatPeopleClass> newchatPeopleList = await getPeopleData(_chatRoomSimpleData.chatRoomUid);
+    setState(() {
+      _chatPeopleList = newchatPeopleList;
     });
   }
 
@@ -92,6 +90,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     _chatRoomSimpleData = widget.chatRoomSimpleData;
     _chatPeopleList = widget.chatPeopleList;
     _scrollController.addListener(_scrollListener);
+
+    // DB의 특정 문서의 변경을 감지하기 위한 경로를 가지고 있는 변수
     _collectionRef = FirebaseFirestore.instance
         .collection('chat')
         .doc(_chatRoomSimpleData.chatRoomUid)
@@ -101,16 +101,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     _chatSystemCheck();
     _getManager();
 
+    // 문서 변경이 감지되었을시 새로운 메세지를 추가하거나 새로운 맴버를 추가하는 기능
     _subscription = _collectionRef
         .orderBy('timestamp', descending: true)
-        .limit(50)
+        .limit(_chatLength)
         .snapshots()
         .listen((snapshot) {
       for (var change in snapshot.docChanges) {
         if (change.type == DocumentChangeType.added &&
             !messageMapData.containsKey(change.doc['messageid'])) {
           if (change.doc['messagetype'] == 'system') {
-            refreshMember();
+            _refreshMember();
           }
           setState(() {
             messageList.insert(
@@ -137,6 +138,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     super.dispose();
   }
 
+  // 사용자가 해당 채팅방의 매니저인지 확인과 해당 채팅방이 그룹채팅방인지 1대1채팅방인지 구분하기 위한 함수
   void _chatSystemCheck() {
     if (_chatRoomSimpleData.chatRoomUid.length <= 8 &&
         chatRoomDataList[_chatRoomSimpleData.chatRoomUid]?.chatRoomManager == myData.myUID) {
@@ -149,8 +151,15 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     }
   }
 
-  Future<void> onFieldSubmitted() async {
-    await setChatData(_chatRoomSimpleData.chatRoomUid, _textEditingController.text, "text");
+  // 메세지 보내기 버튼을 눌렀을때 실행되는 함수이며
+  // 메세지를 DB에 저장후 화면 새로고침과 텍스트필드의 데이터를 없에고 키보드를 사라지게 만드는 함수
+  Future<void> _onFieldSubmitted() async {
+    DateTime dateTime = DateTime.now();
+    await setChatData(
+        _chatRoomSimpleData.chatRoomUid, _textEditingController.text, "text", dateTime);
+    await setChatRealTimeData(_chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid,
+        _textEditingController.text, dateTime);
+
     setState(() {});
     // 스크롤 위치를 맨 아래로 이동 시킴
     _scrollController.animateTo(
@@ -161,13 +170,22 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     _textEditingController.text = '';
   }
 
-  void _scrollListener() {
-    if (_scrollController.position.atEdge && _scrollController.position.pixels != 0) {
-      print('맨 위에 도달했습니다.');
-      // 여기에 특정 기능을 추가하세요.
+  // 사용자가 채팅을 맨 위로 올렸을때 그것을 감지해서 실행하는 함수
+  // 최초에 50개만 출력되는 메세지를 50개씩 더 추가해주는 기능
+  void _scrollListener() async {
+    if (_scrollController.position.atEdge &&
+        _scrollController.position.pixels != 0 &&
+        messageList.length >= _chatLength) {
+      EasyLoading.show();
+      await getChatDataAfter(_chatRoomSimpleData.chatRoomUid);
+      setState(() {
+        _chatLength += 50;
+      });
+      EasyLoading.dismiss();
     }
   }
 
+  // 채팅방을 나갈때 조건을 확인하는 함수 조건이 맞을시 leaveChatRoomDialog생성
   void leaveRoom() {
     if (_chatRoomData.chatRoomManager != myData.myUID) {
       leaveChatRoomDialog(context, _chatRoomData.chatRoomUid);
@@ -178,49 +196,59 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     }
   }
 
+  // 이미지와 비디오를 업로드 하기 위한 함수
   void uploadMedia(ImageSource imageSource) async {
     XFile? imageFile;
     CroppedFile? croppedFile;
     String imgURL;
-    imageFile = await getVideo(imageSource); // getImage 함수 비동기 호출
+    DateTime dateTime = DateTime.now();
+    imageFile = await getVideo(imageSource);
     bool isImageFile =
         imageFile != null && (imageFile.path.endsWith('.jpg') || imageFile.path.endsWith('.png'));
     if (isImageFile) {
       croppedFile = await cropImage(imageFile);
       imgURL = await uploadChatImage(croppedFile, _chatRoomSimpleData.chatRoomUid);
       if (imgURL.isNotEmpty) {
-        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, "image");
+        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, "image", dateTime);
+        await setChatRealTimeData(
+            _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '이미지', dateTime);
       }
     } else {
       imgURL = await uploadChatVideo(imageFile!, _chatRoomSimpleData.chatRoomUid);
       if (imgURL.isNotEmpty) {
-        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, "video");
+        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, "video", dateTime);
+        await setChatRealTimeData(
+            _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '비디오', dateTime);
       }
     }
     setState(() {});
   }
 
-  // 이미지를 채팅에 업로드 하기 위한 함수
+  // 여러 이미지를 채팅에 업로드 하기 위한 함수
   void uploadMultipleMedia() async {
     List<XFile>? mediaFile;
     String imgURL;
+    DateTime dateTime = DateTime.now();
 
     mediaFile = await getMultipleMedia(); // getImage 함수 비동기 호출
 
     for (var file in mediaFile!) {
       imgURL = await uploadChatMultiImage(file, _chatRoomSimpleData.chatRoomUid);
       if (imgURL.isNotEmpty) {
-        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'image');
+        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'image', dateTime);
+        await setChatRealTimeData(
+            _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '이미지', dateTime);
       }
     }
     setState(() {});
   }
 
-  // 이미지를 채팅에 업로드 하기 위한 함수
+  // 여러 이미지를 채팅에 업로드 하기 위한 함수
   void uploadMultipleMediaV2() async {
     List<XFile>? mediaFile;
     String imgURL;
     bool isImageFile;
+    DateTime dateTime = DateTime.now();
 
     mediaFile = await getMultipleMediaV2(); // getImage 함수 비동기 호출
 
@@ -230,18 +258,23 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       if (isImageFile) {
         imgURL = await uploadChatMultiImageV2(file, _chatRoomSimpleData.chatRoomUid, 'image');
         if (imgURL.isNotEmpty) {
-          await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'image');
+          await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'image', dateTime);
+          await setChatRealTimeData(
+              _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '이미지', dateTime);
         }
       } else {
         imgURL = await uploadChatMultiImageV2(file, _chatRoomSimpleData.chatRoomUid, 'video');
         if (imgURL.isNotEmpty) {
-          await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'video');
+          await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'video', dateTime);
+          await setChatRealTimeData(
+              _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '비디오', dateTime);
         }
       }
     }
     setState(() {});
   }
 
+  // 해당 채팅방의 매니저의 데이터를 가져오기 위한 함수
   void _getManager() {
     for (var item in _chatPeopleList) {
       if (_chatRoomData.chatRoomManager == item.uid) {
@@ -278,10 +311,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                   onTap: () {
                     if (_chatRoomSimpleData.chatRoomCustomProfile.isNotEmpty) {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ImageViewer(
-                                  imageURL: _chatRoomSimpleData.chatRoomCustomProfile)));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ImageViewer(imageURL: _chatRoomSimpleData.chatRoomCustomProfile),
+                        ),
+                      );
                     }
                   },
                   child: CircleAvatar(
@@ -302,10 +337,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 onTap: () {
                   if (_chatRoomData.chatRoomProfile.isNotEmpty) {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ImageViewer(imageURL: _chatRoomData.chatRoomProfile)));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ImageViewer(imageURL: _chatRoomData.chatRoomProfile),
+                      ),
+                    );
                   }
                 },
                 child: CircleAvatar(
@@ -343,17 +379,19 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                   child: Visibility(
                     visible: _checkGroup,
                     child: IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddPersonScreen(
-                                      chatRoomSimpleData: _chatRoomSimpleData,
-                                      chatPeopleList: _chatPeopleList,
-                                    )),
-                          );
-                        },
-                        icon: const Icon(Icons.add)),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddPersonScreen(
+                              chatRoomSimpleData: _chatRoomSimpleData,
+                              chatPeopleList: _chatPeopleList,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.add),
+                    ),
                   ),
                 )
               ],
@@ -363,7 +401,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 height: _screenSize.getHeightPerSize(6) * _chatPeopleList.length,
                 margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 decoration: const BoxDecoration(
-                    border: Border(top: BorderSide(width: 0.5), bottom: BorderSide(width: 0.5))),
+                  border: Border(
+                    top: BorderSide(width: 0.5),
+                    bottom: BorderSide(width: 0.5),
+                  ),
+                ),
                 child: ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   padding: EdgeInsets.zero,
@@ -376,7 +418,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                     } else {
                       checkManager = false;
                     }
-                    String? name = _chatPeopleList[index].name;
+                    String name = _chatPeopleList[index].name;
                     String proFile = _chatPeopleList[index].profile;
 
                     return SizedBox(
@@ -396,7 +438,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                     Icons.star,
                                     color: Colors.yellow,
                                   )
-                                : Text('')
+                                : const Text('')
                           ],
                         ),
                         onTap: () {
@@ -404,7 +446,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                               _chatPeopleList[index].name, _chatPeopleList[index].profile);
                         },
                         onLongPress: () {
-                          //내가 이 방의 매니저일경우, 단체채팅방일경우에만 실행
+                          //내가 이 방의 매니저일경우 혹은 단체채팅방일 경우에만 실행
                           if (_chatRoomData.chatRoomUid.length <= 8 &&
                               _managerUid == myData.myUID) {
                             showDialog(
@@ -425,33 +467,36 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 ),
               ),
             ),
-            //j6OwaXM0iuSqFJubNrqt26Mezs32
-            //xoIlnIxqaPeYlDM9Os2tDbtlb933
+            // 해당 채팅방의 매니저일경우에만 나타나는 리스트 타일
             Visibility(
               visible: _checkManager,
               child: ListTile(
-                leading: Icon(Icons.settings),
+                leading: const Icon(Icons.settings),
                 title: const Text('채팅방 설정 (매니저 전용)'),
                 onTap: () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SettingRoomManager(
-                                chatRoomSimpleData: _chatRoomSimpleData,
-                              )));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SettingRoomManager(
+                        chatRoomSimpleData: _chatRoomSimpleData,
+                      ),
+                    ),
+                  );
                 },
               ),
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('채팅방 설정'),
+              leading: const Icon(Icons.settings),
+              title: const Text('채팅방 설정'),
               onTap: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SettingRoom(
-                              chatRoomSimpleData: _chatRoomSimpleData,
-                            )));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingRoom(
+                      chatRoomSimpleData: _chatRoomSimpleData,
+                    ),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -486,12 +531,15 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         controller: _scrollController,
                         itemCount: messageList.length,
                         itemBuilder: (context, index) {
+                          // 제일 첫번째 메세지가 아닐경우 전에 사용한 메세지 데이터를 Before데이터에 넣는 작업
                           if (index != 0) {
                             _messageBefore = _message;
                             _uidBefore = _uid;
                             _timeBefore = _time;
                           }
 
+                          // 첫번째 메세지이거나 제일 마지막 메세지일경우 messageList의 index위치에 있는 데이터를 가져오는 작업
+                          // 둘다 아닐경우 After데이터들을 현재 메세지 데이터에 넣는 작업
                           if (index == 0 || index == messageList.length - 1) {
                             _messageDataClass = messageList[index];
                             _message = _messageDataClass.message;
@@ -503,6 +551,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                             _time = _timeAfter;
                           }
 
+                          // 마지막 메세지가 아닐경우 messageList에 index + 1 위치의 메세지 데이터를 가져오는 작업
+                          // 가져온 데이터를 After데이터에 넣는 작업
                           if (index != messageList.length - 1) {
                             _messageDataClass = messageList[index + 1];
                             _messageAfter = _messageDataClass.message;
@@ -526,12 +576,15 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                             _firstMessagebool = true;
                           }
 
+                          // 구별한 데이터를 메세지 위젯에 등록
                           return messageWidget(context, _screenSize, messageList[index],
                               _discontinuedText, _firstMessagebool);
                         },
+                        // 아이템 간의 간격 조절
                         separatorBuilder: (context, index) {
                           return SizedBox(
-                              height: _screenSize.getHeightPerSize(0.5)); // 아이템 간의 간격 조절
+                            height: _screenSize.getHeightPerSize(0.5),
+                          );
                         },
                       );
                     }),
@@ -572,7 +625,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                     controller: _textEditingController,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
-                      //contentPadding: EdgeInsets.symmetric(horizontal: 20.0), // 좌우 여백 설정
                     ),
                     onTapOutside: (event) {
                       _keyBoardSelelted = false;
@@ -587,24 +639,26 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 SizedBox(
                   width: _screenSize.getWidthPerSize(10),
                   child: IconButton(
-                      style: IconButton.styleFrom(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
+                    style: IconButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
                       ),
-                      onPressed: () async {
-                        if (_textEditingController.text.isNotEmpty) {
-                          onFieldSubmitted();
-                        }
-                      },
-                      icon: Icon(
-                        Icons.send,
-                        color: mainColor,
-                      )),
+                    ),
+                    onPressed: () async {
+                      if (_textEditingController.text.isNotEmpty) {
+                        _onFieldSubmitted();
+                      }
+                    },
+                    icon: Icon(
+                      Icons.send,
+                      color: mainColor,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
+          // 사진이나 동영상등 각종 기능이 있는 컨테이너이며 나타날때 사라질때 애니메이션효과를 생성
           AnimatedContainer(
             duration: const Duration(milliseconds: 50),
             height: _selected ? _screenSize.getHeightPerSize(8) : 0,
@@ -687,6 +741,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               ),
             ),
           ),
+          // 사용하는 기기가 ios를 사용중이면 ui 맨 아래쪽에 여백을 생성하여 하단이 잘리지 않게 하는 작업
           Visibility(
             visible: !(getPlatform() != "IOS" || _keyBoardSelelted),
             child: Container(

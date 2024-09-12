@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// 화면을 이동할때 커스텀 애니메이션 효과를 생성해는 기능
 Route screenMovementLeftToRight(Widget nextPage) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => nextPage,
@@ -18,6 +19,7 @@ Route screenMovementLeftToRight(Widget nextPage) {
     },
   );
 }
+
 Route screenMovementZero(Widget nextPage) {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => nextPage,

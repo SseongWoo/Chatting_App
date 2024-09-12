@@ -8,6 +8,7 @@ import '../../../utils/image_viewer.dart';
 import '../../../utils/screen_size.dart';
 import '../request/request_data.dart';
 
+// 친구 상세 정보 화면
 class DetailInformationScreen extends StatefulWidget {
   final FriendData friendData;
 
@@ -110,7 +111,7 @@ class _DetailInformationScreenState extends State<DetailInformationScreen> {
                             width: screenSize.getWidthPerSize(8),
                             child: IconButton(
                                 onPressed: () {
-                                  copyToClipboard(context, friendData.friendEmail, "이메일을");
+                                  copyToClipboard(context, friendData.friendEmail, '이메일을');
                                 },
                                 icon: Icon(
                                   Icons.copy,
@@ -127,7 +128,7 @@ class _DetailInformationScreenState extends State<DetailInformationScreen> {
                     height: screenSize.getHeightPerSize(4),
                     child: Center(
                       child: Text(
-                        "카테고리",
+                        '카테고리',
                         style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
                       ),
                     )),
@@ -187,7 +188,7 @@ class _DetailInformationScreenState extends State<DetailInformationScreen> {
                 child: SizedBox(
                   height: screenSize.getHeightPerSize(5),
                   child: Center(
-                    child: Text("친구로 등록되지 않은 유저입니다.",
+                    child: Text('친구로 등록되지 않은 유저입니다.',
                         style:
                             TextStyle(fontSize: screenSize.getHeightPerSize(2), color: Colors.red)),
                   ),
@@ -201,13 +202,13 @@ class _DetailInformationScreenState extends State<DetailInformationScreen> {
                 children: [
                   ElevatedButton(
                       onPressed: () {
-                        copyToClipboard(context, friendData.friendUID, "친구 코드를");
+                        copyToClipboard(context, friendData.friendUID, '친구 코드를');
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           const Text(
-                            "친구 코드 복사하기",
+                            '친구 코드 복사하기',
                             style: TextStyle(color: Colors.black),
                           ),
                           SizedBox(
@@ -235,7 +236,7 @@ class _DetailInformationScreenState extends State<DetailInformationScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             const Text(
-                              "친구 요청 보내기",
+                              '친구 요청 보내기',
                               style: TextStyle(color: Colors.black),
                             ),
                             SizedBox(

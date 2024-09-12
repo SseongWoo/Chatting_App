@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../utils/screen_size.dart';
 
+// 계정 찾기 첫번째 화면
 class AccountFindFirstScreen extends StatefulWidget {
   const AccountFindFirstScreen({super.key});
 
@@ -25,10 +26,11 @@ class _AccountFindFirstScreenState extends State<AccountFindFirstScreen> {
     super.dispose();
   }
 
+  // 계정의 비밀번호를 찾기 위해 입력받은 이메일을 체크 후 비밀번호 재설정 메일을 보낸뒤 다음화면으로 넘어가는 함수
   void findPassword() async {
     bool emailCheck = await isEmailRegistered(controllerID.text);
     if (emailCheck) {
-      resetPassword(controllerID.text);
+      await resetPassword(controllerID.text);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -66,14 +68,14 @@ class _AccountFindFirstScreenState extends State<AccountFindFirstScreen> {
                   SizedBox(
                     width: screenSize.getWidthPerSize(80),
                     child: Text(
-                      "계정 찾기\n",
+                      '계정 찾기\n',
                       style: TextStyle(fontSize: screenSize.getHeightPerSize(4)),
                     ),
                   ),
                   SizedBox(
                     width: screenSize.getWidthPerSize(80),
                     child: Text(
-                      "복구 할 이메일을 입력해 주세요",
+                      '복구 할 이메일을 입력해 주세요',
                       style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
                     ),
                   ),
@@ -95,9 +97,10 @@ class _AccountFindFirstScreenState extends State<AccountFindFirstScreen> {
                         onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                         validator: (String? value) {
                           if (value?.isEmpty ?? true) return '이메일을 입력해 주세요';
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value!))
-                            return "이메일 형식이 아닙니다.";
-                          if (!existentEmail) return "등록되어 있지 않는 이메일입니다.";
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value!)) {
+                            return '이메일 형식이 아닙니다.';
+                          }
+                          if (!existentEmail) return '등록되어 있지 않는 이메일입니다.';
                           return null;
                         },
                       ),
@@ -138,7 +141,7 @@ class _AccountFindFirstScreenState extends State<AccountFindFirstScreen> {
                         color: Colors.white,
                       )
                     : Text(
-                        "다음",
+                        '다음',
                         style: TextStyle(
                             fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
                       ),

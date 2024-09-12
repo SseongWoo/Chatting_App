@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-class ScreenSize{
+// 화면 사이즈 클래스
+class ScreenSize {
   late Size screenSize;
 
   ScreenSize(this.screenSize);
 
-  double getHeightSize(){
+  double getHeightSize() {
     return screenSize.height;
   }
 
-  double getWidthSize(){
+  double getWidthSize() {
     return screenSize.width;
   }
 
@@ -21,9 +22,3 @@ class ScreenSize{
     return (screenSize.width * per) / 100;
   }
 }
-
-
-
-
-
-

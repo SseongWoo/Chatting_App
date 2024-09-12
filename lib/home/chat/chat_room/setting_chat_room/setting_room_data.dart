@@ -4,14 +4,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import '../../../../utils/get_people_data.dart';
+import '../../../../utils/logger.dart';
 import '../../create_chat/creat_chat_data.dart';
 import '../chat_room_data.dart';
 
+// 채팅방 프로필을 사용자 커스텀 프로필 사진을 등록할때 서버에 저장하고 URL을 리턴해주는 함수
 Future<String> uploadChatRoomCustomProfile(CroppedFile? croppedFile, String chatRoomUid) async {
   FirebaseStorage storage = FirebaseStorage.instance;
-  String downloadURL = "";
+  String downloadURL = '';
 
-  Reference ref = storage.ref("/chat/$chatRoomUid/profile").child(myData.myUID);
+  Reference ref = storage.ref('/chat/$chatRoomUid/profile').child(myData.myUID);
   try {
     UploadTask uploadTask = ref.putFile(File(croppedFile!.path));
     await uploadTask.then((snapshot) {
@@ -20,17 +22,18 @@ Future<String> uploadChatRoomCustomProfile(CroppedFile? croppedFile, String chat
       downloadURL = url;
     });
   } catch (e) {
-    //오류
-    print("uploadChatMultipleMedia오류 : $e");
+    logger.e('uploadChatRoomCustomProfile오류 : $e');
   }
   return downloadURL;
 }
 
+// 채팅방을 삭제하는 함수
 Future<void> deleteChatRoom(String chatRoomUid) async {
   try {
     await getChatData(chatRoomUid);
     List<ChatPeopleClass> chatPeople = await getPeopleData(chatRoomUid);
 
+    // 채팅방에 있는 인원들 각각의 DB에 있는 채팅방 데이터를 삭제하는 작업
     for (var item in chatPeople) {
       await FirebaseFirestore.instance
           .collection('users')
@@ -38,14 +41,14 @@ Future<void> deleteChatRoom(String chatRoomUid) async {
           .collection('chat')
           .doc(chatRoomUid)
           .delete();
-
-      await FirebaseFirestore.instance
-          .collection('chat')
-          .doc(chatRoomUid)
-          .collection('realtime')
-          .doc(item.uid)
-          .delete();
+      // await FirebaseFirestore.instance
+      //     .collection('chat')
+      //     .doc(chatRoomUid)
+      //     .collection('realtime')
+      //     .doc(item.uid)
+      //     .delete();
     }
+    // 채팅방 DB의 하위 문서를 삭제하는 작업
     await FirebaseFirestore.instance
         .collection('chat')
         .doc(chatRoomUid)
@@ -53,6 +56,7 @@ Future<void> deleteChatRoom(String chatRoomUid) async {
         .doc('_lastmessage_')
         .delete();
 
+    // 모든 채팅내역을 삭제하는 작업
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('chat')
         .doc(chatRoomUid)
@@ -62,10 +66,32 @@ Future<void> deleteChatRoom(String chatRoomUid) async {
       await doc.reference.delete();
     }
 
+    // 채팅방 DB의 필드값과 문서를 삭제
     await FirebaseFirestore.instance.collection('chat').doc(chatRoomUid).delete();
 
+    // 채팅방의 저장된 파일들 삭제
     await FirebaseStorage.instance.ref('/chat/$chatRoomUid/').delete();
   } catch (e) {
-    //
+    logger.e('deleteChatRoom오류 : $e');
+  }
+}
+
+// chat_public위치에 있는 채팅방 데이터 삭제하는 함수
+Future<void> deleteChatPublicData(String chatUid) async {
+  try {
+    await firestore.collection('chat_public').doc(chatUid).delete();
+  } catch (e) {
+    logger.e('deleteChatPublicData오류 : $e');
+  }
+}
+
+// 암호를 변경시 암호가 없다가 생겼을 경우, 있다가 없어질 경우 chat_public의 password의 bool값을 업데이트 하는 함수
+Future<void> updateChatPublicPassWordData(String chatUid, bool password) async {
+  try {
+    await firestore.collection('chat_public').doc(chatUid).update({
+      'password': password,
+    });
+  } catch (e) {
+    logger.e('updateChatPublicPassWordData오류 : $e');
   }
 }

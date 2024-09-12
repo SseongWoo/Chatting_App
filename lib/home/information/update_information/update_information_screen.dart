@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// 앱 업데이트 확인 화면
 class UpdateInformationScreen extends StatefulWidget {
   const UpdateInformationScreen({super.key});
 

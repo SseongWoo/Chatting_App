@@ -1,8 +1,7 @@
 import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
-import '../login/registration/authentication.dart';
-
+// 앱의 상태를 감지하는 기능
 class StateObserver extends WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {

@@ -51,7 +51,7 @@ class _RequestSentWidgetState extends State<RequestSentWidget> {
       )),
       child: deleteWidget
           ? const Center(
-              child: Text("삭제된 요청입니다."),
+              child: Text('삭제된 요청입니다.'),
             )
           : Row(
               children: [
@@ -81,7 +81,7 @@ class _RequestSentWidgetState extends State<RequestSentWidget> {
                         },
                         errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
                           return const Center(
-                            child: Text('Failed to load image'),
+                            child: Text('이미지 로딩 실패'),
                           );
                         },
                       ),
@@ -105,7 +105,7 @@ class _RequestSentWidgetState extends State<RequestSentWidget> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          requestSendList[index].requestCheck ? "요청 거부됨" : "수락 대기중",
+                          requestSendList[index].requestCheck ? '요청 거부됨' : '수락 대기중',
                           style: TextStyle(
                               fontSize: screenSize.getHeightPerSize(1),
                               color:
@@ -126,7 +126,7 @@ class _RequestSentWidgetState extends State<RequestSentWidget> {
                         delete();
                       },
                       child: Text(
-                        requestSendList[index].requestCheck ? "삭제" : "취소",
+                        requestSendList[index].requestCheck ? '삭제' : '취소',
                         style: TextStyle(
                             fontSize: screenSize.getHeightPerSize(2),
                             color: requestSendList[index].requestCheck ? Colors.red : Colors.black),
@@ -141,6 +141,7 @@ class _RequestSentWidgetState extends State<RequestSentWidget> {
   }
 }
 
+// 받은 요청 위젯
 class RequestReceivedWidget extends StatefulWidget {
   final ScreenSize screenSize;
   final int index;
@@ -183,15 +184,17 @@ class _RequestReceivedWidgetState extends State<RequestReceivedWidget> {
           Visibility(
             visible: deleteWidget && !checkWidget,
             child: Positioned(
-                top: 0,
-                right: 0,
-                child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        deleteRequest(requestReceivedList[index].requestUID, true, false);
-                      });
-                    },
-                    icon: const Icon(Icons.close))),
+              top: 0,
+              right: 0,
+              child: IconButton(
+                onPressed: () {
+                  setState(() {
+                    deleteRequest(requestReceivedList[index].requestUID, true, false);
+                  });
+                },
+                icon: const Icon(Icons.close),
+              ),
+            ),
           ),
           Row(
             children: [
@@ -220,8 +223,8 @@ class _RequestReceivedWidgetState extends State<RequestReceivedWidget> {
                         }
                       },
                       errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                        return Center(
-                          child: Text('Failed to load image'),
+                        return const Center(
+                          child: Text('이미지 로딩 실패'),
                         );
                       },
                     ),
@@ -251,7 +254,7 @@ class _RequestReceivedWidgetState extends State<RequestReceivedWidget> {
                     deleteWidget
                         ? Center(
                             child: Text(
-                              checkWidget ? "수락한 요청입니다." : "거절한 요청입니다.",
+                              checkWidget ? '수락한 요청입니다.' : '거절한 요청입니다.',
                               style: TextStyle(
                                   color: checkWidget ? Colors.greenAccent : Colors.redAccent),
                             ),
@@ -280,11 +283,11 @@ class _RequestReceivedWidgetState extends State<RequestReceivedWidget> {
                                             requestReceivedList[index].requestUID, context);
                                       } else {
                                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                            content: Text("문제가 발생하였습니다. 다시 시도해 주세요")));
+                                            content: Text('문제가 발생하였습니다. 다시 시도해 주세요')));
                                       }
                                     },
                                     child: Text(
-                                      "수락",
+                                      '수락',
                                       style: TextStyle(
                                           fontSize: screenSize.getHeightPerSize(1.5),
                                           color: Colors.black),
@@ -313,11 +316,11 @@ class _RequestReceivedWidgetState extends State<RequestReceivedWidget> {
                                         updateRequest(requestReceivedList[index].requestUID);
                                       } else {
                                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                            content: Text("문제가 발생하였습니다. 다시 시도해 주세요")));
+                                            content: Text('문제가 발생하였습니다. 다시 시도해 주세요')));
                                       }
                                     },
                                     child: Text(
-                                      "거절",
+                                      '거절',
                                       style: TextStyle(
                                           fontSize: screenSize.getHeightPerSize(1.5),
                                           color: Colors.black),

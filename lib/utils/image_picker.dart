@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
+// 갤러리의 이미지를 가져오는 함수
 Future<XFile?> getImage(ImageSource imageSource) async {
   // Image Picker 인스턴스 생성
   final ImagePicker picker = ImagePicker();
@@ -22,6 +23,7 @@ Future<XFile?> getImage(ImageSource imageSource) async {
   }
 }
 
+//갤러리의 비디오를 가져오는 함수
 Future<XFile?> getVideo(ImageSource imageSource) async {
   // Image Picker 인스턴스 생성
   final ImagePicker picker = ImagePicker();

@@ -3,10 +3,10 @@ import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-
 import '../../../login/registration/authentication.dart';
 import '../information_data.dart';
 
+// 계정 삭제 화면
 class DeleteUserInformationScreen extends StatefulWidget {
   const DeleteUserInformationScreen({super.key});
 
@@ -16,9 +16,9 @@ class DeleteUserInformationScreen extends StatefulWidget {
 
 class _DeleteUserInformationScreenState extends State<DeleteUserInformationScreen> {
   late ScreenSize _screenSize;
+  final TextEditingController _passWordEditingController = TextEditingController();
   bool _isChecked = false;
   bool _errorPW = false;
-  final TextEditingController _passWordEditingController = TextEditingController();
 
   void _startDeleteUser() async {
     EasyLoading.show();

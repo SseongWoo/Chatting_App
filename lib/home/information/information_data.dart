@@ -13,6 +13,7 @@ import 'package:image_cropper/image_cropper.dart';
 
 import '../../login/registration/authentication.dart';
 import '../../utils/convert_array.dart';
+import '../../utils/logger.dart';
 import 'information_dialog.dart';
 
 FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -20,22 +21,22 @@ FirebaseFirestore _firestore = FirebaseFirestore.instance;
 // 수정된 이름을 기존에 DB에 업데이트 하는 작업
 Future<void> updateMyName(String name) async {
   try {
-    await _firestore.collection("users").doc(myData.myUID).update({
-      "nickname": name,
+    await _firestore.collection('users').doc(myData.myUID).update({
+      'nickname': name,
     });
-    await _firestore.collection("users_public").doc(myData.myUID).update({
-      "nickname": name,
+    await _firestore.collection('users_public').doc(myData.myUID).update({
+      'nickname': name,
     });
     myData.myNickName = name;
   } catch (e) {
-    print('updatemyName에러 $e');
+    logger.e('updateMyName오류 : $e');
   }
 }
 
 // 수정된 프로필 사진을 기존에 있던 프로필사진의 파일에 덮어씌우는 작업과 DB에 등록하는 작업
 Future<void> uploadMyProfile(CroppedFile? croppedFile) async {
   FirebaseStorage storage = FirebaseStorage.instance;
-  String downloadURL = "";
+  String downloadURL = '';
 
   Reference ref = storage.ref('/userImage/${myData.myUID}/').child('profileImage');
   try {
@@ -48,16 +49,15 @@ Future<void> uploadMyProfile(CroppedFile? croppedFile) async {
     });
 
     // 유저 정보 DB에 프로필 업데이트
-    await _firestore.collection("users").doc(myData.myUID).update({
-      "profile": downloadURL,
+    await _firestore.collection('users').doc(myData.myUID).update({
+      'profile': downloadURL,
     });
-    await _firestore.collection("users_public").doc(myData.myUID).update({
-      "profile": downloadURL,
+    await _firestore.collection('users_public').doc(myData.myUID).update({
+      'profile': downloadURL,
     });
     myData.myProfile = downloadURL;
   } catch (e) {
-    //오류
-    print("uploadMyProfile에러 : $e");
+    logger.e('uploadMyProfile오류 : $e');
   }
 }
 
@@ -163,17 +163,17 @@ Future<void> deleteUser(BuildContext context) async {
       }
       // 친구 요청 데이터들을 삭제하는 작업
       QuerySnapshot querySnapshotRequest = await FirebaseFirestore.instance
-          .collection("users")
+          .collection('users')
           .doc(myData.myUID)
-          .collection("request")
+          .collection('request')
           .get();
       for (var doc in querySnapshotRequest.docs) {
         doc.reference.delete();
         // 상대방의 데이터에도 요청데이터 삭제
         await FirebaseFirestore.instance
-            .collection("users")
+            .collection('users')
             .doc(doc.id)
-            .collection("request")
+            .collection('request')
             .doc(myData.myUID)
             .delete();
       }
@@ -193,6 +193,6 @@ Future<void> deleteUser(BuildContext context) async {
       snackBarErrorMessage(context, '그룹채팅방중 사용자가 방장인 그룹채팅방이 있습니다.\n방장을 위임해주고 다시 시도해주세요');
     }
   } catch (e) {
-    print('deleteUser에러 : $e');
+    logger.e('deleteUser오류 : $e');
   }
 }

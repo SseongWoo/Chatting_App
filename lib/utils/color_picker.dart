@@ -3,9 +3,10 @@ import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-
 import '../home/information/information_widget.dart';
 import 'color.dart';
+
+// 채팅방의 여러 오브젝트의 색을 사용자가 원하는 색으로 선택할수 있게 도와주는 색 선택 다이얼로그
 
 const Color guidePrimary = Color(0xFF6200EE);
 const Color guidePrimaryVariant = Color(0xFF3700B3);

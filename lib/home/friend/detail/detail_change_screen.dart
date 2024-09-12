@@ -1,10 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
-
 import '../../../utils/color.dart';
 import '../../../utils/screen_movement.dart';
 import '../../../utils/screen_size.dart';
@@ -12,6 +9,7 @@ import '../../home_screen.dart';
 import '../category/category_data.dart';
 import '../friend_data.dart';
 
+// 친구 상세 정보 수정 화면, 친구의 커스텀 닉네임 설정, 카테고리 등록 기능
 class DetailChangeScreen extends StatefulWidget {
   final FriendData friendData;
 
@@ -64,16 +62,16 @@ class _DetailChangeScreenState extends State<DetailChangeScreen> {
     screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("정보 수정"),
+        title: const Text('정보 수정'),
         backgroundColor: mainLightColor,
         actions: [
           TextButton(
             onPressed: () async {
               EasyLoading.show(status: '로딩 중입니다...');
-              // if (_formKey.currentState!.validate()) {}
-              if ((_textEditingController.text == "" && friendData.friendCustomName != "") ||
+              // 커스텀 닉네임과, 카테고리중 수정된 것만 실행후 홈 화면으로 이동
+              if ((_textEditingController.text == '' && friendData.friendCustomName != '') ||
                   _textEditingController.text == friendData.friendNickName) {
-                await updateFriendName(friendData, "");
+                await updateFriendName(friendData, '');
               } else if (_textEditingController.text != friendData.friendCustomName) {
                 await updateFriendName(friendData, _textEditingController.text);
               }
@@ -89,7 +87,7 @@ class _DetailChangeScreenState extends State<DetailChangeScreen> {
               );
             },
             child: Text(
-              "확인",
+              '확인',
               style: TextStyle(color: Colors.black, fontSize: screenSize.getHeightPerSize(1.8)),
             ),
           ),
@@ -110,7 +108,7 @@ class _DetailChangeScreenState extends State<DetailChangeScreen> {
                   child: TextFormField(
                     decoration: InputDecoration(
                       label: Text(
-                        "이름 설정",
+                        '이름 설정',
                         style: TextStyle(
                             fontSize: screenSize.getHeightPerSize(2), color: Colors.black),
                       ),
@@ -138,12 +136,6 @@ class _DetailChangeScreenState extends State<DetailChangeScreen> {
                     onTapOutside: (event) {
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
-                    // validator: (value) {
-                    //   if (value!.isEmpty) {
-                    //     return "이름을 입력해 주세요";
-                    //   }
-                    //   return null;
-                    // },
                   ),
                 ),
               ),
@@ -151,7 +143,7 @@ class _DetailChangeScreenState extends State<DetailChangeScreen> {
                 height: screenSize.getHeightPerSize(3),
                 width: screenSize.getWidthPerSize(80),
                 child: Text(
-                  "친구가 설정한 이름 : ${friendData.friendNickName}",
+                  '친구가 설정한 이름 : ${friendData.friendNickName}',
                   style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5), color: Colors.grey),
                 ),
               ),
@@ -177,10 +169,10 @@ class _DetailChangeScreenState extends State<DetailChangeScreen> {
                       color: Colors.white,
                     )),
                 fieldDecoration: FieldDecoration(
-                  labelText: "카테고리 설정",
+                  labelText: '카테고리 설정',
                   labelStyle:
                       TextStyle(fontSize: screenSize.getHeightPerSize(2), color: Colors.black),
-                  hintText: "카테고리를 선택해 주세요",
+                  hintText: '카테고리를 선택해 주세요',
                   prefixIcon: const Icon(Icons.category),
                   suffixIcon: const Icon(Icons.read_more),
                   border: OutlineInputBorder(
@@ -213,15 +205,6 @@ class _DetailChangeScreenState extends State<DetailChangeScreen> {
                   textColor: Colors.black,
                   //selectedBackgroundColor: Colors.grey
                 ),
-                // validator: (value) {
-                //   if (value == null || value.isEmpty) {
-                //     return "카테고리를 선택해 주세요";
-                //   }
-                //   return null;
-                // },
-                // onSelectionChange: (selectedItems) {
-                //   debugPrint("OnSelectionChange: $selectedItems");
-                // },
               ),
             ],
           ),

@@ -8,12 +8,14 @@ import 'package:chattingapp/utils/screen_size.dart';
 import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-
 import '../../../utils/data_refresh.dart';
+import '../../../utils/file_download.dart';
 import '../../../utils/image_viewer.dart';
+import '../../../utils/snackbar_message.dart';
 import '../../home_screen.dart';
-import '../../information/information_data.dart';
+import 'chat_room_dialog.dart';
 
+// 유저 세부정보를 표시하는 화면으로 이동하기 위해 데이터를 작업하고 DetailInformationScreen 화면으로 이동시키는 함수
 void goDetailInfomation(BuildContext context, String userUid, String userName, String userProfile) {
   FriendData friendData;
 
@@ -25,13 +27,13 @@ void goDetailInfomation(BuildContext context, String userUid, String userName, S
     );
   } else if (userUid == myData.myUID) {
     friendData = FriendData(
-        myData.myUID, myData.myEmail, myData.myNickName, myData.myProfile, "", "", "", [], false);
+        myData.myUID, myData.myEmail, myData.myNickName, myData.myProfile, '', '', '', [], false);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => DetailInformationScreen(friendData: friendData)),
     );
   } else {
-    friendData = FriendData(userUid, "", userName, userProfile, "", "", "", [], false);
+    friendData = FriendData(userUid, '', userName, userProfile, '', '', '', [], false);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => DetailInformationScreen(friendData: friendData)),
@@ -39,6 +41,7 @@ void goDetailInfomation(BuildContext context, String userUid, String userName, S
   }
 }
 
+// 메세지 위젯의 타입을 구분하여 해당 위젯을 리턴시키는 함수
 Widget messageWidget(BuildContext context, ScreenSize screenSize, MessageDataClass messageDataClass,
     bool visCheck, bool firstMessage) {
   switch (messageDataClass.messageType) {
@@ -69,6 +72,7 @@ Widget messageWidget(BuildContext context, ScreenSize screenSize, MessageDataCla
   }
 }
 
+// 텍스트 메세지 위젯이며 상대방 메세지를 표현할때 사용
 Widget messageTextType2(BuildContext context, ScreenSize screenSize,
     MessageDataClass messageDataClass, bool firstMessage, bool visTime) {
   String name = getName(messageDataClass);
@@ -95,6 +99,27 @@ Widget messageTextType2(BuildContext context, ScreenSize screenSize,
                 child: messageDataClass.userProfile.isNotEmpty
                     ? Image.network(
                         messageDataClass.userProfile,
+                        // 이미지 로딩
+                        loadingBuilder:
+                            (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child; // 이미지 로드 완료
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          }
+                        },
+                        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                          return const Center(
+                            child: Text('이미지 로딩 실패'),
+                          );
+                        },
                       )
                     : Image.asset(
                         imagePath,
@@ -134,8 +159,8 @@ Widget messageTextType2(BuildContext context, ScreenSize screenSize,
                       style: TextStyle(
                           fontSize: screenSize.getHeightPerSize(1.6),
                           color: chatRoomColorMap['FriendChatStringColor']),
-                      maxLines: null, // 줄바꿈을 허용
-                      overflow: TextOverflow.visible, // 텍스트가 넘어갈 경우 줄바꿈
+                      maxLines: null,
+                      overflow: TextOverflow.visible,
                     ),
                   ),
                 ),
@@ -160,6 +185,7 @@ Widget messageTextType2(BuildContext context, ScreenSize screenSize,
   );
 }
 
+// 텍스트 메세지 위젯이며 사용자 메세지를 표현할때 사용
 Widget messageTextType1(ScreenSize screenSize, MessageDataClass messageDataClass, bool visTime) {
   String time = dateTimeConvert(messageDataClass.timestamp);
   return Container(
@@ -204,6 +230,7 @@ Widget messageTextType1(ScreenSize screenSize, MessageDataClass messageDataClass
   );
 }
 
+// 이미지 메세지 위젯이며 사용자 메세지를 표현할때 사용
 Widget messageImageType1(
     BuildContext context, ScreenSize screenSize, MessageDataClass messageDataClass, bool visTime) {
   return Container(
@@ -236,6 +263,9 @@ Widget messageImageType1(
                 MaterialPageRoute(
                     builder: (context) => ImageViewer(imageURL: messageDataClass.message)),
               );
+            },
+            onLongPress: () {
+              imageDownloadDialog(context, messageDataClass.message);
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
@@ -278,6 +308,7 @@ Widget messageImageType1(
   );
 }
 
+// 이미지 메세지 위젯이며 상대방 메세지를 표현할때 사용
 Widget messageImageType2(BuildContext context, ScreenSize screenSize,
     MessageDataClass messageDataClass, bool firstMessage, bool visTime) {
   String name = getName(messageDataClass);
@@ -296,13 +327,35 @@ Widget messageImageType2(BuildContext context, ScreenSize screenSize,
             visible: firstMessage,
             child: GestureDetector(
               onTap: () {
-                print("따로 다이얼로그를 만들어서 UI제공예정");
+                goDetailInfomation(context, messageDataClass.messageUid, messageDataClass.userName,
+                    messageDataClass.userProfile);
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: messageDataClass.userProfile.isNotEmpty
                     ? Image.network(
                         messageDataClass.userProfile,
+                        // 이미지 로딩
+                        loadingBuilder:
+                            (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child; // 이미지 로드 완료
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          }
+                        },
+                        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                          return const Center(
+                            child: Text('이미지 로딩 실패'),
+                          );
+                        },
                       )
                     : Image.asset(
                         imagePath,
@@ -339,6 +392,9 @@ Widget messageImageType2(BuildContext context, ScreenSize screenSize,
                         MaterialPageRoute(
                             builder: (context) => ImageViewer(imageURL: messageDataClass.message)),
                       );
+                    },
+                    onLongPress: () {
+                      imageDownloadDialog(context, messageDataClass.message);
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
@@ -398,6 +454,7 @@ Widget messageImageType2(BuildContext context, ScreenSize screenSize,
   );
 }
 
+// 비디오 메세지 위젯이며 사용자 메세지를 표현할때 사용
 Widget messageVideoType1(
     BuildContext context, ScreenSize screenSize, MessageDataClass messageDataClass, bool visTime) {
   return Container(
@@ -429,7 +486,12 @@ Widget messageVideoType1(
                 color: chatRoomColorMap['MyChatColor'], borderRadius: BorderRadius.circular(10)),
             child: Row(
               children: [
-                IconButton(onPressed: () {}, icon: Icon(Icons.file_download_rounded)),
+                IconButton(
+                    onPressed: () async {
+                      await downloadFile(messageDataClass.message, DateTime.now().toString());
+                      snackBarMessage(context, '이미지 다운로드 완료');
+                    },
+                    icon: const Icon(Icons.file_download_rounded)),
                 Text(
                   '다운로드 버튼을 클릭하여\n동영상 파일을 다운로드하세요',
                   style: TextStyle(
@@ -445,6 +507,7 @@ Widget messageVideoType1(
   );
 }
 
+// 비디오 메세지 위젯이며 상대방 메세지를 표현할때 사용
 Widget messageVideoType2(BuildContext context, ScreenSize screenSize,
     MessageDataClass messageDataClass, bool firstMessage, bool visTime) {
   String name = getName(messageDataClass);
@@ -463,13 +526,35 @@ Widget messageVideoType2(BuildContext context, ScreenSize screenSize,
             visible: firstMessage,
             child: GestureDetector(
               onTap: () {
-                print("따로 다이얼로그를 만들어서 UI제공예정");
+                goDetailInfomation(context, messageDataClass.messageUid, messageDataClass.userName,
+                    messageDataClass.userProfile);
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: messageDataClass.userProfile.isNotEmpty
                     ? Image.network(
                         messageDataClass.userProfile,
+                        // 이미지 로딩
+                        loadingBuilder:
+                            (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child; // 이미지 로드 완료
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          }
+                        },
+                        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                          return const Center(
+                            child: Text('이미지 로딩 실패'),
+                          );
+                        },
                       )
                     : Image.asset(
                         imagePath,
@@ -513,7 +598,13 @@ Widget messageVideoType2(BuildContext context, ScreenSize screenSize,
                               fontSize: screenSize.getHeightPerSize(1.5),
                               color: chatRoomColorMap['FriendChatStringColor']),
                         ),
-                        IconButton(onPressed: () {}, icon: const Icon(Icons.file_download_rounded)),
+                        IconButton(
+                            onPressed: () async {
+                              await downloadFile(
+                                  messageDataClass.message, DateTime.now().toString());
+                              snackBarMessage(context, '이미지 다운로드 완료');
+                            },
+                            icon: const Icon(Icons.file_download_rounded)),
                       ],
                     ),
                   ),
@@ -539,6 +630,7 @@ Widget messageVideoType2(BuildContext context, ScreenSize screenSize,
   );
 }
 
+// 시스템 메세지 위젯
 Widget systemMessage(ScreenSize screenSize, MessageDataClass messageDataClass) {
   return Container(
       width: screenSize.getWidthSize(),
@@ -548,78 +640,4 @@ Widget systemMessage(ScreenSize screenSize, MessageDataClass messageDataClass) {
         messageDataClass.message,
         textAlign: TextAlign.center,
       ));
-}
-
-void leaveChatRoomDialog(BuildContext getContext, String roomUid) {
-  showDialog(
-    context: getContext,
-    barrierDismissible: true,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("채팅방 삭제"),
-        content: const Text('정말로 채팅방을 삭제하시겠습니까?'),
-        actions: <Widget>[
-          TextButton(
-              onPressed: () async {
-                EasyLoading.show();
-                await leaveChatRoom(roomUid);
-                await refreshData();
-                EasyLoading.dismiss();
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => const HomeScreen()), (route) => false);
-              },
-              child: const Text(
-                '삭제',
-                style: TextStyle(color: Colors.red),
-              )),
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text(
-                '취소',
-                style: TextStyle(color: Colors.black),
-              )),
-        ],
-      );
-    },
-  );
-}
-
-class ManagerDelegationDialog extends StatelessWidget {
-  final String chatRoomUid;
-  final String delegationUid;
-  final Function(String) refresh;
-  const ManagerDelegationDialog(
-      {super.key, required this.chatRoomUid, required this.delegationUid, required this.refresh});
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text("매니저 위임"),
-      content: const Text('매니저를 위임하시겠습니까?'),
-      actions: <Widget>[
-        TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text(
-              '취소',
-              style: TextStyle(color: Colors.black),
-            )),
-        TextButton(
-            onPressed: () async {
-              EasyLoading.show();
-              await managerDelegation(chatRoomUid, delegationUid);
-              refresh(delegationUid);
-              EasyLoading.dismiss();
-              Navigator.of(context).pop();
-            },
-            child: const Text(
-              '확인',
-              style: TextStyle(color: Colors.black),
-            )),
-      ],
-    );
-  }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// 이미지를 불러올때 로딩을 구현한 위젯
 Widget imageWidget(String imageUrl) {
   return ClipRRect(
     borderRadius: BorderRadius.circular(10),

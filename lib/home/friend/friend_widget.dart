@@ -16,6 +16,7 @@ import '../chat/chat_room/chat_room_screen.dart';
 import '../chat/create_chat/creat_chat_data.dart';
 import 'friend_data.dart';
 
+// 친구 리스트 위젯
 class FriendWidget extends StatefulWidget {
   final FriendData friendData;
 
@@ -27,9 +28,9 @@ class FriendWidget extends StatefulWidget {
 
 class _FriendWidgetState extends State<FriendWidget> {
   late ScreenSize screenSize;
-  bool selected = false;
   late FriendData friendData;
   late ChatRoomSimpleData chatRoomSimpleData;
+  bool selected = false;
   bool dataChaek = true;
 
   @override
@@ -37,6 +38,8 @@ class _FriendWidgetState extends State<FriendWidget> {
     // TODO: implement initState
     super.initState();
     friendData = widget.friendData;
+
+    // 해당 친구와 1대1채팅방이 있는지 확인하는 작업
     if (chatRoomList.containsKey(friendData.friendInherentChatRoom)) {
       chatRoomSimpleData = chatRoomList[friendData.friendInherentChatRoom]!;
     } else {
@@ -44,6 +47,7 @@ class _FriendWidgetState extends State<FriendWidget> {
     }
   }
 
+  // 채팅방으로 이동하는 함수
   void moveChatRoom() async {
     EasyLoading.show();
     await getChatData(chatRoomSimpleData.chatRoomUid);
@@ -67,7 +71,6 @@ class _FriendWidgetState extends State<FriendWidget> {
     } else {
       name = friendData.friendNickName;
     }
-
     return Stack(
       children: [
         GestureDetector(
@@ -125,7 +128,7 @@ class _FriendWidgetState extends State<FriendWidget> {
                             errorBuilder:
                                 (BuildContext context, Object error, StackTrace? stackTrace) {
                               return const Center(
-                                child: Text('Failed to load image'),
+                                child: Text('이미지 로딩 실패'),
                               );
                             },
                           ),
@@ -164,21 +167,22 @@ class _FriendWidgetState extends State<FriendWidget> {
               height: screenSize.getHeightPerSize(8),
               width: screenSize.getWidthPerSize(16),
               child: IconButton(
-                  style: IconButton.styleFrom(
-                    backgroundColor: mainColor,
-                    shape: const BeveledRectangleBorder(),
-                  ),
-                  onPressed: () async {
-                    if (dataChaek) {
-                      moveChatRoom();
-                    } else {
-                      snackBarErrorMessage(context, '작업을 수행하는데 문제가 발생하였습니다.\n친구를 삭제하였다가 다시 추가해주세요');
-                    }
-                  },
-                  icon: const Icon(
-                    Icons.chat,
-                    color: Colors.white,
-                  )),
+                style: IconButton.styleFrom(
+                  backgroundColor: mainColor,
+                  shape: const BeveledRectangleBorder(),
+                ),
+                onPressed: () async {
+                  if (dataChaek) {
+                    moveChatRoom();
+                  } else {
+                    snackBarErrorMessage(context, '작업을 수행하는데 문제가 발생하였습니다.\n친구를 삭제하였다가 다시 추가해주세요');
+                  }
+                },
+                icon: const Icon(
+                  Icons.chat,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ),
         )
@@ -187,10 +191,11 @@ class _FriendWidgetState extends State<FriendWidget> {
   }
 }
 
+// FriendWidget을 길게 눌렀을때 나타나는 다이얼로그 상세정보, 정보수정, 친구삭제 메뉴로 구성
 void friendWidgetDialog(BuildContext context, ScreenSize screenSize, FriendData friendData) {
   String name;
   if (friendData.friendCustomName.isNotEmpty) {
-    name = "${friendData.friendCustomName}(${friendData.friendNickName})";
+    name = '${friendData.friendCustomName}(${friendData.friendNickName})';
   } else {
     name = friendData.friendNickName;
   }
@@ -220,63 +225,75 @@ void friendWidgetDialog(BuildContext context, ScreenSize screenSize, FriendData 
               height: screenSize.getHeightPerSize(1),
             ),
             SizedBox(
-                height: screenSize.getHeightPerSize(4.5),
-                width: double.infinity,
-                child: TextButton(
-                    style: TextButton.styleFrom(
-                      shape: const BeveledRectangleBorder(),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DetailInformationScreen(
-                                    friendData: friendData,
-                                  )));
-                    },
-                    child: Text(
-                      "상세 정보",
-                      style: TextStyle(
-                          color: Colors.black, fontSize: screenSize.getHeightPerSize(1.5)),
-                    ))),
+              height: screenSize.getHeightPerSize(4.5),
+              width: double.infinity,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  shape: const BeveledRectangleBorder(),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DetailInformationScreen(
+                                friendData: friendData,
+                              )));
+                },
+                child: Text(
+                  '상세 정보',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: screenSize.getHeightPerSize(1.5),
+                  ),
+                ),
+              ),
+            ),
             SizedBox(
-                height: screenSize.getHeightPerSize(4.5),
-                width: double.infinity,
-                child: TextButton(
-                    style: TextButton.styleFrom(
-                      shape: const BeveledRectangleBorder(),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DetailChangeScreen(
-                                    friendData: friendData,
-                                  )));
-                    },
-                    child: Text(
-                      "정보 수정",
-                      style: TextStyle(
-                          color: Colors.black, fontSize: screenSize.getHeightPerSize(1.5)),
-                    ))),
+              height: screenSize.getHeightPerSize(4.5),
+              width: double.infinity,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  shape: const BeveledRectangleBorder(),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DetailChangeScreen(
+                                friendData: friendData,
+                              )));
+                },
+                child: Text(
+                  '정보 수정',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: screenSize.getHeightPerSize(1.5),
+                  ),
+                ),
+              ),
+            ),
             SizedBox(
-                height: screenSize.getHeightPerSize(4.5),
-                width: double.infinity,
-                child: TextButton(
-                    style: TextButton.styleFrom(
-                      shape: const BeveledRectangleBorder(),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      friendDeleteDialog(context, friendData);
-                    },
-                    child: Text(
-                      "친구 삭제",
-                      style:
-                          TextStyle(color: Colors.red, fontSize: screenSize.getHeightPerSize(1.5)),
-                    ))),
+              height: screenSize.getHeightPerSize(4.5),
+              width: double.infinity,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  shape: const BeveledRectangleBorder(),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  friendDeleteDialog(context, friendData);
+                },
+                child: Text(
+                  '친구 삭제',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: screenSize.getHeightPerSize(1.5),
+                  ),
+                ),
+              ),
+            ),
             SizedBox(
               height: screenSize.getHeightPerSize(1.5),
             )
@@ -287,37 +304,41 @@ void friendWidgetDialog(BuildContext context, ScreenSize screenSize, FriendData 
   );
 }
 
+// 친구 삭제 다이얼로그
 void friendDeleteDialog(BuildContext getContext, FriendData friendData) {
   showDialog(
     context: getContext,
     barrierDismissible: false,
     builder: (context) {
       return AlertDialog(
-        title: const Text("친구 추가"),
-        content: const Text("정말로 삭제하시겠습니까?"),
+        title: const Text('친구 추가'),
+        content: const Text('정말로 삭제하시겠습니까?'),
         actions: <Widget>[
           TextButton(
-              onPressed: () async {
-                EasyLoading.show();
-                await deleteFriend(context, friendData.friendUID);
-                EasyLoading.dismiss();
-                Navigator.of(context).pushAndRemoveUntil(
-                  screenMovementZero(const HomeScreen()),
-                  (Route<dynamic> route) => false,
-                );
-              },
-              child: const Text("삭제")),
+            onPressed: () async {
+              EasyLoading.show();
+              await deleteFriend(context, friendData.friendUID);
+              EasyLoading.dismiss();
+              Navigator.of(context).pushAndRemoveUntil(
+                screenMovementZero(const HomeScreen()),
+                (Route<dynamic> route) => false,
+              );
+            },
+            child: const Text('삭제'),
+          ),
           TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("취소")),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('취소'),
+          ),
         ],
       );
     },
   );
 }
 
+// 친구 커스텀 닉네임을 설정하는 다이얼로그
 void friendCustomNickNameDialog(BuildContext getContext, FriendData friendData) {
   TextEditingController controller = TextEditingController();
   if (friendData.friendCustomName.isNotEmpty) {
@@ -329,7 +350,7 @@ void friendCustomNickNameDialog(BuildContext getContext, FriendData friendData) 
     barrierDismissible: true,
     builder: (context) {
       return AlertDialog(
-        title: const Text("이름 설정"),
+        title: const Text('이름 설정'),
         content: TextField(
             maxLength: 8,
             controller: controller,
@@ -345,12 +366,12 @@ void friendCustomNickNameDialog(BuildContext getContext, FriendData friendData) 
                 await updateFriendName(friendData, controller.text);
                 EasyLoading.dismiss();
               },
-              child: const Text("변경")),
+              child: const Text('변경')),
           TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text("취소")),
+              child: const Text('취소')),
         ],
       );
     },

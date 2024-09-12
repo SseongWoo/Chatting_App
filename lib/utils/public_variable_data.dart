@@ -1,0 +1,2 @@
+String appVersion = '';
+String firebaseVersion = '';
