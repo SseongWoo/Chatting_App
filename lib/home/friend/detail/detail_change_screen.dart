@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
-import '../../../utils/color.dart';
+import '../../../utils/color/color.dart';
 import '../../../utils/screen_movement.dart';
 import '../../../utils/screen_size.dart';
 import '../../home_screen.dart';
@@ -163,7 +163,7 @@ class _DetailChangeScreenState extends State<DetailChangeScreen> {
                     labelStyle: const TextStyle(
                       color: Colors.white,
                     ),
-                    borderSide: BorderSide(color: mainColor),
+                    //borderSide: BorderSide(color: mainColor),
                     deleteIcon: const Icon(
                       Icons.cancel,
                       color: Colors.white,
@@ -190,7 +190,8 @@ class _DetailChangeScreenState extends State<DetailChangeScreen> {
                 ),
                 dropdownDecoration: DropdownDecoration(
                   marginTop: 2,
-                  height: items.length >= 5 ? 250 : items.length * 50,
+                  maxHeight: items.length >= 5 ? 250 : items.length * 50,
+                  //height: items.length >= 5 ? 250 : items.length * 50,
                 ),
                 onSelectionChange: (selectedItems) {
                   //print(selectedItems);

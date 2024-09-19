@@ -4,7 +4,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../../utils/image_picker.dart';
+import '../../utils/image/image_picker.dart';
 import '../../utils/my_data.dart';
 import '../../utils/screen_size.dart';
 import 'authentication.dart';

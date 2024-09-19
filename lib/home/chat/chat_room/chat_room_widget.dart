@@ -1,7 +1,7 @@
 import 'package:chattingapp/home/chat/chat_room/chat_room_data.dart';
 import 'package:chattingapp/home/friend/detail/detail_information_screen.dart';
 import 'package:chattingapp/home/friend/friend_data.dart';
-import 'package:chattingapp/utils/color.dart';
+import 'package:chattingapp/utils/color/color.dart';
 import 'package:chattingapp/utils/date_check.dart';
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/screen_size.dart';
@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../../utils/data_refresh.dart';
 import '../../../utils/file_download.dart';
-import '../../../utils/image_viewer.dart';
+import '../../../utils/image/image_viewer.dart';
 import '../../../utils/snackbar_message.dart';
 import '../../home_screen.dart';
 import 'chat_room_dialog.dart';

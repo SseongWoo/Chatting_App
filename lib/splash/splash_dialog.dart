@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:chattingapp/utils/color.dart';
+import 'package:chattingapp/utils/color/color.dart';
 import 'package:flutter/material.dart';
 import '../utils/launch_browser.dart';
 

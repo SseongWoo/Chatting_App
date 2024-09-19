@@ -2,7 +2,7 @@ import 'package:chattingapp/home/friend/category/category_setting_screen.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../utils/color.dart';
+import '../../../utils/color/color.dart';
 import '../../../utils/screen_movement.dart';
 import 'category_data.dart';
 

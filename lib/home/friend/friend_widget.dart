@@ -1,13 +1,11 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:chattingapp/home/friend/detail/detail_change_screen.dart';
 import 'package:chattingapp/home/friend/detail/detail_information_screen.dart';
 import 'package:chattingapp/home/home_screen.dart';
 import 'package:chattingapp/utils/snackbar_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import '../../utils/color.dart';
 import '../../utils/get_people_data.dart';
-import '../../utils/image_viewer.dart';
+import '../../utils/image/image_viewer.dart';
 import '../../utils/screen_movement.dart';
 import '../../utils/screen_size.dart';
 import '../chat/chat_list_data.dart';
@@ -29,37 +27,12 @@ class FriendWidget extends StatefulWidget {
 class _FriendWidgetState extends State<FriendWidget> {
   late ScreenSize screenSize;
   late FriendData friendData;
-  late ChatRoomSimpleData chatRoomSimpleData;
-  bool selected = false;
-  bool dataChaek = true;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     friendData = widget.friendData;
-
-    // 해당 친구와 1대1채팅방이 있는지 확인하는 작업
-    if (chatRoomList.containsKey(friendData.friendInherentChatRoom)) {
-      chatRoomSimpleData = chatRoomList[friendData.friendInherentChatRoom]!;
-    } else {
-      dataChaek = false;
-    }
-  }
-
-  // 채팅방으로 이동하는 함수
-  void moveChatRoom() async {
-    EasyLoading.show();
-    await getChatData(chatRoomSimpleData.chatRoomUid);
-    List<ChatPeopleClass> chatPeople = await getPeopleData(chatRoomSimpleData.chatRoomUid);
-    EasyLoading.dismiss();
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ChatRoomScreen(
-                  chatRoomSimpleData: chatRoomSimpleData,
-                  chatPeopleList: chatPeople,
-                )));
   }
 
   @override
@@ -75,9 +48,7 @@ class _FriendWidgetState extends State<FriendWidget> {
       children: [
         GestureDetector(
           onTap: () {
-            setState(() {
-              selected = !selected;
-            });
+            friendWidgetDialog(context, screenSize, friendData);
           },
           onLongPress: () {
             friendWidgetDialog(context, screenSize, friendData);
@@ -156,36 +127,6 @@ class _FriendWidgetState extends State<FriendWidget> {
             ]),
           ),
         ),
-        Positioned(
-          top: 0,
-          right: 0,
-          child: FadeInRight(
-            animate: selected,
-            duration: const Duration(milliseconds: 200),
-            child: Container(
-              color: Colors.blue,
-              height: screenSize.getHeightPerSize(8),
-              width: screenSize.getWidthPerSize(16),
-              child: IconButton(
-                style: IconButton.styleFrom(
-                  backgroundColor: mainColor,
-                  shape: const BeveledRectangleBorder(),
-                ),
-                onPressed: () async {
-                  if (dataChaek) {
-                    moveChatRoom();
-                  } else {
-                    snackBarErrorMessage(context, '작업을 수행하는데 문제가 발생하였습니다.\n친구를 삭제하였다가 다시 추가해주세요');
-                  }
-                },
-                icon: const Icon(
-                  Icons.chat,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        )
       ],
     );
   }
@@ -194,111 +135,90 @@ class _FriendWidgetState extends State<FriendWidget> {
 // FriendWidget을 길게 눌렀을때 나타나는 다이얼로그 상세정보, 정보수정, 친구삭제 메뉴로 구성
 void friendWidgetDialog(BuildContext context, ScreenSize screenSize, FriendData friendData) {
   String name;
+  late ChatRoomSimpleData chatRoomSimpleData;
+  bool selected = false;
+  bool dataChaek = true;
   if (friendData.friendCustomName.isNotEmpty) {
     name = '${friendData.friendCustomName}(${friendData.friendNickName})';
   } else {
     name = friendData.friendNickName;
   }
 
+  // 해당 친구와 1대1채팅방이 있는지 확인하는 작업
+  if (chatRoomList.containsKey(friendData.friendInherentChatRoom)) {
+    chatRoomSimpleData = chatRoomList[friendData.friendInherentChatRoom]!;
+  } else {
+    dataChaek = false;
+  }
+
+  // 채팅방으로 이동하는 함수
+  void moveChatRoom() async {
+    EasyLoading.show();
+    await getChatData(chatRoomSimpleData.chatRoomUid);
+    List<ChatPeopleClass> chatPeople = await getPeopleData(chatRoomSimpleData.chatRoomUid);
+    EasyLoading.dismiss();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ChatRoomScreen(
+                  chatRoomSimpleData: chatRoomSimpleData,
+                  chatPeopleList: chatPeople,
+                )));
+  }
+
   showDialog(
     context: context,
     builder: (context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: screenSize.getHeightPerSize(1),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                  screenSize.getWidthPerSize(3), screenSize.getHeightPerSize(1.5), 0, 0),
-              child: Text(
-                name,
-                style: TextStyle(fontSize: screenSize.getHeightPerSize(2.5)),
-              ),
-            ),
-            SizedBox(
-              height: screenSize.getHeightPerSize(1),
-            ),
-            SizedBox(
-              height: screenSize.getHeightPerSize(4.5),
-              width: double.infinity,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  shape: const BeveledRectangleBorder(),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => DetailInformationScreen(
-                                friendData: friendData,
-                              )));
-                },
-                child: Text(
-                  '상세 정보',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: screenSize.getHeightPerSize(1.5),
+      return SimpleDialog(
+        title: Text(name),
+        children: [
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.of(context).pop();
+              if (dataChaek) {
+                moveChatRoom();
+              } else {
+                snackBarErrorMessage(context, '작업을 수행하는데 문제가 발생하였습니다.\n친구를 삭제하였다가 다시 추가해주세요');
+              }
+            },
+            child: const Text('채팅하기'),
+          ),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailInformationScreen(
+                    friendData: friendData,
                   ),
                 ),
-              ),
-            ),
-            SizedBox(
-              height: screenSize.getHeightPerSize(4.5),
-              width: double.infinity,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  shape: const BeveledRectangleBorder(),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => DetailChangeScreen(
-                                friendData: friendData,
-                              )));
-                },
-                child: Text(
-                  '정보 수정',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: screenSize.getHeightPerSize(1.5),
+              );
+            },
+            child: const Text('상세정보'),
+          ),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailChangeScreen(
+                    friendData: friendData,
                   ),
                 ),
-              ),
-            ),
-            SizedBox(
-              height: screenSize.getHeightPerSize(4.5),
-              width: double.infinity,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  shape: const BeveledRectangleBorder(),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  friendDeleteDialog(context, friendData);
-                },
-                child: Text(
-                  '친구 삭제',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: screenSize.getHeightPerSize(1.5),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: screenSize.getHeightPerSize(1.5),
-            )
-          ],
-        ),
+              );
+            },
+            child: const Text('정보수정'),
+          ),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.of(context).pop();
+              friendDeleteDialog(context, friendData);
+            },
+            child: const Text('친구삭제'),
+          ),
+        ],
       );
     },
   );

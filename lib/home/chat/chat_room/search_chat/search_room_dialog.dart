@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chattingapp/home/chat/chat_room/search_chat/search_room_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import '../../../../utils/color.dart';
+import '../../../../utils/color/color.dart';
 import '../../../../utils/screen_size.dart';
 import '../../../friend/friend_data.dart';
 import '../../../friend/request/request_data.dart';

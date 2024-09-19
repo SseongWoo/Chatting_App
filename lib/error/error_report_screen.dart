@@ -1,11 +1,10 @@
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/snackbar_message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:uuid/uuid.dart';
-import '../utils/color.dart';
+import '../utils/color/color.dart';
 import '../utils/logger.dart';
 import '../utils/screen_size.dart';
 

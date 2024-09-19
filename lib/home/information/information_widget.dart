@@ -1,8 +1,8 @@
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
-import '../../utils/color.dart';
-import '../../utils/color_picker.dart';
+import '../../utils/color/color.dart';
+import '../../utils/color/color_picker.dart';
 import '../../utils/shared_preferences.dart';
 import 'information_dialog.dart';
 

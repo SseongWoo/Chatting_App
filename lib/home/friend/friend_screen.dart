@@ -1,6 +1,6 @@
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:chattingapp/home/friend/friend_widget.dart';
-import 'package:chattingapp/utils/color.dart';
+import 'package:chattingapp/utils/color/color.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flutter/material.dart';
 import 'category/category_data.dart';

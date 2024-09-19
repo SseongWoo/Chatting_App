@@ -1,10 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chattingapp/home/friend/friend_data.dart';
-import 'package:chattingapp/utils/color.dart';
+import 'package:chattingapp/utils/color/color.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_tags/simple_tags.dart';
 import '../../../utils/copy.dart';
-import '../../../utils/image_viewer.dart';
+import '../../../utils/image/image_viewer.dart';
 import '../../../utils/screen_size.dart';
 import '../request/request_data.dart';
 

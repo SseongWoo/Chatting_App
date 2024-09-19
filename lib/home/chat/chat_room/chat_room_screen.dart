@@ -3,8 +3,9 @@ import 'package:chattingapp/home/chat/chat_list_data.dart';
 import 'package:chattingapp/home/chat/chat_room/add_person/add_person_screen.dart';
 import 'package:chattingapp/home/chat/chat_room/setting_chat_room/setting_room.dart';
 import 'package:chattingapp/home/chat/chat_room/setting_chat_room/setting_room_manager.dart';
+import 'package:chattingapp/home/friend/friend_data.dart';
 import 'package:chattingapp/home/home_screen.dart';
-import 'package:chattingapp/utils/image_viewer.dart';
+import 'package:chattingapp/utils/image/image_viewer.dart';
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:chattingapp/utils/snackbar_message.dart';
@@ -13,10 +14,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../utils/color.dart';
+import '../../../utils/color/color.dart';
 import '../../../utils/date_check.dart';
 import '../../../utils/get_people_data.dart';
-import '../../../utils/image_picker.dart';
+import '../../../utils/image/image_picker.dart';
 import '../../../utils/platform_check.dart';
 import '../../../utils/screen_movement.dart';
 import '../../../utils/screen_size.dart';
@@ -45,6 +46,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   late ChatRoomData _chatRoomData;
   late MessageDataClass _messageDataClass;
   late StreamSubscription _subscription;
+  late FriendData _singleFriendData;
+  String _title = '채팅방 타이틀';
   int _chatLength = 50;
   bool _selected = false;
   bool _discontinuedText = false;
@@ -128,6 +131,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         }
       }
     });
+
+    _setSingleFriendData();
   }
 
   @override
@@ -284,15 +289,31 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     }
   }
 
+  // 화면의 타이틀을 설정하는 함수
+  // 개인채팅방일경우 상대방의 이름을 기본설젇으로 등록함
+  void _setSingleFriendData() {
+    String getTitle = chatRoomDataList[_chatRoomSimpleData.chatRoomUid]!.chatRoomName;
+    if (_chatRoomSimpleData.chatRoomCustomName.isNotEmpty) {
+      _title = _chatRoomSimpleData.chatRoomCustomName;
+    } else if (getTitle == '1대1 채팅방') {
+      for (var item in _chatPeopleList) {
+        if (myData.myUID != item.uid) {
+          _title = item.name;
+          _singleFriendData = friendList[friendListUidKey[item.uid]]!;
+        }
+      }
+    } else {
+      _title = getTitle;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text(_chatRoomSimpleData.chatRoomCustomName.isNotEmpty
-            ? _chatRoomSimpleData.chatRoomCustomName
-            : chatRoomDataList[_chatRoomSimpleData.chatRoomUid]!.chatRoomName),
+        title: Text(_title),
         leading: IconButton(
             onPressed: () {
               Navigator.of(context).pushAndRemoveUntil(
@@ -347,8 +368,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 child: CircleAvatar(
                   backgroundImage: _chatRoomData.chatRoomProfile.isNotEmpty
                       ? NetworkImage(_chatRoomData.chatRoomProfile) as ImageProvider
-                      : null,
-                  child: _chatRoomData.chatRoomProfile.isEmpty
+                      : _chatRoomData.chatRoomUid.length > 8 &&
+                              _singleFriendData.friendProfile.isNotEmpty
+                          ? NetworkImage(_singleFriendData.friendProfile)
+                          : null,
+                  child: _chatRoomData.chatRoomProfile.isEmpty &&
+                          _chatRoomData.chatRoomUid.length < 8 &&
+                          _singleFriendData.friendProfile.isEmpty
                       ? Icon(
                           Icons.image,
                           size: _screenSize.getHeightPerSize(6),
@@ -359,7 +385,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               ),
               accountName: _chatRoomSimpleData.chatRoomUid.length <= 8
                   ? Text('${_chatRoomData.chatRoomName} (${_chatRoomData.chatRoomUid})')
-                  : const Text('1대1 채팅방'),
+                  : Text(_title),
               accountEmail:
                   _chatRoomSimpleData.chatRoomUid.length <= 8 ? Text('매니저 : $_managerName') : null,
               decoration: BoxDecoration(

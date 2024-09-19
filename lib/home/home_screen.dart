@@ -3,10 +3,9 @@ import 'package:chattingapp/home/chat/create_chat/creat_chat_screen.dart';
 import 'package:chattingapp/home/friend/request/friend_request_screen.dart';
 import 'package:chattingapp/home/friend/request/request_data.dart';
 import 'package:chattingapp/home/information/information_screen.dart';
-import 'package:chattingapp/utils/color.dart';
+import 'package:chattingapp/utils/color/color.dart';
 import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import '../error/error_dialog.dart';
 import '../utils/screen_size.dart';
 import 'chat/chat_list_screen.dart';
 import 'friend/friend_screen.dart';
@@ -54,19 +53,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           title: Text(titles[_tabController.index]!),
           backgroundColor: mainLightColor,
           actions: [
-            IconButton(
-              onPressed: () {
-                showErrorDialog(context, 'ㄷㄷㄷㄷㄷㄷ');
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(buifor (var item in groupChatRoomSequence) {
-                //                 //   print(chatRoomList[item]?.chatRoomCustomName);
-                //                 // }lder: (context) => const TestScreen()),
-                // );
-                //
-              },
-              icon: const Icon(Icons.texture_sharp),
-            ),
             if (_tabController.index == 0)
               Stack(
                 children: [
@@ -87,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       child: Container(
                         height: _screenSize.getHeightPerSize(1),
                         width: _screenSize.getHeightPerSize(1),
-                        decoration: BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                        decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
                       ),
                     ),
                   ),
@@ -114,12 +100,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               icon: const Icon(Icons.search),
               tooltip: '검색',
             ),
-            if (_tabController.index == 3)
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.settings),
-                tooltip: '앱 설정',
-              ),
           ],
         ),
         body: TabBarView(

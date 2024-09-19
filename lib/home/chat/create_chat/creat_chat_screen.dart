@@ -11,9 +11,9 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:search_choices/search_choices.dart';
-import '../../../utils/color.dart';
+import '../../../utils/color/color.dart';
 import '../../../utils/get_people_data.dart';
-import '../../../utils/image_picker.dart';
+import '../../../utils/image/image_picker.dart';
 import '../chat_room/chat_room_data.dart';
 import 'creat_chat_data.dart';
 

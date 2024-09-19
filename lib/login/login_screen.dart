@@ -1,5 +1,6 @@
 import 'package:chattingapp/login/registration/authentication.dart';
 import 'package:chattingapp/login/registration/registration_first_screen.dart';
+import 'package:chattingapp/utils/color/color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -40,8 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
   // 로그인을 하기위해 DB에서 정보를 가지고와 내부 저장소에 저장하고 로그인을 완료하는 함수
   void _login() async {
     if (await signIn(controllerID.text, controllerPW.text)) {
-      await getFriendDataList();
       await getMyData();
+      await getFriendDataList();
       await getChatRoomData();
       await getChatRoomDataList();
       await getSharedPreferencese();
@@ -167,6 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: screenSize.getWidthPerSize(80),
                 height: screenSize.getHeightPerSize(5),
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: mainLightColor),
                   onPressed: () {
                     setState(() {
                       if (controllerID.text == '') {
@@ -188,8 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       : Text(
                           '로그인',
                           style: TextStyle(
-                            fontSize: screenSize.getHeightPerSize(2),
-                          ),
+                              fontSize: screenSize.getHeightPerSize(2), color: Colors.white),
                         ),
                 ),
               ),
@@ -208,7 +209,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         child: Text(
                           '회원가입',
-                          style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
+                          style: TextStyle(
+                              fontSize: screenSize.getHeightPerSize(1.5), color: mainColor),
                         )),
                     TextButton(
                         onPressed: () {
@@ -219,7 +221,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         child: Text(
                           '계정 찾기',
-                          style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
+                          style: TextStyle(
+                              fontSize: screenSize.getHeightPerSize(1.5), color: mainColor),
                         )),
                   ],
                 ),

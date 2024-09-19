@@ -1,4 +1,4 @@
-import 'package:chattingapp/utils/color.dart';
+import 'package:chattingapp/utils/color/color.dart';
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:flutter/material.dart';

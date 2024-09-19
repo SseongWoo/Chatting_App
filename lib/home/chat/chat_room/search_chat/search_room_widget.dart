@@ -7,7 +7,7 @@ import 'package:chattingapp/utils/data_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../../../utils/get_people_data.dart';
-import '../../../../utils/image_viewer.dart';
+import '../../../../utils/image/image_viewer.dart';
 import '../../../../utils/screen_size.dart';
 import '../../create_chat/creat_chat_data.dart';
 import '../chat_room_data.dart';

@@ -56,6 +56,8 @@ Future<void> deleteChatRoom(String chatRoomUid) async {
         .doc('_lastmessage_')
         .delete();
 
+    await FirebaseFirestore.instance.collection('chat_public').doc(chatRoomUid).delete();
+
     // 모든 채팅내역을 삭제하는 작업
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('chat')

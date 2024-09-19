@@ -1,5 +1,7 @@
 import 'package:chattingapp/home/chat/chat_list_data.dart';
 import 'package:chattingapp/home/friend/friend_data.dart';
+import 'package:chattingapp/home/information/questions/questions_screen.dart';
+import 'package:chattingapp/home/information/update_information/update_information_screen.dart';
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:chattingapp/utils/snackbar_message.dart';
@@ -9,7 +11,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../login/login_screen.dart';
 import '../../login/registration/authentication.dart';
 import '../../utils/copy.dart';
-import '../../utils/image_widget.dart';
+import '../../utils/image/image_widget.dart';
 import '../../utils/screen_size.dart';
 import 'delete_user_information/delete_user_information_screen.dart';
 import 'information_dialog.dart';
@@ -129,6 +131,22 @@ class _InformationScreenState extends State<InformationScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const DeleteUserInformationScreen()),
+    );
+  }
+
+  // 업데이트 확인 화면 실행 함수
+  void _updateInformation() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const UpdateInformationScreen()),
+    );
+  }
+
+  // 문의사항 화면 실행 함수
+  void _quesrionsInformation() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const QuestionsScreen()),
     );
   }
 
@@ -340,31 +358,32 @@ class _InformationScreenState extends State<InformationScreen> {
               ),
               /* 앱 설정 */
               informationTitleWidget(_screenSize, '앱 설정'),
-              InformationMenuWidget(title: '업데이트 정보', location: 'top', onTap: _updatePassWord),
-              InformationMenuWidget(title: '문의 사항', location: 'bottom', onTap: _updatePassWord),
+              InformationMenuWidget(title: '업데이트 정보', location: 'top', onTap: _updateInformation),
+              InformationMenuWidget(
+                  title: '문의 사항', location: 'bottom', onTap: _quesrionsInformation),
               SizedBox(
                 height: _screenSize.getHeightPerSize(1),
               ),
-              ElevatedButton(
-                  onPressed: () async {
-                    //bool test = await checkEmailVerificationStatus();
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return LogOutDialog();
-                      },
-                    );
-                  },
-                  child: Text('테스트')),
-              ElevatedButton(
-                  onPressed: () {
-                    signOut();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
-                    );
-                  },
-                  child: Text('로그아웃')),
+              // ElevatedButton(
+              //     onPressed: () async {
+              //       //bool test = await checkEmailVerificationStatus();
+              //       showDialog(
+              //         context: context,
+              //         builder: (BuildContext context) {
+              //           return LogOutDialog();
+              //         },
+              //       );
+              //     },
+              //     child: Text('테스트')),
+              // ElevatedButton(
+              //     onPressed: () {
+              //       signOut();
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(builder: (context) => const LoginScreen()),
+              //       );
+              //     },
+              //     child: Text('로그아웃')),
             ],
           ),
         ),

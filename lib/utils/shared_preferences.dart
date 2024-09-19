@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'color.dart';
+import 'color/color.dart';
 
 // 데이터를 내부 기기에 저장하는 기능들
 

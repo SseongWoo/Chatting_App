@@ -1,5 +1,5 @@
 import 'package:chattingapp/splash/splash_screen.dart';
-import 'package:chattingapp/utils/color.dart';
+import 'package:chattingapp/utils/color/color.dart';
 import 'package:chattingapp/utils/logger.dart';
 import 'package:chattingapp/utils/state_observer.dart';
 import 'package:firebase_core/firebase_core.dart';

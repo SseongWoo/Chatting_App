@@ -2,7 +2,7 @@ import 'package:chattingapp/home/chat/chat_list_data.dart';
 import 'package:chattingapp/home/chat/chat_room/search_chat/search_room_data.dart';
 import 'package:chattingapp/home/chat/chat_room/search_chat/search_room_widget.dart';
 import 'package:chattingapp/home/friend/friend_data.dart';
-import 'package:chattingapp/utils/color.dart';
+import 'package:chattingapp/utils/color/color.dart';
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -337,8 +337,11 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
         String email = doc['email'] ?? '';
         String uid = doc['uid'] ?? '';
         String emailPrefix = email.split('@').first;
+        String name = doc['nickname'] ?? '';
         return uid != myData.myUID &&
-            (emailPrefix.contains(searchData) || uid.contains(searchData));
+            (emailPrefix.contains(searchData) ||
+                uid.contains(searchData) ||
+                name.contains(searchData));
       }).toList();
 
       // 저장된 filteredDocs 리스트에 있는 데이터들을 UserData클래스로 재구성해서 _userDataSequence에 저장

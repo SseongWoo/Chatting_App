@@ -1,6 +1,6 @@
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:chattingapp/home/home_screen.dart';
-import 'package:chattingapp/utils/color.dart';
+import 'package:chattingapp/utils/color/color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../../utils/screen_movement.dart';
