@@ -1,6 +1,7 @@
 # Futter Talk
-## 개요
+<img src = "https://github.com/user-attachments/assets/83c2f12e-7a73-455a-829a-8afbd391c265" width="350" height="350">
 
+## 개요
 - 프로젝트 : 플러터와 파이어베이스를 사용한 채팅어플
 - 분류 : 개인프로젝트
 - 제작기간 : 24.06~24.09
@@ -24,6 +25,49 @@
 
 ## 프로젝트 구성
 ### 화면 구성
+|로그인|메인화면_친구|
+|:---:|:---:|
+|<img src = "https://github.com/user-attachments/assets/25e4cb88-0cd1-4d8b-83d7-cc4a8601ebdc" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/aff6ce0e-6678-4ccd-b34e-eb54b95f8971" width="350" height="750">|
+|메인화면_개인,단체채팅|내정보 및 설정|
+|<img src = "https://github.com/user-attachments/assets/ba5b4a2a-f93d-4b1f-b19d-064a8d3f3ab0" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/7d62a4da-f2c5-49ab-9ca3-dd3b2e9c8058" width="350" height="750">|
+|채팅방 화면||
+|<img src = "https://github.com/user-attachments/assets/2e8cd6f5-4599-47b3-9b29-6acb1d3c01ad" width="350" height="750">||
+
+<details><summary>회원가입 및 비밀번호 찾기 화면구성</summary>
+    
+|회원가입 1단계|회원가입 2단계|
+|:---:|:---:|
+|<img src = "https://github.com/user-attachments/assets/687091ac-494e-4dda-945e-f9d8bbd7971c" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/5530ec1e-33ec-49c4-9834-065229d5891b" width="350" height="750">|    
+|회원가입 3단계|계정 찾기 1단계|
+|<img src = "https://github.com/user-attachments/assets/d3a42b74-07fb-402e-ab02-1546c6c5e83b" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/bcd06624-4740-4a5d-8fc8-d64d0d4a6b5b" width="350" height="750">|
+|계정 찾기 2단계||
+|<img src = "https://github.com/user-attachments/assets/6ec8a9bd-b5d1-435e-acbf-639fe6d482a8" width="350" height="750">|>|
+</details>
+
+<details><summary>친구 추가 요청 및 상세정보 화면구성</summary>
+    
+|친구 추가_보낸 요청|친구 추가_받은 요청|
+|:---:|:---:|
+|<img src = "https://github.com/user-attachments/assets/4e271877-672b-42f2-a485-427c2a13fadc" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/e29ae69b-5824-41a2-81ef-d4217f642e10" width="350" height="750">|
+|친구 상세정보|친구 정보수정|
+|<img src = "https://github.com/user-attachments/assets/fcae3763-2a19-4a0a-be9a-9e97e9d57fe7" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/aeb4f18d-174c-41b2-9081-9e9bc9d8e9bc" width="350" height="750">|
+</details>
+
+<details><summary>카테고리 및 채팅방 생성 화면구성</summary>
+    
+|카테고리 설정|채팅방 생성|
+|:---:|:---:|
+|<img src = "https://github.com/user-attachments/assets/b916b00f-abc5-4e73-80be-01d117a81766" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/15aae425-4ccd-4a99-9f56-588a6311647f" width="350" height="750">|
+</details>
+
+<details><summary>채팅방 자세한 화면구성</summary>
+    
+|개인 채팅방 드로어|단체 채팅방 드로어|
+|:---:|:---:|
+|<img src = "https://github.com/user-attachments/assets/460cf5d2-e4c8-42fb-9618-e578697531f2" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/a9d3e794-62dc-4931-b213-6d0c5d3502d5" width="350" height="750">|
+|개인 채팅방 커스텀 설정|단체 채팅방 커스텀 설정|
+|<img src = "https://github.com/user-attachments/assets/460cf5d2-e4c8-42fb-9618-e578697531f2" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/a9d3e794-62dc-4931-b213-6d0c5d3502d5" width="350" height="750">|
+</details>
 
 
 ### 디렉토리 구조
@@ -136,3 +180,41 @@ lib
     ├── snackbar_message.dart : 스낵바 메세지 호출 기능
     └── state_observer.dart : 어플 구동상태 확인 기능
 ```
+
+### 사용한 라이브러리
+```sh
+  cupertino_icons: ^1.0.6 : 더 다양한 아이콘 패키지
+  firebase_core: ^2.32.0 : 파이어베이스 패키지
+  cloud_firestore: ^4.17.5 : 파이어베이스 파이어스토어 데이터베이스 패키지
+  firebase_auth: ^4.20.0 : 파이어베이스 인증 패키지
+  flutter_spinkit: ^5.2.1 : 로딩GIF 패키지
+  intl: ^0.19.0 : DateTime의 형식을 변경하기 위한 패키지
+  image_picker: ^1.1.1 : 갤러리에서 이미지 가져오는 패키지
+  image_cropper: ^6.0.0 : 이미지 수정 패키지
+  firebase_storage: ^11.7.7 : 파이어베이스 스토리지
+  animate_do: ^3.3.4 : 다양한 위젯 애니메이션 효과를 위한 패키지
+  photo_view: ^0.15.0 : 사진 뷰어 패키지
+  buttons_tabbar: ^1.3.10 : 버튼 탭바 패키지
+  multi_dropdown: ^3.0.0-dev.2 : 드롭 다운 패키지
+  animated_reorderable_list: ^1.0.5 : 애니메이션 리스트 패키지
+  dropdown_button2: ^2.3.9 : 드롭 다운 메뉴 버튼 패키지
+  auto_size_text: ^3.0.0 : 글자 크기 자동 조절 패키지
+  simple_tags: ^0.0.6 : 태그 뷰어 패키지
+  flutter_easyloading: ^3.0.5 : 로딩창 패키지
+  uuid: ^4.5.0 : 랜덤한 UID를 생성하는 패키지
+  search_choices: ^2.2.7 : 검색창 패키지
+  shared_preferences: ^2.2.3 : 데이터 저장 패키지
+  flex_color_picker: ^3.5.0 : 색상 선택 패키지
+  url_launcher: ^6.3.0 : 외부 브라우저 실행 패키지
+  package_info_plus: ^8.0.0 : 앱의 정보 제공 패키지
+  firebase_remote_config: : 파이어베이스 remote_config 패키지
+  rxdart: ^0.28.0 : streamzip등등 다양한 기능의 패키지
+  logger: ^2.4.0 : 로그 패키지
+  path_provider: ^2.1.4 : 파일 시스템 접근 패키지
+  permission_handler: ^11.3.1 : 권한 요청 패키지
+```
+
+
+
+
+
