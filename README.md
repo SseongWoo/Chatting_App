@@ -1,6 +1,9 @@
 # Futter Talk
 <img src = "https://github.com/user-attachments/assets/83c2f12e-7a73-455a-829a-8afbd391c265" width="350" height="350">
 
+## 프로젝트 소개
+- 이 프로젝트는 AOS, IOS 에서 동작하는 크로스플랫폼 프로젝트이며, 사용자들간 실시간 채팅을 사용하여 대화가 가능하며, 다양한 커스텀을 통해 사용자가 원하는 채팅방의 UI를 사용할수 있도록 할수 있도록 제작하였습니다.
+
 ## 개요
 - 프로젝트 : 플러터와 파이어베이스를 사용한 채팅어플
 - 분류 : 개인프로젝트
@@ -13,9 +16,6 @@
 - Android Studio Koala | 2024.1.1
 - Flutter 3.24.3
 - Dart 3.5.3
-
-## 프로젝트 소개
-- 이 프로젝트는 AOS, IOS 에서 동작하는 크로스플랫폼 프로젝트이며, 사용자들간 실시간 채팅을 사용하여 대화가 가능하며, 다양한 커스텀을 통해 사용자가 원하는 채팅방의 UI를 사용할수 있도록 할수 있도록 제작하였습니다.
 
 ## 주요 기능
 - 1대1 채팅 및 그룹 채팅, 그룹 오픈채팅 생성 기능
@@ -62,13 +62,28 @@
 
 <details><summary>채팅방 자세한 화면구성</summary>
     
-|개인 채팅방 드로어|단체 채팅방 드로어|
+|개인 채팅방 드로어|개인,단체 채팅방 커스텀 설정|
 |:---:|:---:|
-|<img src = "https://github.com/user-attachments/assets/460cf5d2-e4c8-42fb-9618-e578697531f2" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/a9d3e794-62dc-4931-b213-6d0c5d3502d5" width="350" height="750">|
-|개인 채팅방 커스텀 설정|단체 채팅방 커스텀 설정|
-|<img src = "https://github.com/user-attachments/assets/460cf5d2-e4c8-42fb-9618-e578697531f2" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/a9d3e794-62dc-4931-b213-6d0c5d3502d5" width="350" height="750">|
+|<img src = "https://github.com/user-attachments/assets/460cf5d2-e4c8-42fb-9618-e578697531f2" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/651cb726-33ce-4411-a94b-87747a35465a" width="350" height="750">|
+|단체 채팅방 드로어|단체 채팅방 기본 설정|
+|<img src = "https://github.com/user-attachments/assets/a9d3e794-62dc-4931-b213-6d0c5d3502d5" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/5c45931b-2d66-493e-86e9-ad141cdd0854" width="350" height="750">|
 </details>
 
+<details><summary>검색 화면구성</summary>
+    
+|내부 검색|외부 검색|
+|:---:|:---:|
+|<img src = "https://github.com/user-attachments/assets/10048cd4-5dc1-4e8a-9043-c17309b2a28b" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/e9bc69c7-733f-4f72-98a5-b866ed876932" width="350" height="750">|
+</details>
+
+<details><summary>설정 화면구성</summary>
+    
+|문의|회원 탈퇴|
+|:---:|:---:|
+|<img src = "https://github.com/user-attachments/assets/449c7c3f-ed22-4bc6-af69-08b683b4d20e" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/b0f8f63d-79b8-40c0-86e2-75dc5ea67e15" width="350" height="750">|
+|색상 설정|글자 크기 설정|
+|<img src = "https://github.com/user-attachments/assets/3fcec1ef-1b37-4ef3-b008-5d56cc6388c5" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/ca38303a-a635-4293-b2ce-a5f8475876c0" width="350" height="750">|
+</details>
 
 ### 디렉토리 구조
 
