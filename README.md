@@ -10,7 +10,7 @@
 - 제작기간 : 24.06~24.09
 - 사용기술 : Flutter, Dart, FireBase Authentication, FireBase Cloud Firestore, FireBase Storage, FireBase Remote Config
 - 사용 IDE : Android Studio
-- 사용 디바이스 : iPhone 15 pro max, galaxy s23+
+- 사용 디바이스 : iPhone 15 pro max, Galaxy S23+
 
 ## 개발환경
 - Android Studio Koala | 2024.1.1
