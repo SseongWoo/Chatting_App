@@ -17,7 +17,6 @@ class RegistrationSecondScreen extends StatefulWidget {
 }
 
 class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
-  late ScreenSize _screenSize;
   late String email;
   late String password;
 
@@ -45,7 +44,7 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -54,41 +53,41 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
       body: Stack(
         children: [
           SizedBox(
-            height: _screenSize.getHeightSize(),
+            height: screenSize.getHeightSize(),
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   Container(
-                    height: _screenSize.getHeightPerSize(5),
+                    height: screenSize.getHeightPerSize(5),
                   ),
                   SizedBox(
-                    width: _screenSize.getWidthPerSize(80),
+                    width: screenSize.getWidthPerSize(80),
                     child: Text(
                       '계정 인증\n',
-                      style: TextStyle(fontSize: _screenSize.getHeightPerSize(4)),
+                      style: TextStyle(fontSize: screenSize.getHeightPerSize(4)),
                     ),
                   ),
                   SizedBox(
-                    width: _screenSize.getWidthPerSize(80),
+                    width: screenSize.getWidthPerSize(80),
                     child: Text(
                       '회원가입이 완료되었습니다!\n인증 메일이 성공적으로 전송되었습니다. 아래 이메일 주소로 전송된 링크를 클릭하여 인증을 완료해 주세요. ',
-                      style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
+                      style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
                     ),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(5),
+                    height: screenSize.getHeightPerSize(5),
                   ),
                   SizedBox(
                     child: Text(
                       email,
-                      style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
+                      style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
                     ),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(5),
+                    height: screenSize.getHeightPerSize(5),
                   ),
                   SizedBox(
-                    width: _screenSize.getWidthPerSize(50),
+                    width: screenSize.getWidthPerSize(50),
                     child: ElevatedButton(
                         onPressed: () {
                           signInWithVerifyEmailAndPassword(email, password);
@@ -96,7 +95,7 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
                         child: Text(
                           '이메일 다시 보내기',
                           style: TextStyle(
-                              fontSize: _screenSize.getHeightPerSize(2), color: Colors.black),
+                              fontSize: screenSize.getHeightPerSize(2), color: Colors.black),
                         )),
                   )
                 ],
@@ -106,8 +105,8 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
           Positioned(
             bottom: 0,
             child: SizedBox(
-              height: _screenSize.getHeightPerSize(8),
-              width: _screenSize.getWidthPerSize(100),
+              height: screenSize.getHeightPerSize(8),
+              width: screenSize.getWidthPerSize(100),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
@@ -121,7 +120,7 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
                 onPressed: () => _checkEmail(context),
                 child: Text(
                   '다음',
-                  style: TextStyle(fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
+                  style: TextStyle(fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
                 ),
               ),
             ),

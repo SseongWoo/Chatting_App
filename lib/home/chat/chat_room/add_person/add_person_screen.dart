@@ -27,7 +27,6 @@ class AddPersonScreen extends StatefulWidget {
 class _AddPersonScreenState extends State<AddPersonScreen> {
   List<int> _selectValueList = []; // 선택한 인원 리스트
   final List<String> _itemList = []; // 내 친구 리스트
-  late ScreenSize _screenSize; // 화면 크기
   late ChatRoomSimpleData _chatRoomSimpleData; // 채팅방 데이터
   final List<String> _chatPeopleList = []; // 채팅방에 속해있는 인원 리스트
   final List<String> _newPeopleList = []; // 새롭게 들어오는 인원 리스트
@@ -95,7 +94,7 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       appBar: AppBar(
         title: const Text('친구 추가'),
@@ -115,7 +114,7 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
               },
               child: Text(
                 '확인',
-                style: TextStyle(fontSize: _screenSize.getHeightPerSize(2), color: Colors.black),
+                style: TextStyle(fontSize: screenSize.getHeightPerSize(2), color: Colors.black),
               ))
         ],
       ),
@@ -177,7 +176,7 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
                       ),
                     ),
                     SizedBox(
-                        width: _screenSize.getWidthPerSize(15),
+                        width: screenSize.getWidthPerSize(15),
                         child: IconButton(
                             onPressed: () {
                               setState(() {

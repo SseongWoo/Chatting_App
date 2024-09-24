@@ -4,17 +4,15 @@ import '../../../utils/screen_size.dart';
 
 // 보낸 요청 위젯
 class RequestSentWidget extends StatefulWidget {
-  final ScreenSize screenSize;
   final int index;
 
-  const RequestSentWidget({super.key, required this.screenSize, required this.index});
+  const RequestSentWidget({super.key, required this.index});
 
   @override
   State<RequestSentWidget> createState() => _RequestSentWidgetState();
 }
 
 class _RequestSentWidgetState extends State<RequestSentWidget> {
-  late ScreenSize screenSize;
   late int index;
   bool deleteWidget = false;
 
@@ -22,7 +20,6 @@ class _RequestSentWidgetState extends State<RequestSentWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    screenSize = widget.screenSize;
     index = widget.index;
   }
 
@@ -153,7 +150,6 @@ class RequestReceivedWidget extends StatefulWidget {
 }
 
 class _RequestReceivedWidgetState extends State<RequestReceivedWidget> {
-  late ScreenSize screenSize;
   late int index;
   bool deleteWidget = false; // 사용자가 조작을 한 상태인지 아닌지 구분해주는 변수
   bool checkWidget = false; // 수락한 요청인지, 거절한 요청인지 구분해주는 변수

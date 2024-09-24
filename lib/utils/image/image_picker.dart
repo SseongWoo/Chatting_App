@@ -104,3 +104,40 @@ Future<CroppedFile?> cropImage(XFile? imageFile) async {
     return null;
   }
 }
+
+// 이미지를 자르거나 회전하는 함수
+Future<CroppedFile?> cropImageInChatRoom(XFile? imageFile) async {
+  try {
+    if (imageFile != null) {
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: imageFile.path, // 사용할 이미지 경로
+        compressFormat: ImageCompressFormat.jpg, // 저장할 이미지 확장자(jpg/png)
+        compressQuality: 50, // 저장할 이미지의 퀄리티
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square, // 1:1 비율
+        ],
+
+        uiSettings: [
+          // 안드로이드 UI 설정
+          AndroidUiSettings(
+            toolbarTitle: '이미지 자르기/회전하기', // 타이틀바 제목
+            toolbarColor: mainColor, // 타이틀바 배경색
+            toolbarWidgetColor: Colors.white, // 타이틀바 단추색
+          ),
+          // iOS UI 설정
+          IOSUiSettings(
+            title: '이미지 자르기/회전하기', // 보기 컨트롤러의 맨 위에 나타나는 제목
+          ),
+        ],
+      );
+
+      if (croppedFile != null) {
+        // 자르거나 회전한 이미지를 앱에 출력하기 위해 앱의 상태 변경
+        return croppedFile;
+      }
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}

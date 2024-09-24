@@ -17,7 +17,6 @@ class CategoryWidget extends StatefulWidget {
 }
 
 class _CategoryWidgetState extends State<CategoryWidget> {
-  late ScreenSize screenSize;
   late String categoryName;
   late int index;
 

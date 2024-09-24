@@ -40,7 +40,6 @@ class StatefulColorPickerDialog extends StatefulWidget {
 
 class _StatefulColorPickerDialogState extends State<StatefulColorPickerDialog> {
   late String _type;
-  late ScreenSize _screenSize;
   String _typeMessage = '';
   late Color beforColor;
 
@@ -106,7 +105,7 @@ class _StatefulColorPickerDialogState extends State<StatefulColorPickerDialog> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _screenSize = widget.screenSize;
+    screenSize = widget.screenSize;
     _type = widget.type;
     _setString();
     beforColor = chatRoomColorMap[_type]!;
@@ -119,7 +118,7 @@ class _StatefulColorPickerDialogState extends State<StatefulColorPickerDialog> {
       content: SingleChildScrollView(
         child: Column(
           children: [
-            previewWidget(_screenSize),
+            previewWidget(screenSize),
             ColorPicker(
               color: chatRoomColorMap[_type]!,
               onColorChanged: (Color color) => setState(() => chatRoomColorMap[_type] = color),
@@ -182,7 +181,7 @@ class _StatefulColorPickerDialogState extends State<StatefulColorPickerDialog> {
             TextButton(
               onPressed: () async {
                 EasyLoading.show();
-                await setColorSharedPreferencese(_type, chatRoomColorMap[_type]!);
+                await setColorShared(_type, chatRoomColorMap[_type]!);
                 widget.reflashColor(_type, chatRoomColorMap[_type]!);
                 EasyLoading.dismiss();
                 Navigator.of(context).pop(true);

@@ -15,7 +15,6 @@ class DeleteUserInformationScreen extends StatefulWidget {
 }
 
 class _DeleteUserInformationScreenState extends State<DeleteUserInformationScreen> {
-  late ScreenSize _screenSize;
   final TextEditingController _passWordEditingController = TextEditingController();
   bool _isChecked = false;
   bool _errorPW = false;
@@ -34,7 +33,7 @@ class _DeleteUserInformationScreenState extends State<DeleteUserInformationScree
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       appBar: AppBar(
         title: const Text('회원 탈퇴'),
@@ -45,20 +44,20 @@ class _DeleteUserInformationScreenState extends State<DeleteUserInformationScree
           children: [
             Text(
               '정말 탈퇴하시겠습니까?',
-              style: TextStyle(fontSize: _screenSize.getHeightPerSize(2.5)),
+              style: TextStyle(fontSize: screenSize.getHeightPerSize(2.5)),
             ),
             SizedBox(
-              height: _screenSize.getHeightPerSize(3),
+              height: screenSize.getHeightPerSize(3),
             ),
             Text(
               '탈퇴하시면 모든 데이터가 삭제되어 복구할수가 없습니다.\n회원 탈퇴를 계속 하시려면 아래 비밀번호 입력과\n동의 버튼을 눌러 주세요.',
-              style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.7)),
+              style: TextStyle(fontSize: screenSize.getHeightPerSize(1.7)),
             ),
             SizedBox(
-              height: _screenSize.getHeightPerSize(2),
+              height: screenSize.getHeightPerSize(2),
             ),
             SizedBox(
-              width: _screenSize.getWidthPerSize(80),
+              width: screenSize.getWidthPerSize(80),
               child: TextField(
                 controller: _passWordEditingController,
                 decoration:
@@ -73,14 +72,14 @@ class _DeleteUserInformationScreenState extends State<DeleteUserInformationScree
             Visibility(
                 visible: _errorPW,
                 child: SizedBox(
-                  width: _screenSize.getWidthPerSize(80),
+                  width: screenSize.getWidthPerSize(80),
                   child: const Text(
                     '비밀번호를 잘못 입력했습니다.',
                     style: TextStyle(color: Colors.red),
                   ),
                 )),
             SizedBox(
-              width: _screenSize.getWidthPerSize(80),
+              width: screenSize.getWidthPerSize(80),
               child: Row(
                 children: [
                   Checkbox(
@@ -103,7 +102,7 @@ class _DeleteUserInformationScreenState extends State<DeleteUserInformationScree
               ),
             ),
             SizedBox(
-              height: _screenSize.getHeightPerSize(1),
+              height: screenSize.getHeightPerSize(1),
             ),
             ElevatedButton(
                 onPressed: _isChecked && _passWordEditingController.text.isNotEmpty
@@ -121,7 +120,7 @@ class _DeleteUserInformationScreenState extends State<DeleteUserInformationScree
                   style: TextStyle(color: Colors.black),
                 )),
             SizedBox(
-              height: _screenSize.getHeightPerSize(6),
+              height: screenSize.getHeightPerSize(6),
             ),
           ],
         ),

@@ -15,7 +15,6 @@ class RegistrationFirstScreen extends StatefulWidget {
 }
 
 class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
-  late ScreenSize _screenSize;
   final _registrationFirstFormKey = GlobalKey<FormState>();
   final TextEditingController _controllerID = TextEditingController();
   final TextEditingController _controllerPW = TextEditingController();
@@ -57,13 +56,13 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close)),
       ),
       body: SizedBox(
-        height: _screenSize.getHeightSize(),
+        height: screenSize.getHeightSize(),
         child: Stack(
           children: [
             Form(
@@ -72,21 +71,21 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                 child: Column(
                   children: [
                     Container(
-                      height: _screenSize.getHeightPerSize(5),
+                      height: screenSize.getHeightPerSize(5),
                     ),
                     SizedBox(
-                      width: _screenSize.getWidthPerSize(80),
+                      width: screenSize.getWidthPerSize(80),
                       child: Text(
                         '회원정보를\n입력해주세요',
-                        style: TextStyle(fontSize: _screenSize.getHeightPerSize(4)),
+                        style: TextStyle(fontSize: screenSize.getHeightPerSize(4)),
                       ),
                     ),
                     SizedBox(
-                      height: _screenSize.getHeightPerSize(5),
+                      height: screenSize.getHeightPerSize(5),
                     ),
                     SizedBox(
-                      height: _screenSize.getHeightPerSize(12),
-                      width: _screenSize.getWidthPerSize(80),
+                      height: screenSize.getHeightPerSize(12),
+                      width: screenSize.getWidthPerSize(80),
                       child: TextFormField(
                         focusNode: _focusNodeID,
                         controller: _controllerID,
@@ -105,8 +104,8 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: _screenSize.getHeightPerSize(12),
-                      width: _screenSize.getWidthPerSize(80),
+                      height: screenSize.getHeightPerSize(12),
+                      width: screenSize.getWidthPerSize(80),
                       child: TextFormField(
                         focusNode: _focusNodePW,
                         controller: _controllerPW,
@@ -125,8 +124,8 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: _screenSize.getHeightPerSize(12),
-                      width: _screenSize.getWidthPerSize(80),
+                      height: screenSize.getHeightPerSize(12),
+                      width: screenSize.getWidthPerSize(80),
                       child: TextFormField(
                         focusNode: _focusNodePWCheck,
                         controller: _controllerPWCheck,
@@ -153,11 +152,11 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
               duration: Duration(microseconds: Platform.isIOS ? 300000 : 130000),
               curve: Curves.easeInOut,
               bottom: _focusNodeID.hasFocus || _focusNodePW.hasFocus || _focusNodePWCheck.hasFocus
-                  ? -_screenSize.getHeightPerSize(8)
+                  ? -screenSize.getHeightPerSize(8)
                   : 0,
               child: SizedBox(
-                height: _screenSize.getHeightPerSize(8),
-                width: _screenSize.getWidthPerSize(100),
+                height: screenSize.getHeightPerSize(8),
+                width: screenSize.getWidthPerSize(100),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
@@ -173,8 +172,7 @@ class _RegistrationFirstScreenState extends State<RegistrationFirstScreen> {
                   },
                   child: Text(
                     '다음',
-                    style:
-                        TextStyle(fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
+                    style: TextStyle(fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
                   ),
                 ),
               ),

@@ -29,7 +29,6 @@ class ChatListWidget extends StatefulWidget {
 class _ChatListWidgetState extends State<ChatListWidget> {
   final String imagePath = 'assets/images/blank_profile.png';
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late ScreenSize _screenSize;
   late ChatRoomSimpleData _chatRoomSimpleData;
   late ChatRoomData _chatRoomData;
   late Stream<DocumentSnapshot> _stream1; // 스트림에 등록된 서버의 DB 경로에서 값이 변경되는 것을 감지하고 해당 값을 가져오기 위한 변수1
@@ -127,7 +126,7 @@ class _ChatListWidgetState extends State<ChatListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return StreamBuilder<List<DocumentSnapshot>>(
         stream: _combinedStream,
         builder: (context, snapshot) {
@@ -169,18 +168,18 @@ class _ChatListWidgetState extends State<ChatListWidget> {
               );
             },
             child: Container(
-              height: _screenSize.getHeightPerSize(7),
+              height: screenSize.getHeightPerSize(7),
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey, width: 0.5),
                   borderRadius: BorderRadius.circular(20)),
               child: Row(
                 children: [
                   SizedBox(
-                    width: _screenSize.getWidthPerSize(4),
+                    width: screenSize.getWidthPerSize(4),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(6),
-                    width: _screenSize.getHeightPerSize(6),
+                    height: screenSize.getHeightPerSize(6),
+                    width: screenSize.getHeightPerSize(6),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: _profileUrl.isNotEmpty
@@ -214,13 +213,13 @@ class _ChatListWidgetState extends State<ChatListWidget> {
                     ),
                   ),
                   SizedBox(
-                    width: _screenSize.getWidthPerSize(2),
+                    width: screenSize.getWidthPerSize(2),
                   ),
                   Expanded(
                     child: Column(
                       children: [
                         SizedBox(
-                          height: _screenSize.getHeightPerSize(3.5),
+                          height: screenSize.getHeightPerSize(3.5),
                           child: Align(
                               alignment: Alignment.bottomLeft,
                               child: AutoSizeText(
@@ -228,20 +227,20 @@ class _ChatListWidgetState extends State<ChatListWidget> {
                                 maxLines: 1,
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: _screenSize.getHeightPerSize(1.7)),
+                                    fontSize: screenSize.getHeightPerSize(1.7)),
                               )),
                         ),
                         SizedBox(
-                          height: _screenSize.getHeightPerSize(0.5),
+                          height: screenSize.getHeightPerSize(0.5),
                         ),
                         SizedBox(
-                          height: _screenSize.getHeightPerSize(2.8),
+                          height: screenSize.getHeightPerSize(2.8),
                           child: Align(
                             alignment: Alignment.topLeft,
                             child: Text(
                               _message,
                               style: TextStyle(
-                                  color: Colors.grey, fontSize: _screenSize.getHeightPerSize(1.5)),
+                                  color: Colors.grey, fontSize: screenSize.getHeightPerSize(1.5)),
                             ),
                           ),
                         ),
@@ -249,16 +248,16 @@ class _ChatListWidgetState extends State<ChatListWidget> {
                     ),
                   ),
                   SizedBox(
-                    width: _screenSize.getWidthPerSize(2),
+                    width: screenSize.getWidthPerSize(2),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(5),
-                    width: _screenSize.getWidthPerSize(16),
+                    height: screenSize.getHeightPerSize(5),
+                    width: screenSize.getWidthPerSize(16),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        dateTimeConvertTextWidget(_time, _screenSize),
+                        dateTimeConvertTextWidget(_time, screenSize),
                         Visibility(
                           visible: chatRoomRealTimeData[_chatRoomSimpleData.chatRoomUid]!
                                       .readableMessage >
@@ -266,8 +265,8 @@ class _ChatListWidgetState extends State<ChatListWidget> {
                               ? true
                               : false,
                           child: Container(
-                            height: _screenSize.getHeightPerSize(2.5),
-                            width: _screenSize.getHeightPerSize(2.5),
+                            height: screenSize.getHeightPerSize(2.5),
+                            width: screenSize.getHeightPerSize(2.5),
                             decoration: const BoxDecoration(
                               color: Colors.red,
                               shape: BoxShape.circle,
@@ -283,7 +282,7 @@ class _ChatListWidgetState extends State<ChatListWidget> {
                                     : '+99',
                                 style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: _screenSize.getHeightPerSize(1.3)),
+                                    fontSize: screenSize.getHeightPerSize(1.3)),
                               ),
                             ),
                           ),
@@ -292,7 +291,7 @@ class _ChatListWidgetState extends State<ChatListWidget> {
                     ),
                   ),
                   SizedBox(
-                    width: _screenSize.getWidthPerSize(2),
+                    width: screenSize.getWidthPerSize(2),
                   ),
                 ],
               ),

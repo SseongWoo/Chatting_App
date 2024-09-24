@@ -19,7 +19,6 @@ class RegistrationThirdScreen extends StatefulWidget {
 class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
   final TextEditingController _controllerNickName = TextEditingController();
   final FocusNode _focusNodeNickName = FocusNode();
-  late ScreenSize _screenSize;
   final _registrationThirdFormKey = GlobalKey<FormState>();
   CroppedFile? _croppedFile; // 카메라 또는 갤러리의 이미지를 저장할 변수
 
@@ -52,7 +51,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -61,29 +60,29 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
       body: Stack(
         children: [
           SizedBox(
-            height: _screenSize.getHeightSize(),
+            height: screenSize.getHeightSize(),
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   Container(
-                    height: _screenSize.getHeightPerSize(5),
+                    height: screenSize.getHeightPerSize(5),
                   ),
                   SizedBox(
-                    width: _screenSize.getWidthPerSize(80),
+                    width: screenSize.getWidthPerSize(80),
                     child: Text(
                       '계정 설정\n',
-                      style: TextStyle(fontSize: _screenSize.getHeightPerSize(4)),
+                      style: TextStyle(fontSize: screenSize.getHeightPerSize(4)),
                     ),
                   ),
                   SizedBox(
-                    width: _screenSize.getWidthPerSize(80),
+                    width: screenSize.getWidthPerSize(80),
                     child: Text(
                       '마지막 단계입니다!\n사용할 사용자의 닉네임과 프로필 사진을 등록해주세요. 이 정보들은 나중에 변경할 수 있습니다.',
-                      style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
+                      style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
                     ),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(5),
+                    height: screenSize.getHeightPerSize(5),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -91,8 +90,8 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                     },
                     child: Center(
                       child: SizedBox(
-                        height: _screenSize.getHeightPerSize(20),
-                        width: _screenSize.getHeightPerSize(20),
+                        height: screenSize.getHeightPerSize(20),
+                        width: screenSize.getHeightPerSize(20),
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
@@ -110,8 +109,8 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                               right: -10,
                               bottom: -10,
                               child: Container(
-                                  height: _screenSize.getHeightPerSize(4),
-                                  width: _screenSize.getHeightPerSize(4),
+                                  height: screenSize.getHeightPerSize(4),
+                                  width: screenSize.getHeightPerSize(4),
                                   decoration:
                                       BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                                   child: const Icon(
@@ -130,8 +129,8 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                                     });
                                   },
                                   child: Container(
-                                      height: _screenSize.getHeightPerSize(4),
-                                      width: _screenSize.getHeightPerSize(4),
+                                      height: screenSize.getHeightPerSize(4),
+                                      width: screenSize.getHeightPerSize(4),
                                       decoration: const BoxDecoration(
                                           color: Colors.red, shape: BoxShape.circle),
                                       child: const Icon(
@@ -147,11 +146,11 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(2),
+                    height: screenSize.getHeightPerSize(2),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(10),
-                    width: _screenSize.getWidthPerSize(60),
+                    height: screenSize.getHeightPerSize(10),
+                    width: screenSize.getWidthPerSize(60),
                     child: Form(
                       key: _registrationThirdFormKey,
                       child: TextFormField(
@@ -177,10 +176,10 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
           AnimatedPositioned(
             duration: Duration(microseconds: Platform.isIOS ? 300000 : 130000),
             curve: Curves.easeInOut,
-            bottom: _focusNodeNickName.hasFocus ? -_screenSize.getHeightPerSize(8) : 0,
+            bottom: _focusNodeNickName.hasFocus ? -screenSize.getHeightPerSize(8) : 0,
             child: SizedBox(
-              height: _screenSize.getHeightPerSize(8),
-              width: _screenSize.getWidthPerSize(100),
+              height: screenSize.getHeightPerSize(8),
+              width: screenSize.getWidthPerSize(100),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
@@ -198,7 +197,7 @@ class _RegistrationThirdScreenState extends State<RegistrationThirdScreen> {
                 },
                 child: Text(
                   '완료',
-                  style: TextStyle(fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
+                  style: TextStyle(fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
                 ),
               ),
             ),

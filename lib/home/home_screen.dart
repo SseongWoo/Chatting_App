@@ -19,7 +19,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
-  late ScreenSize _screenSize;
   late TabController _tabController;
   final titles = {
     0: '친구',
@@ -44,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -71,8 +70,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       top: 10,
                       right: 10,
                       child: Container(
-                        height: _screenSize.getHeightPerSize(1),
-                        width: _screenSize.getHeightPerSize(1),
+                        height: screenSize.getHeightPerSize(1),
+                        width: screenSize.getHeightPerSize(1),
                         decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
                       ),
                     ),

@@ -26,8 +26,6 @@ class InformationScreen extends StatefulWidget {
 }
 
 class _InformationScreenState extends State<InformationScreen> {
-  late ScreenSize _screenSize;
-
   // 하위 문서에서 setState을 사용하기 위한 함수
   void _refreshSize(double newSize) {
     setState(() {
@@ -152,17 +150,17 @@ class _InformationScreenState extends State<InformationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             children: [
               SizedBox(
-                height: _screenSize.getHeightPerSize(2),
+                height: screenSize.getHeightPerSize(2),
               ),
               Container(
-                height: _screenSize.getHeightPerSize(10),
+                height: screenSize.getHeightPerSize(10),
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -173,7 +171,7 @@ class _InformationScreenState extends State<InformationScreen> {
                 child: Row(
                   children: [
                     SizedBox(
-                      width: _screenSize.getHeightPerSize(2),
+                      width: screenSize.getHeightPerSize(2),
                     ),
                     Expanded(
                       child: Column(
@@ -182,10 +180,10 @@ class _InformationScreenState extends State<InformationScreen> {
                         children: [
                           Text(
                             myData.myNickName,
-                            style: TextStyle(fontSize: _screenSize.getHeightPerSize(2.5)),
+                            style: TextStyle(fontSize: screenSize.getHeightPerSize(2.5)),
                           ),
                           SizedBox(
-                            height: _screenSize.getHeightPerSize(0.5),
+                            height: screenSize.getHeightPerSize(0.5),
                           ),
                           GestureDetector(
                             onTap: () {
@@ -193,11 +191,11 @@ class _InformationScreenState extends State<InformationScreen> {
                             },
                             child: Text(
                               myData.myEmail,
-                              style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.5)),
+                              style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
                             ),
                           ),
                           SizedBox(
-                            height: _screenSize.getHeightPerSize(0.5),
+                            height: screenSize.getHeightPerSize(0.5),
                           ),
                           GestureDetector(
                             onTap: () {
@@ -205,7 +203,7 @@ class _InformationScreenState extends State<InformationScreen> {
                             },
                             child: Text(
                               myData.myUID,
-                              style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.2)),
+                              style: TextStyle(fontSize: screenSize.getHeightPerSize(1.2)),
                             ),
                           ),
                         ],
@@ -215,18 +213,18 @@ class _InformationScreenState extends State<InformationScreen> {
                       child: imageWidget(myData.myProfile),
                     ),
                     SizedBox(
-                      width: _screenSize.getHeightPerSize(2),
+                      width: screenSize.getHeightPerSize(2),
                     ),
                   ],
                 ),
               ),
               Container(
-                height: _screenSize.getHeightPerSize(2),
+                height: screenSize.getHeightPerSize(2),
                 color: Colors.white,
                 child: const Divider(color: Colors.grey, thickness: 1),
               ),
               Container(
-                height: _screenSize.getHeightPerSize(8),
+                height: screenSize.getHeightPerSize(8),
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -241,7 +239,7 @@ class _InformationScreenState extends State<InformationScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     informationMyDataSubWidget(
-                      _screenSize,
+                      screenSize,
                       '전체 친구 수',
                       friendList.length.toString(),
                     ),
@@ -250,7 +248,7 @@ class _InformationScreenState extends State<InformationScreen> {
                       color: Colors.grey,
                     ),
                     informationMyDataSubWidget(
-                      _screenSize,
+                      screenSize,
                       '참가중인 단체 채팅방',
                       groupChatRoomSequence.length.toString(),
                     ),
@@ -259,7 +257,7 @@ class _InformationScreenState extends State<InformationScreen> {
                       color: Colors.grey,
                     ),
                     informationMyDataSubWidget(
-                      _screenSize,
+                      screenSize,
                       '아이디 생성일',
                       myData.myDate,
                     ),
@@ -267,10 +265,10 @@ class _InformationScreenState extends State<InformationScreen> {
                 ),
               ),
               SizedBox(
-                height: _screenSize.getHeightPerSize(1),
+                height: screenSize.getHeightPerSize(1),
               ),
               /* 프로필 관리 */
-              informationTitleWidget(_screenSize, '프로필 관리'),
+              informationTitleWidget(screenSize, '프로필 관리'),
               InformationMenuWidget(
                 title: '닉네임 변경',
                 location: 'top',
@@ -282,57 +280,57 @@ class _InformationScreenState extends State<InformationScreen> {
                 onTap: _updateProfile,
               ),
               SizedBox(
-                height: _screenSize.getHeightPerSize(1),
+                height: screenSize.getHeightPerSize(1),
               ),
               /* 채팅방 설정 */
 
-              informationTitleWidget(_screenSize, '채팅방 설정'),
+              informationTitleWidget(screenSize, '채팅방 설정'),
               InformationColorMenuWidget(
                 reflashColor: _refreshColor,
-                screenSize: _screenSize,
+                screenSize: screenSize,
                 type: 'BackgroundColor',
                 title: '배경 색상 설정',
                 location: 'top',
               ),
               InformationColorMenuWidget(
                 reflashColor: _refreshColor,
-                screenSize: _screenSize,
+                screenSize: screenSize,
                 type: 'MyChatColor',
                 title: '내 대화 색상 설정',
                 location: 'middle',
               ),
               InformationColorMenuWidget(
                 reflashColor: _refreshColor,
-                screenSize: _screenSize,
+                screenSize: screenSize,
                 type: 'MyChatStringColor',
                 title: '내 글자 색상 설정',
                 location: 'middle',
               ),
               InformationColorMenuWidget(
                 reflashColor: _refreshColor,
-                screenSize: _screenSize,
+                screenSize: screenSize,
                 type: 'FriendChatColor',
                 title: '상대 대화 색상 설정',
                 location: 'middle',
               ),
               InformationColorMenuWidget(
                 reflashColor: _refreshColor,
-                screenSize: _screenSize,
+                screenSize: screenSize,
                 type: 'FriendChatStringColor',
                 title: '상대 글자 색상 설정',
                 location: 'middle',
               ),
               InformationSizeMenuWidget(
                 reflashSize: _refreshSize,
-                screenSize: _screenSize,
+                screenSize: screenSize,
                 title: '글자 크기 설정',
                 location: 'bottom',
               ),
               SizedBox(
-                height: _screenSize.getHeightPerSize(1),
+                height: screenSize.getHeightPerSize(1),
               ),
               /* 계정 관리 */
-              informationTitleWidget(_screenSize, '계정 설정'),
+              informationTitleWidget(screenSize, '계정 설정'),
               InformationMenuWidget(
                 title: '이메일 인증',
                 location: 'top',
@@ -354,15 +352,15 @@ class _InformationScreenState extends State<InformationScreen> {
                 onTap: _deleteUser,
               ),
               SizedBox(
-                height: _screenSize.getHeightPerSize(1),
+                height: screenSize.getHeightPerSize(1),
               ),
               /* 앱 설정 */
-              informationTitleWidget(_screenSize, '앱 설정'),
+              informationTitleWidget(screenSize, '앱 설정'),
               InformationMenuWidget(title: '업데이트 정보', location: 'top', onTap: _updateInformation),
               InformationMenuWidget(
                   title: '문의 사항', location: 'bottom', onTap: _quesrionsInformation),
               SizedBox(
-                height: _screenSize.getHeightPerSize(1),
+                height: screenSize.getHeightPerSize(1),
               ),
               // ElevatedButton(
               //     onPressed: () async {

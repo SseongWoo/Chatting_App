@@ -13,7 +13,6 @@ class AccountFindFirstScreen extends StatefulWidget {
 }
 
 class _AccountFindFirstScreenState extends State<AccountFindFirstScreen> {
-  late ScreenSize screenSize;
   final _accountFindFirstFormKey = GlobalKey<FormState>();
   TextEditingController controllerID = TextEditingController();
   final FocusNode focusNodeID = FocusNode();

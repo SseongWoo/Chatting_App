@@ -22,7 +22,6 @@ class QuestionsScreen extends StatefulWidget {
 }
 
 class _QuestionsScreenState extends State<QuestionsScreen> {
-  late ScreenSize _screenSize;
   final _questionsFirstFormKey = GlobalKey<FormState>();
   final TextEditingController _controllerTitle = TextEditingController();
   final TextEditingController _controllerDetails = TextEditingController();
@@ -55,7 +54,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       appBar: AppBar(
         title: const Text('문의 사항'),
@@ -65,48 +64,48 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         child: Form(
           key: _questionsFirstFormKey,
           child: SizedBox(
-            width: _screenSize.getWidthPerSize(80),
+            width: screenSize.getWidthPerSize(80),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: _screenSize.getHeightPerSize(2.5),
+                  height: screenSize.getHeightPerSize(2.5),
                 ),
                 SizedBox(
                   child: Text(
                     '유저코드 : ${myData.myUID}',
-                    style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.8)),
+                    style: TextStyle(fontSize: screenSize.getHeightPerSize(1.8)),
                   ),
                 ),
                 SizedBox(
-                  height: _screenSize.getHeightPerSize(1),
+                  height: screenSize.getHeightPerSize(1),
                 ),
                 SizedBox(
                   child: Text(
                     '유저명 : ${myData.myNickName}',
-                    style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.8)),
+                    style: TextStyle(fontSize: screenSize.getHeightPerSize(1.8)),
                   ),
                 ),
                 SizedBox(
-                  height: _screenSize.getHeightPerSize(1),
+                  height: screenSize.getHeightPerSize(1),
                 ),
                 SizedBox(
                   child: Text(
                     '답변 받을 이메일 : ${myData.myEmail}',
-                    style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.8)),
+                    style: TextStyle(fontSize: screenSize.getHeightPerSize(1.8)),
                   ),
                 ),
                 SizedBox(
-                  height: _screenSize.getHeightPerSize(1),
+                  height: screenSize.getHeightPerSize(1),
                 ),
                 SizedBox(
                   child: Text(
                     '제목',
-                    style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.8)),
+                    style: TextStyle(fontSize: screenSize.getHeightPerSize(1.8)),
                   ),
                 ),
                 SizedBox(
-                  height: _screenSize.getHeightPerSize(1),
+                  height: screenSize.getHeightPerSize(1),
                 ),
                 TextFormField(
                   decoration: InputDecoration(
@@ -125,7 +124,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                     ),
                   ),
                   cursorColor: Colors.black,
-                  style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.3)),
+                  style: TextStyle(fontSize: screenSize.getHeightPerSize(1.3)),
                   maxLines: 1,
                   maxLength: 20,
                   controller: _controllerTitle,
@@ -144,11 +143,11 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                 SizedBox(
                   child: Text(
                     '내용',
-                    style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.8)),
+                    style: TextStyle(fontSize: screenSize.getHeightPerSize(1.8)),
                   ),
                 ),
                 SizedBox(
-                  height: _screenSize.getHeightPerSize(1),
+                  height: screenSize.getHeightPerSize(1),
                 ),
                 TextFormField(
                   decoration: InputDecoration(
@@ -168,7 +167,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                     ),
                   ),
                   cursorColor: Colors.black,
-                  style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.5)),
+                  style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
                   maxLines: 10,
                   maxLength: 200,
                   controller: _controllerDetails,
@@ -185,11 +184,11 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                   },
                 ),
                 SizedBox(
-                  height: _screenSize.getHeightPerSize(2),
+                  height: screenSize.getHeightPerSize(2),
                 ),
                 SizedBox(
-                  width: _screenSize.getWidthPerSize(90),
-                  height: _screenSize.getHeightPerSize(6),
+                  width: screenSize.getWidthPerSize(90),
+                  height: screenSize.getHeightPerSize(6),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: mainLightColor,
@@ -207,7 +206,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                     child: Text(
                       '문의하기',
                       style:
-                          TextStyle(fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
+                          TextStyle(fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
                     ),
                   ),
                 ),

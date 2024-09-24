@@ -21,7 +21,6 @@ class CategorySettingScreen extends StatefulWidget {
 
 class _CategorySettingScreenState extends State<CategorySettingScreen>
     with TickerProviderStateMixin {
-  late ScreenSize screenSize;
   late TabController _tabController;
   final TextEditingController controllerName = TextEditingController();
   final ScrollController _scrollController = ScrollController();

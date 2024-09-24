@@ -1,7 +1,6 @@
 import 'package:chattingapp/login/registration/authentication.dart';
 import 'package:chattingapp/login/registration/registration_first_screen.dart';
 import 'package:chattingapp/utils/color/color.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../home/chat/chat_list_data.dart';
@@ -20,41 +19,59 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  late ScreenSize screenSize;
-  bool isChecked = true;
-  bool loginFail = false;
-  String loginFailReason = '';
-  bool loadingState = false;
-  bool keyboardVisibilty = false;
+  bool _isChecked = true;
+  bool _loginFail = false;
+  String _loginFailReason = '';
+  bool _loadingState = false;
+  bool _keyboardVisibilty = false;
 
-  FirebaseFirestore fireStore = FirebaseFirestore.instance;
-  TextEditingController controllerID = TextEditingController();
-  TextEditingController controllerPW = TextEditingController();
+  final TextEditingController _controllerID = TextEditingController();
+  final TextEditingController _controllerPW = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    /// 데모 ///
+    _controllerID.text = 'testid1@test.com';
+    _controllerPW.text = '123456789';
+  }
 
   @override
   void dispose() {
-    controllerID.dispose();
-    controllerPW.dispose();
+    _controllerID.dispose();
+    _controllerPW.dispose();
     super.dispose();
+  }
+
+  void _getID() async {
+    String? getid = await getIDShared();
+    _controllerID.text = getid.toString();
   }
 
   // 로그인을 하기위해 DB에서 정보를 가지고와 내부 저장소에 저장하고 로그인을 완료하는 함수
   void _login() async {
-    if (await signIn(controllerID.text, controllerPW.text)) {
+    if (await signIn(_controllerID.text, _controllerPW.text)) {
+      if (_isChecked) {
+        await setIDShared(_controllerID.text);
+      } else {
+        await setIDShared('');
+      }
       await getMyData();
       await getFriendDataList();
       await getChatRoomData();
       await getChatRoomDataList();
-      await getSharedPreferencese();
+      await getTapShared();
       await getRealTimeData();
       initializationTap();
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const HomeScreen()), (route) => false);
     } else {
       setState(() {
-        loadingState = false;
-        loginFailReason = '이메일 또는 비밀번호를 잘못 입력했습니다.';
-        loginFail = true;
+        _loadingState = false;
+        _loginFailReason = '이메일 또는 비밀번호를 잘못 입력했습니다.';
+        _loginFail = true;
       });
     }
   }
@@ -62,6 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     screenSize = ScreenSize(MediaQuery.of(context).size);
+    _getID();
     return Scaffold(
       body: SingleChildScrollView(
         child: Center(
@@ -88,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Image.asset('assets/images/logo.png'),
                 ),
                 crossFadeState:
-                    keyboardVisibilty ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                    _keyboardVisibilty ? CrossFadeState.showFirst : CrossFadeState.showSecond,
               ),
               SizedBox(
                 height: screenSize.getHeightPerSize(4),
@@ -97,13 +115,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: screenSize.getWidthPerSize(80),
                 height: screenSize.getHeightPerSize(6),
                 child: TextField(
-                    controller: controllerID,
+                    controller: _controllerID,
                     decoration: const InputDecoration(labelText: '아이디'),
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
-                    onTap: () => keyboardVisibilty = true,
+                    onTap: () => _keyboardVisibilty = true,
                     onTapOutside: (event) {
-                      keyboardVisibilty = false;
+                      _keyboardVisibilty = false;
                       FocusManager.instance.primaryFocus?.unfocus();
                     }),
               ),
@@ -114,52 +132,51 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: screenSize.getWidthPerSize(80),
                 height: screenSize.getHeightPerSize(6),
                 child: TextField(
-                    controller: controllerPW,
+                    controller: _controllerPW,
                     decoration: const InputDecoration(labelText: '비밀번호'),
                     keyboardType: TextInputType.text,
                     obscureText: true,
-                    onTap: () => keyboardVisibilty = true,
+                    onTap: () => _keyboardVisibilty = true,
                     onTapOutside: (event) {
-                      keyboardVisibilty = false;
+                      _keyboardVisibilty = false;
                       FocusManager.instance.primaryFocus?.unfocus();
                     }),
               ),
               SizedBox(
                 height: screenSize.getHeightPerSize(2),
               ),
-              // SizedBox(
-              //   width: screenSize.getWidthPerSize(80),
-              //   child: Row(
-              //     children: [
-              //       Checkbox(
-              //         shape: RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.circular(15)),
-              //         value: isChecked,
-              //         onChanged: (value) {
-              //           setState(() {
-              //             isChecked = value!;
-              //           });
-              //         },
-              //         activeColor: Colors.green,
-              //         checkColor: Colors.white,
-              //       ),
-              //       GestureDetector(
-              //           onTap: () {
-              //             setState(() {
-              //               isChecked = !isChecked;
-              //             });
-              //           },
-              //           child: const Text('자동 로그인')),
-              //     ],
-              //   ),
-              // ),
+              SizedBox(
+                width: screenSize.getWidthPerSize(85),
+                child: Row(
+                  children: [
+                    Checkbox(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      value: _isChecked,
+                      onChanged: (value) {
+                        setState(() {
+                          _isChecked = value!;
+                        });
+                      },
+                      activeColor: Colors.green,
+                      checkColor: Colors.white,
+                    ),
+                    GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isChecked = !_isChecked;
+                          });
+                        },
+                        child: const Text('아이디 저장')),
+                  ],
+                ),
+              ),
               Visibility(
-                  visible: loginFail,
+                  visible: _loginFail,
                   child: SizedBox(
                     width: screenSize.getWidthPerSize(80),
                     height: screenSize.getHeightPerSize(3),
                     child: Text(
-                      loginFailReason,
+                      _loginFailReason,
                       style:
                           TextStyle(fontSize: screenSize.getHeightPerSize(1.5), color: Colors.red),
                     ),
@@ -171,19 +188,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: ElevatedButton.styleFrom(backgroundColor: mainLightColor),
                   onPressed: () {
                     setState(() {
-                      if (controllerID.text == '') {
-                        loginFailReason = '아이디를 입력해 주세요';
-                        loginFail = true;
-                      } else if (controllerPW.text == '') {
-                        loginFailReason = '비밀번호를 입력해 주세요';
-                        loginFail = true;
+                      if (_controllerID.text == '') {
+                        _loginFailReason = '아이디를 입력해 주세요';
+                        _loginFail = true;
+                      } else if (_controllerPW.text == '') {
+                        _loginFailReason = '비밀번호를 입력해 주세요';
+                        _loginFail = true;
                       } else {
-                        loadingState = true;
+                        _loadingState = true;
                         _login();
                       }
                     });
                   },
-                  child: loadingState
+                  child: _loadingState
                       ? const SpinKitThreeInOut(
                           color: Colors.white,
                         )
@@ -227,26 +244,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-              // SizedBox(
-              //   width: screenSize.getWidthPerSize(80),
-              //   height: screenSize.getHeightPerSize(5),
-              //   child: ElevatedButton(
-              //     onPressed: () {
-              //       Navigator.push(
-              //           context,
-              //           MaterialPageRoute(
-              //             builder: (context) =>
-              //                 const AccountFindSecondScreen(email: 'email',),
-              //           ));
-              //     },
-              //     child: Text(
-              //       '테스트 버튼',
-              //       style: TextStyle(
-              //         fontSize: screenSize.getHeightPerSize(2),
-              //       ),
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ),

@@ -9,7 +9,6 @@ import '../../../utils/screen_movement.dart';
 import '../../home_screen.dart';
 import 'request_data.dart';
 
-late ScreenSize screenSize;
 late DateTime now;
 late String toDay;
 
@@ -243,7 +242,7 @@ class _RequestSentScreenState extends State<RequestSentScreen> {
             ListView.builder(
               itemCount: requestSendList.length,
               itemBuilder: (context, index) {
-                return RequestSentWidget(screenSize: screenSize, index: index);
+                return RequestSentWidget(index: index);
               },
             ),
             Visibility(

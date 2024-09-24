@@ -15,7 +15,6 @@ class ImageViewer extends StatefulWidget {
 }
 
 class _ImageViewerState extends State<ImageViewer> {
-  late ScreenSize screenSize;
   @override
   Widget build(BuildContext context) {
     screenSize = ScreenSize(MediaQuery.of(context).size);

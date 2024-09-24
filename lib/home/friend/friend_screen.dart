@@ -16,7 +16,6 @@ class FriendScreen extends StatefulWidget {
 }
 
 class _FriendScreenState extends State<FriendScreen> with TickerProviderStateMixin {
-  late ScreenSize screenSize;
   late TabController _tabController;
   List<String> newCategorySequence = [];
   Map<String, FriendData> newFriendList = {};

@@ -15,6 +15,6 @@ class StateObserver extends WidgetsBindingObserver {
   void appClosed() async {
     //signOut();
     print('어플리케이션이 종료됩니다.');
-    await setSharedPreferencese();
+    await setTapShared();
   }
 }

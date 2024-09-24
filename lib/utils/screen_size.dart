@@ -22,3 +22,5 @@ class ScreenSize {
     return (screenSize.width * per) / 100;
   }
 }
+
+late ScreenSize screenSize;

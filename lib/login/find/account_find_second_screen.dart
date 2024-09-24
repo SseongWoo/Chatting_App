@@ -12,7 +12,6 @@ class AccountFindSecondScreen extends StatefulWidget {
 }
 
 class _AccountFindSecondScreenState extends State<AccountFindSecondScreen> {
-  late ScreenSize screenSize;
   late String email;
 
   @override

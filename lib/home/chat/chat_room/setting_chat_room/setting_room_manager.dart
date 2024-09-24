@@ -26,7 +26,6 @@ class SettingRoomManager extends StatefulWidget {
 }
 
 class _SettingRoomManagerState extends State<SettingRoomManager> {
-  late ScreenSize _screenSize;
   final TextEditingController _controllerName = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
   final TextEditingController _controllerExplain = TextEditingController();
@@ -140,7 +139,7 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       appBar: AppBar(
         title: const Text('채팅방 설정'),
@@ -158,7 +157,7 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
       body: SingleChildScrollView(
         child: Center(
           child: SizedBox(
-            width: _screenSize.getWidthPerSize(90),
+            width: screenSize.getWidthPerSize(90),
             child: Form(
               key: _creatChatKey,
               child: Column(
@@ -167,10 +166,10 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                   Text(
                     '채팅방 프로필',
                     style: TextStyle(
-                        fontSize: _screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
+                        fontSize: screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(1),
+                    height: screenSize.getHeightPerSize(1),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -178,8 +177,8 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                     },
                     child: Center(
                       child: SizedBox(
-                        height: _screenSize.getHeightPerSize(15),
-                        width: _screenSize.getHeightPerSize(15),
+                        height: screenSize.getHeightPerSize(15),
+                        width: screenSize.getHeightPerSize(15),
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
@@ -222,8 +221,8 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                               right: -10,
                               bottom: -10,
                               child: Container(
-                                  height: _screenSize.getHeightPerSize(4),
-                                  width: _screenSize.getHeightPerSize(4),
+                                  height: screenSize.getHeightPerSize(4),
+                                  width: screenSize.getHeightPerSize(4),
                                   decoration: const BoxDecoration(
                                       color: Colors.white, shape: BoxShape.circle),
                                   child: const Icon(
@@ -243,8 +242,8 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                                     });
                                   },
                                   child: Container(
-                                      height: _screenSize.getHeightPerSize(4),
-                                      width: _screenSize.getHeightPerSize(4),
+                                      height: screenSize.getHeightPerSize(4),
+                                      width: screenSize.getHeightPerSize(4),
                                       decoration: const BoxDecoration(
                                           color: Colors.red, shape: BoxShape.circle),
                                       child: const Icon(
@@ -260,15 +259,15 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                     ),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(2),
+                    height: screenSize.getHeightPerSize(2),
                   ),
                   Text(
                     '채팅방 이름',
                     style: TextStyle(
-                        fontSize: _screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
+                        fontSize: screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(1),
+                    height: screenSize.getHeightPerSize(1),
                   ),
                   TextFormField(
                     decoration: InputDecoration(
@@ -288,7 +287,7 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                         borderSide: BorderSide(color: Colors.red, width: 2.0), // 포커스된 에러 상태의 외곽선
                       ),
                     ),
-                    style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
+                    style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
                     controller: _controllerName,
                     onTapOutside: (event) {
                       FocusManager.instance.primaryFocus?.unfocus();
@@ -300,7 +299,7 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                     maxLength: 20,
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(2),
+                    height: screenSize.getHeightPerSize(2),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -311,13 +310,13 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                           Text(
                             '채팅방 공개 설정',
                             style: TextStyle(
-                                fontSize: _screenSize.getHeightPerSize(1.7),
+                                fontSize: screenSize.getHeightPerSize(1.7),
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(
                             '채팅방을 검색할때 검색에 보이지 않게 합니다.',
                             style: TextStyle(
-                                fontSize: _screenSize.getHeightPerSize(1.5),
+                                fontSize: screenSize.getHeightPerSize(1.5),
                                 color: Colors.grey.shade800),
                           ),
                         ],
@@ -335,15 +334,15 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                     ],
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(2),
+                    height: screenSize.getHeightPerSize(2),
                   ),
                   Text(
                     '채팅방 암호',
                     style: TextStyle(
-                        fontSize: _screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
+                        fontSize: screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(1),
+                    height: screenSize.getHeightPerSize(1),
                   ),
                   TextFormField(
                     decoration: InputDecoration(
@@ -363,7 +362,7 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                         borderSide: BorderSide(color: Colors.red, width: 2.0), // 포커스된 에러 상태의 외곽선
                       ),
                     ),
-                    style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
+                    style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
                     keyboardType: TextInputType.visiblePassword,
                     controller: _controllerPassword,
                     onTapOutside: (event) {
@@ -372,15 +371,15 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                     maxLength: 12,
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(2),
+                    height: screenSize.getHeightPerSize(2),
                   ),
                   Text(
                     '채팅방 설명',
                     style: TextStyle(
-                        fontSize: _screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
+                        fontSize: screenSize.getHeightPerSize(1.7), fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(1),
+                    height: screenSize.getHeightPerSize(1),
                   ),
                   TextFormField(
                     decoration: InputDecoration(
@@ -400,7 +399,7 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                         borderSide: BorderSide(color: Colors.red, width: 2.0), // 포커스된 에러 상태의 외곽선
                       ),
                     ),
-                    style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.3)),
+                    style: TextStyle(fontSize: screenSize.getHeightPerSize(1.3)),
                     controller: _controllerExplain,
                     onTapOutside: (event) {
                       FocusManager.instance.primaryFocus?.unfocus();
@@ -408,18 +407,18 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                     maxLines: 10,
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(2),
+                    height: screenSize.getHeightPerSize(2),
                   ),
                   const Text(
                     '해당 설정은 전체 유저들에게 보이는 기본설정입니다.',
                     style: TextStyle(color: Colors.grey),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(2),
+                    height: screenSize.getHeightPerSize(2),
                   ),
                   SizedBox(
-                    width: _screenSize.getWidthPerSize(90),
-                    height: _screenSize.getHeightPerSize(6),
+                    width: screenSize.getWidthPerSize(90),
+                    height: screenSize.getHeightPerSize(6),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: mainColor,
@@ -436,12 +435,12 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
                       child: Text(
                         "완료",
                         style: TextStyle(
-                            fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
+                            fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
                       ),
                     ),
                   ),
                   SizedBox(
-                    height: _screenSize.getHeightPerSize(3),
+                    height: screenSize.getHeightPerSize(3),
                   ),
                 ],
               ),

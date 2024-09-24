@@ -46,7 +46,6 @@ class JoinGlobalChatRoom extends StatefulWidget {
 }
 
 class _JoinGlobalChatRoomState extends State<JoinGlobalChatRoom> {
-  late ScreenSize _screenSize;
   late ChatRoomPublicData _chatRoomPublicData;
   final String imagePath = 'assets/images/blank_profile.png';
 
@@ -59,11 +58,11 @@ class _JoinGlobalChatRoomState extends State<JoinGlobalChatRoom> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Dialog(
       child: Container(
-        height: _screenSize.getHeightPerSize(60),
-        width: _screenSize.getWidthPerSize(80),
+        height: screenSize.getHeightPerSize(60),
+        width: screenSize.getWidthPerSize(80),
         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
         child: Column(
           children: [
@@ -72,8 +71,8 @@ class _JoinGlobalChatRoomState extends State<JoinGlobalChatRoom> {
               child: IconButton(onPressed: () {}, icon: const Icon(Icons.close)),
             ),
             SizedBox(
-              height: _screenSize.getWidthPerSize(60),
-              width: _screenSize.getWidthPerSize(60),
+              height: screenSize.getWidthPerSize(60),
+              width: screenSize.getWidthPerSize(60),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: _chatRoomPublicData.chatRoomProfile.isNotEmpty
@@ -108,23 +107,23 @@ class _JoinGlobalChatRoomState extends State<JoinGlobalChatRoom> {
               ),
             ),
             SizedBox(
-              height: _screenSize.getWidthPerSize(2),
+              height: screenSize.getWidthPerSize(2),
             ),
             SizedBox(
-              height: _screenSize.getWidthPerSize(10),
-              width: _screenSize.getWidthPerSize(70),
+              height: screenSize.getWidthPerSize(10),
+              width: screenSize.getWidthPerSize(70),
               child: Align(
                 alignment: Alignment.centerLeft,
                 // 채팅방 제목 뒤에 채팅방 참여 인원수 까지 출력
                 child: Text(
                   '${_chatRoomPublicData.chatRoomName}(${_chatRoomPublicData.people})',
-                  style: TextStyle(color: Colors.black, fontSize: _screenSize.getHeightPerSize(3)),
+                  style: TextStyle(color: Colors.black, fontSize: screenSize.getHeightPerSize(3)),
                 ),
               ),
             ),
             Expanded(
                 child: SizedBox(
-              width: _screenSize.getWidthPerSize(70),
+              width: screenSize.getWidthPerSize(70),
               child: Align(
                 alignment: Alignment.topLeft,
                 // 설명이 길어서 화면을 벗어날 경우를 방지하기 위해 AutoSizeText 사용
@@ -132,8 +131,7 @@ class _JoinGlobalChatRoomState extends State<JoinGlobalChatRoom> {
                   _chatRoomPublicData.chatRoomExplain.isNotEmpty
                       ? _chatRoomPublicData.chatRoomExplain
                       : '설명 없음',
-                  style:
-                      TextStyle(color: Colors.black, fontSize: _screenSize.getHeightPerSize(1.8)),
+                  style: TextStyle(color: Colors.black, fontSize: screenSize.getHeightPerSize(1.8)),
                   maxLines: 6,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -143,8 +141,8 @@ class _JoinGlobalChatRoomState extends State<JoinGlobalChatRoom> {
               children: [
                 // 취소버튼, 왼쪽 모서라만 둥글게
                 SizedBox(
-                  height: _screenSize.getHeightPerSize(6),
-                  width: _screenSize.getWidthPerSize(25),
+                  height: screenSize.getHeightPerSize(6),
+                  width: screenSize.getWidthPerSize(25),
                   child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -163,8 +161,8 @@ class _JoinGlobalChatRoomState extends State<JoinGlobalChatRoom> {
                 ),
                 // 확인버튼, 오른쪽 모서리만 둥글게
                 SizedBox(
-                  height: _screenSize.getHeightPerSize(6),
-                  width: _screenSize.getWidthPerSize(55),
+                  height: screenSize.getHeightPerSize(6),
+                  width: screenSize.getWidthPerSize(55),
                   child: ElevatedButton(
                       onPressed: () async {
                         EasyLoading.show();
@@ -219,7 +217,6 @@ class _EnterPasswordDialogState extends State<EnterPasswordDialog> {
   final TextEditingController _controller = TextEditingController();
   final _enterPasswordDialogFormKey = GlobalKey<FormState>();
   late ChatRoomPublicData _chatRoomPublicData;
-  late ScreenSize _screenSize;
   bool _passwordCheck = false;
 
   @override
@@ -241,11 +238,11 @@ class _EnterPasswordDialogState extends State<EnterPasswordDialog> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Dialog(
       child: Container(
-        height: _screenSize.getHeightPerSize(30),
-        width: _screenSize.getWidthPerSize(80),
+        height: screenSize.getHeightPerSize(30),
+        width: screenSize.getWidthPerSize(80),
         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
         child: Column(
           children: [
@@ -258,31 +255,31 @@ class _EnterPasswordDialogState extends State<EnterPasswordDialog> {
                   icon: const Icon(Icons.close)),
             ),
             SizedBox(
-              width: _screenSize.getWidthPerSize(70),
+              width: screenSize.getWidthPerSize(70),
               child: Text(
                 '비밀번호 입력',
                 style: TextStyle(
-                  fontSize: _screenSize.getHeightPerSize(2),
+                  fontSize: screenSize.getHeightPerSize(2),
                 ),
                 textAlign: TextAlign.left,
               ),
             ),
             SizedBox(
-              height: _screenSize.getHeightPerSize(1),
+              height: screenSize.getHeightPerSize(1),
             ),
             SizedBox(
-              width: _screenSize.getWidthPerSize(70),
+              width: screenSize.getWidthPerSize(70),
               child: Text(
                 '"${_chatRoomPublicData.chatRoomName}"방의 비밀번호를 입력해 주세요',
                 style: TextStyle(
-                  fontSize: _screenSize.getHeightPerSize(1.5),
+                  fontSize: screenSize.getHeightPerSize(1.5),
                 ),
                 textAlign: TextAlign.left,
               ),
             ),
             Expanded(
               child: SizedBox(
-                width: _screenSize.getWidthPerSize(70),
+                width: screenSize.getWidthPerSize(70),
                 child: Center(
                   child: Form(
                     key: _enterPasswordDialogFormKey,
@@ -309,8 +306,8 @@ class _EnterPasswordDialogState extends State<EnterPasswordDialog> {
             Row(
               children: [
                 SizedBox(
-                  height: _screenSize.getHeightPerSize(6),
-                  width: _screenSize.getWidthPerSize(25),
+                  height: screenSize.getHeightPerSize(6),
+                  width: screenSize.getWidthPerSize(25),
                   child: ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -328,8 +325,8 @@ class _EnterPasswordDialogState extends State<EnterPasswordDialog> {
                       )),
                 ),
                 SizedBox(
-                  height: _screenSize.getHeightPerSize(6),
-                  width: _screenSize.getWidthPerSize(55),
+                  height: screenSize.getHeightPerSize(6),
+                  width: screenSize.getWidthPerSize(55),
                   child: ElevatedButton(
                       onPressed: () async {
                         EasyLoading.show();

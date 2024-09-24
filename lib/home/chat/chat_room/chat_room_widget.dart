@@ -7,12 +7,9 @@ import 'package:chattingapp/utils/my_data.dart';
 import 'package:chattingapp/utils/screen_size.dart';
 import 'package:chattingapp/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import '../../../utils/data_refresh.dart';
 import '../../../utils/file_download.dart';
 import '../../../utils/image/image_viewer.dart';
 import '../../../utils/snackbar_message.dart';
-import '../../home_screen.dart';
 import 'chat_room_dialog.dart';
 
 // 유저 세부정보를 표시하는 화면으로 이동하기 위해 데이터를 작업하고 DetailInformationScreen 화면으로 이동시키는 함수

@@ -9,6 +9,6 @@ Future<void> refreshData() async {
   await getChatRoomData();
   await getChatRoomDataList();
   await getMyData();
-  await getSharedPreferencese();
+  await getTapShared();
   await getRealTimeData();
 }

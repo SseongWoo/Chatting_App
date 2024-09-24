@@ -25,7 +25,6 @@ class SettingRoom extends StatefulWidget {
 }
 
 class _SettingRoomState extends State<SettingRoom> {
-  late ScreenSize screenSize;
   final TextEditingController _controllerName = TextEditingController();
   late CroppedFile? _croppedProFile;
   late ChatRoomSimpleData _chatRoomSimpleData;

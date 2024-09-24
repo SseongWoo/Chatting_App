@@ -19,7 +19,6 @@ class DetailInformationScreen extends StatefulWidget {
 }
 
 class _DetailInformationScreenState extends State<DetailInformationScreen> {
-  late ScreenSize screenSize;
   late FriendData friendData;
   bool friendChaeck = true;
 

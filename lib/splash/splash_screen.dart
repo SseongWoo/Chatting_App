@@ -24,7 +24,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  late ScreenSize screenSize;
   final FirebaseAuth auth = FirebaseAuth.instance;
   String loadingMessage = '';
   Future<void>? _delayedAction; // n초 뒤에 실행하는 기능을 만들기 위함
@@ -129,7 +128,7 @@ class _SplashScreenState extends State<SplashScreen> {
     bool checkFriendDataList = await getFriendDataList();
     bool checkChatRoomData = await getChatRoomData();
     bool checkChatRoomDataList = await getChatRoomDataList();
-    await getSharedPreferencese();
+    await getTapShared();
     await getRealTimeData();
     if (checkFriendDataList &&
         checkMyData &&

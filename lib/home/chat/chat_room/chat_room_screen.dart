@@ -38,7 +38,6 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-  late ScreenSize _screenSize;
   late CollectionReference _collectionRef; // 실시간으로 데이터를 파이어베이스에서 받기 위한 변수
   final TextEditingController _textEditingController = TextEditingController();
   final _scrollController = ScrollController();
@@ -161,7 +160,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   Future<void> _onFieldSubmitted() async {
     DateTime dateTime = DateTime.now();
     await setChatData(
-        _chatRoomSimpleData.chatRoomUid, _textEditingController.text, "text", dateTime);
+        _chatRoomSimpleData.chatRoomUid, _textEditingController.text, 'text', dateTime);
     await setChatRealTimeData(_chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid,
         _textEditingController.text, dateTime);
 
@@ -202,7 +201,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   }
 
   // 이미지와 비디오를 업로드 하기 위한 함수
-  void uploadMedia(ImageSource imageSource) async {
+  void _uploadMedia(ImageSource imageSource) async {
     XFile? imageFile;
     CroppedFile? croppedFile;
     String imgURL;
@@ -211,17 +210,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     bool isImageFile =
         imageFile != null && (imageFile.path.endsWith('.jpg') || imageFile.path.endsWith('.png'));
     if (isImageFile) {
-      croppedFile = await cropImage(imageFile);
+      croppedFile = await cropImageInChatRoom(imageFile);
       imgURL = await uploadChatImage(croppedFile, _chatRoomSimpleData.chatRoomUid);
       if (imgURL.isNotEmpty) {
-        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, "image", dateTime);
+        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'image', dateTime);
         await setChatRealTimeData(
             _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '이미지', dateTime);
       }
     } else {
       imgURL = await uploadChatVideo(imageFile!, _chatRoomSimpleData.chatRoomUid);
       if (imgURL.isNotEmpty) {
-        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, "video", dateTime);
+        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'video', dateTime);
         await setChatRealTimeData(
             _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '비디오', dateTime);
       }
@@ -230,7 +229,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   }
 
   // 여러 이미지를 채팅에 업로드 하기 위한 함수
-  void uploadMultipleMedia() async {
+  void _uploadMultipleMedia() async {
     List<XFile>? mediaFile;
     String imgURL;
     DateTime dateTime = DateTime.now();
@@ -249,7 +248,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   }
 
   // 여러 이미지를 채팅에 업로드 하기 위한 함수
-  void uploadMultipleMediaV2() async {
+  void _uploadMultipleMediaV2() async {
     List<XFile>? mediaFile;
     String imgURL;
     bool isImageFile;
@@ -309,7 +308,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -347,7 +346,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                     child: _chatRoomSimpleData.chatRoomCustomProfile.isEmpty
                         ? Icon(
                             Icons.image,
-                            size: _screenSize.getHeightPerSize(3.5),
+                            size: screenSize.getHeightPerSize(3.5),
                             color: mainColor,
                           )
                         : null,
@@ -377,7 +376,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           _singleFriendData.friendProfile.isEmpty
                       ? Icon(
                           Icons.image,
-                          size: _screenSize.getHeightPerSize(6),
+                          size: screenSize.getHeightPerSize(6),
                           color: mainColor,
                         )
                       : null,
@@ -401,7 +400,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                   ),
                 ),
                 SizedBox(
-                  width: _screenSize.getWidthPerSize(15),
+                  width: screenSize.getWidthPerSize(15),
                   child: Visibility(
                     visible: _checkGroup,
                     child: IconButton(
@@ -424,7 +423,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             ),
             Expanded(
               child: Container(
-                height: _screenSize.getHeightPerSize(6) * _chatPeopleList.length,
+                height: screenSize.getHeightPerSize(6) * _chatPeopleList.length,
                 margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 decoration: const BoxDecoration(
                   border: Border(
@@ -448,7 +447,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                     String proFile = _chatPeopleList[index].profile;
 
                     return SizedBox(
-                      height: _screenSize.getHeightPerSize(6),
+                      height: screenSize.getHeightPerSize(6),
                       child: ListTile(
                         leading: proFile.isNotEmpty
                             ? CircleAvatar(
@@ -603,13 +602,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           }
 
                           // 구별한 데이터를 메세지 위젯에 등록
-                          return messageWidget(context, _screenSize, messageList[index],
+                          return messageWidget(context, screenSize, messageList[index],
                               _discontinuedText, _firstMessagebool);
                         },
                         // 아이템 간의 간격 조절
                         separatorBuilder: (context, index) {
                           return SizedBox(
-                            height: _screenSize.getHeightPerSize(0.5),
+                            height: screenSize.getHeightPerSize(0.5),
                           );
                         },
                       );
@@ -618,13 +617,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             ),
           ),
           Container(
-            height: _screenSize.getHeightPerSize(5),
+            height: screenSize.getHeightPerSize(5),
             color: Colors.white,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: _screenSize.getWidthPerSize(10),
+                  width: screenSize.getWidthPerSize(10),
                   child: IconButton(
                       style: IconButton.styleFrom(
                         shape: const RoundedRectangleBorder(
@@ -646,7 +645,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                       icon: const Icon(Icons.add)),
                 ),
                 SizedBox(
-                  width: _screenSize.getWidthPerSize(80),
+                  width: screenSize.getWidthPerSize(80),
                   child: TextField(
                     controller: _textEditingController,
                     decoration: const InputDecoration(
@@ -663,7 +662,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                   ),
                 ),
                 SizedBox(
-                  width: _screenSize.getWidthPerSize(10),
+                  width: screenSize.getWidthPerSize(10),
                   child: IconButton(
                     style: IconButton.styleFrom(
                       shape: const RoundedRectangleBorder(
@@ -687,8 +686,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           // 사진이나 동영상등 각종 기능이 있는 컨테이너이며 나타날때 사라질때 애니메이션효과를 생성
           AnimatedContainer(
             duration: const Duration(milliseconds: 50),
-            height: _selected ? _screenSize.getHeightPerSize(8) : 0,
-            width: _screenSize.getWidthSize(),
+            height: _selected ? screenSize.getHeightPerSize(8) : 0,
+            width: screenSize.getWidthSize(),
             color: Colors.white,
             child: SingleChildScrollView(
               child: Row(
@@ -703,17 +702,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         ),
                         child: IconButton(
                             onPressed: () {
-                              uploadMedia(ImageSource.camera);
+                              _uploadMedia(ImageSource.camera);
                             },
                             icon: Icon(
                               Icons.camera_alt,
-                              size: _screenSize.getHeightPerSize(4),
+                              size: screenSize.getHeightPerSize(4),
                               color: Colors.white,
                             )),
                       ),
                       Text(
-                        "카메라",
-                        style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.5)),
+                        '카메라',
+                        style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
                       )
                     ],
                   ),
@@ -726,17 +725,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         ),
                         child: IconButton(
                             onPressed: () {
-                              uploadMedia(ImageSource.gallery);
+                              _uploadMedia(ImageSource.gallery);
                             },
                             icon: Icon(
                               Icons.image,
-                              size: _screenSize.getHeightPerSize(4),
+                              size: screenSize.getHeightPerSize(4),
                               color: Colors.white,
                             )),
                       ),
                       Text(
-                        "갤러리",
-                        style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.5)),
+                        '갤러리',
+                        style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
                       )
                     ],
                   ),
@@ -749,17 +748,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         ),
                         child: IconButton(
                             onPressed: () {
-                              uploadMultipleMediaV2();
+                              _uploadMultipleMediaV2();
                             },
                             icon: Icon(
                               Icons.photo_library,
-                              size: _screenSize.getHeightPerSize(4),
+                              size: screenSize.getHeightPerSize(4),
                               color: Colors.white,
                             )),
                       ),
                       Text(
-                        "다중 이미지",
-                        style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.5)),
+                        '다중 이미지',
+                        style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
                       )
                     ],
                   ),
@@ -769,21 +768,21 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           ),
           // 사용하는 기기가 ios를 사용중이면 ui 맨 아래쪽에 여백을 생성하여 하단이 잘리지 않게 하는 작업
           Visibility(
-            visible: !(getPlatform() != "IOS" || _keyBoardSelelted),
+            visible: !(getPlatform() != 'IOS' || _keyBoardSelelted),
             child: Container(
-              height: _screenSize.getHeightPerSize(3),
+              height: screenSize.getHeightPerSize(3),
               color: Colors.white,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: _screenSize.getWidthPerSize(10),
+                    width: screenSize.getWidthPerSize(10),
                   ),
                   SizedBox(
-                    width: _screenSize.getWidthPerSize(80),
+                    width: screenSize.getWidthPerSize(80),
                   ),
                   SizedBox(
-                    width: _screenSize.getWidthPerSize(10),
+                    width: screenSize.getWidthPerSize(10),
                   ),
                 ],
               ),

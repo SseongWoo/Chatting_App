@@ -157,8 +157,7 @@ class _UpdateMyProfileDialogState extends State<UpdateMyProfileDialog> {
 // 채팅방 글자 크기 변경 다이얼로그
 class ChatStringSizeDialog extends StatefulWidget {
   final Function(double) reflashSize;
-  final ScreenSize screenSize;
-  const ChatStringSizeDialog({super.key, required this.screenSize, required this.reflashSize});
+  const ChatStringSizeDialog({super.key, required this.reflashSize});
 
   @override
   State<ChatStringSizeDialog> createState() => _ChatStringSizeDialogState();
@@ -167,7 +166,6 @@ class ChatStringSizeDialog extends StatefulWidget {
 class _ChatStringSizeDialogState extends State<ChatStringSizeDialog> {
   final TextEditingController _controllerSize = TextEditingController();
   late double _chatStringSize;
-  late ScreenSize _screenSize;
   late double _oldSize;
 
   @override
@@ -175,7 +173,6 @@ class _ChatStringSizeDialogState extends State<ChatStringSizeDialog> {
     // TODO: implement initState
     super.initState();
     _oldSize = chatStringSize;
-    _screenSize = widget.screenSize;
     _chatStringSize = chatStringSize * 10;
     _controllerSize.text = _chatStringSize.round().toString();
   }
@@ -187,14 +184,14 @@ class _ChatStringSizeDialogState extends State<ChatStringSizeDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SingleChildScrollView(child: previewWidget(_screenSize)),
+          SingleChildScrollView(child: previewWidget(screenSize)),
           SizedBox(
-            height: _screenSize.getHeightPerSize(1),
+            height: screenSize.getHeightPerSize(1),
           ),
           Row(
             children: [
               SizedBox(
-                width: _screenSize.getWidthPerSize(55),
+                width: screenSize.getWidthPerSize(55),
                 child: Slider(
                   value: _chatStringSize,
                   max: 25,
@@ -211,8 +208,8 @@ class _ChatStringSizeDialogState extends State<ChatStringSizeDialog> {
                 ),
               ),
               SizedBox(
-                width: _screenSize.getWidthPerSize(10),
-                height: _screenSize.getHeightPerSize(3),
+                width: screenSize.getWidthPerSize(10),
+                height: screenSize.getHeightPerSize(3),
                 child: TextField(
                   controller: _controllerSize,
                   style: const TextStyle(fontSize: 15),
@@ -269,7 +266,7 @@ class _ChatStringSizeDialogState extends State<ChatStringSizeDialog> {
             TextButton(
               onPressed: () async {
                 EasyLoading.show();
-                await setSizeSharedPreferencese();
+                await setSizeShared();
                 widget.reflashSize(chatStringSize);
                 EasyLoading.dismiss();
                 Navigator.of(context).pop();
@@ -292,13 +289,12 @@ class EmailCheckDialog extends StatefulWidget {
 }
 
 class _EmailCheckDialogState extends State<EmailCheckDialog> {
-  late ScreenSize _screenSize;
   String _message = '인증 메일이 성공적으로 전송되었습니다.\n아래 이메일 주소로 전송된 링크를 클릭하여 인증을 완료해 주세요.';
   final User? _user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return AlertDialog(
       title: const Text('이메일 인증'),
       content: Column(
@@ -306,11 +302,11 @@ class _EmailCheckDialogState extends State<EmailCheckDialog> {
         children: [
           Text(
             '$_message\n',
-            style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.7)),
+            style: TextStyle(fontSize: screenSize.getHeightPerSize(1.7)),
           ),
           Text(
             '\n${myData.myEmail}',
-            style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
+            style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
           )
         ],
       ),
@@ -373,11 +369,10 @@ class UpdatePassWordDialog extends StatefulWidget {
 }
 
 class _UpdatePassWordDialogState extends State<UpdatePassWordDialog> {
-  late ScreenSize _screenSize;
   String _message = '비밀번호 변경 메일이 아래의 이메일로 전송이 되었습니다.\n해당 메일에서 비밀번호 변경을 완료해주세요';
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return AlertDialog(
       title: const Text('비밀번호 변경'),
       content: Column(
@@ -385,11 +380,11 @@ class _UpdatePassWordDialogState extends State<UpdatePassWordDialog> {
         children: [
           Text(
             _message,
-            style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.7)),
+            style: TextStyle(fontSize: screenSize.getHeightPerSize(1.7)),
           ),
           Text(
             '\n${myData.myEmail}',
-            style: TextStyle(fontSize: _screenSize.getHeightPerSize(2)),
+            style: TextStyle(fontSize: screenSize.getHeightPerSize(2)),
           )
         ],
       ),

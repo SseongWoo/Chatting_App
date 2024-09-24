@@ -14,7 +14,6 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  late ScreenSize _screenSize;
   late bool _groupCheck; // true일경우 그룹 채팅 리스트 화면, false일경우 개인 채팅 리스트 화면
   late List<String> _chatRoomSequence = [];
   String _text = '';
@@ -83,7 +82,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
 
     return Scaffold(
         body: _chatRoomSequence.isNotEmpty
@@ -95,7 +94,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   );
                 },
                 separatorBuilder: (context, index) {
-                  return SizedBox(height: _screenSize.getHeightPerSize(1)); // 아이템 간의 간격 조절
+                  return SizedBox(height: screenSize.getHeightPerSize(1)); // 아이템 간의 간격 조절
                 },
               )
             : Center(child: Text("현재 참여 중인 $_text채팅방이 없습니다.")));

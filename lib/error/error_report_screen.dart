@@ -20,7 +20,6 @@ class ErrorReportScreen extends StatefulWidget {
 }
 
 class _ErrorReportScreenState extends State<ErrorReportScreen> {
-  late ScreenSize _screenSize;
   final TextEditingController _controller = TextEditingController();
 
   Future<void> _setBugReport() async {
@@ -51,7 +50,7 @@ class _ErrorReportScreenState extends State<ErrorReportScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       appBar: AppBar(
         title: const Text('버그 제보'),
@@ -59,57 +58,57 @@ class _ErrorReportScreenState extends State<ErrorReportScreen> {
       ),
       body: Center(
         child: SizedBox(
-          width: _screenSize.getWidthPerSize(80),
+          width: screenSize.getWidthPerSize(80),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: _screenSize.getHeightPerSize(2.5),
+                height: screenSize.getHeightPerSize(2.5),
               ),
               SizedBox(
                 child: Text(
                   '유저코드 : ${myData.myUID}',
-                  style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.8)),
+                  style: TextStyle(fontSize: screenSize.getHeightPerSize(1.8)),
                 ),
               ),
               SizedBox(
-                height: _screenSize.getHeightPerSize(1),
+                height: screenSize.getHeightPerSize(1),
               ),
               SizedBox(
                 child: Text(
                   '유저명 : ${myData.myNickName}',
-                  style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.8)),
+                  style: TextStyle(fontSize: screenSize.getHeightPerSize(1.8)),
                 ),
               ),
               SizedBox(
-                height: _screenSize.getHeightPerSize(1),
+                height: screenSize.getHeightPerSize(1),
               ),
               SizedBox(
                 child: Text(
                   '버그 발생 위치 : ',
-                  style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.8)),
+                  style: TextStyle(fontSize: screenSize.getHeightPerSize(1.8)),
                 ),
               ),
               SizedBox(
-                height: _screenSize.getHeightPerSize(1),
+                height: screenSize.getHeightPerSize(1),
               ),
               SizedBox(
                 child: Text(
                   '버그 내용 : ${widget.errorMessage}',
-                  style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.8)),
+                  style: TextStyle(fontSize: screenSize.getHeightPerSize(1.8)),
                 ),
               ),
               SizedBox(
-                height: _screenSize.getHeightPerSize(1),
+                height: screenSize.getHeightPerSize(1),
               ),
               SizedBox(
                 child: Text(
                   '버그 상세 설명',
-                  style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.8)),
+                  style: TextStyle(fontSize: screenSize.getHeightPerSize(1.8)),
                 ),
               ),
               SizedBox(
-                height: _screenSize.getHeightPerSize(1),
+                height: screenSize.getHeightPerSize(1),
               ),
               TextField(
                 decoration: InputDecoration(
@@ -129,7 +128,7 @@ class _ErrorReportScreenState extends State<ErrorReportScreen> {
                   ),
                 ),
                 cursorColor: Colors.black,
-                style: TextStyle(fontSize: _screenSize.getHeightPerSize(1.5)),
+                style: TextStyle(fontSize: screenSize.getHeightPerSize(1.5)),
                 maxLines: 10,
                 maxLength: 200,
                 controller: _controller,
@@ -138,11 +137,11 @@ class _ErrorReportScreenState extends State<ErrorReportScreen> {
                 },
               ),
               SizedBox(
-                height: _screenSize.getHeightPerSize(2),
+                height: screenSize.getHeightPerSize(2),
               ),
               SizedBox(
-                width: _screenSize.getWidthPerSize(90),
-                height: _screenSize.getHeightPerSize(6),
+                width: screenSize.getWidthPerSize(90),
+                height: screenSize.getHeightPerSize(6),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: mainLightColor,
@@ -157,8 +156,7 @@ class _ErrorReportScreenState extends State<ErrorReportScreen> {
                   },
                   child: Text(
                     '제보하기',
-                    style:
-                        TextStyle(fontSize: _screenSize.getHeightPerSize(3), color: Colors.black),
+                    style: TextStyle(fontSize: screenSize.getHeightPerSize(3), color: Colors.black),
                   ),
                 ),
               ),

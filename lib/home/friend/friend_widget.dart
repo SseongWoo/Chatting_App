@@ -25,7 +25,6 @@ class FriendWidget extends StatefulWidget {
 }
 
 class _FriendWidgetState extends State<FriendWidget> {
-  late ScreenSize screenSize;
   late FriendData friendData;
 
   @override

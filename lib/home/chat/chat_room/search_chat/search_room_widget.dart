@@ -26,7 +26,6 @@ class UserWidget extends StatefulWidget {
 }
 
 class _UserWidgetState extends State<UserWidget> {
-  late ScreenSize _screenSize;
   late UserData userData;
 
   @override
@@ -38,7 +37,7 @@ class _UserWidgetState extends State<UserWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return GestureDetector(
       onTap: () {
         // 해당 위젯의 유저를 친구 추가 하기 위한 작업
@@ -52,16 +51,16 @@ class _UserWidgetState extends State<UserWidget> {
         );
       },
       child: Container(
-        height: _screenSize.getHeightPerSize(8),
-        width: _screenSize.getWidthSize(),
+        height: screenSize.getHeightPerSize(8),
+        width: screenSize.getWidthSize(),
         color: Colors.white,
         child: Column(children: [
           SizedBox(
-            height: _screenSize.getHeightPerSize(8),
+            height: screenSize.getHeightPerSize(8),
             child: Row(
               children: [
                 SizedBox(
-                  width: _screenSize.getWidthPerSize(2),
+                  width: screenSize.getWidthPerSize(2),
                 ),
                 GestureDetector(
                   // 이미지 클릭시 이미지 뷰어로 이동
@@ -73,8 +72,8 @@ class _UserWidgetState extends State<UserWidget> {
                     );
                   },
                   child: SizedBox(
-                    height: _screenSize.getHeightPerSize(6),
-                    width: _screenSize.getHeightPerSize(6),
+                    height: screenSize.getHeightPerSize(6),
+                    width: screenSize.getHeightPerSize(6),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
@@ -105,10 +104,10 @@ class _UserWidgetState extends State<UserWidget> {
                   ),
                 ),
                 SizedBox(
-                  width: _screenSize.getWidthPerSize(2),
+                  width: screenSize.getWidthPerSize(2),
                 ),
                 SizedBox(
-                  height: _screenSize.getHeightPerSize(6),
+                  height: screenSize.getHeightPerSize(6),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Column(
@@ -118,13 +117,13 @@ class _UserWidgetState extends State<UserWidget> {
                         Text(
                           userData.nickName,
                           style: TextStyle(
-                            fontSize: _screenSize.getHeightPerSize(2),
+                            fontSize: screenSize.getHeightPerSize(2),
                           ),
                         ),
                         Text(
                           userData.email,
                           style: TextStyle(
-                            fontSize: _screenSize.getHeightPerSize(1.5),
+                            fontSize: screenSize.getHeightPerSize(1.5),
                           ),
                         ),
                       ],
@@ -154,7 +153,6 @@ class GlobalChatListWidget extends StatefulWidget {
 }
 
 class _GlobalChatListWidgetState extends State<GlobalChatListWidget> {
-  late ScreenSize _screenSize;
   late ChatRoomPublicData _chatRoomPublicData;
   final String imagePath = 'assets/images/blank_profile.png';
 
@@ -167,7 +165,7 @@ class _GlobalChatListWidgetState extends State<GlobalChatListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return GestureDetector(
       onTap: () async {
         EasyLoading.show();
@@ -201,18 +199,18 @@ class _GlobalChatListWidgetState extends State<GlobalChatListWidget> {
         EasyLoading.dismiss();
       },
       child: Container(
-        height: _screenSize.getHeightPerSize(7),
+        height: screenSize.getHeightPerSize(7),
         decoration: BoxDecoration(
             border: Border.all(color: Colors.grey, width: 0.5),
             borderRadius: BorderRadius.circular(20)),
         child: Row(
           children: [
             SizedBox(
-              width: _screenSize.getWidthPerSize(4),
+              width: screenSize.getWidthPerSize(4),
             ),
             SizedBox(
-              height: _screenSize.getHeightPerSize(6),
-              width: _screenSize.getHeightPerSize(6),
+              height: screenSize.getHeightPerSize(6),
+              width: screenSize.getHeightPerSize(6),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: _chatRoomPublicData.chatRoomProfile.isNotEmpty
@@ -246,17 +244,17 @@ class _GlobalChatListWidgetState extends State<GlobalChatListWidget> {
               ),
             ),
             SizedBox(
-              width: _screenSize.getWidthPerSize(2),
+              width: screenSize.getWidthPerSize(2),
             ),
             Expanded(
               child: AutoSizeText(
                 _chatRoomPublicData.chatRoomName,
                 maxLines: 1,
-                style: TextStyle(color: Colors.black, fontSize: _screenSize.getHeightPerSize(1.7)),
+                style: TextStyle(color: Colors.black, fontSize: screenSize.getHeightPerSize(1.7)),
               ),
             ),
             SizedBox(
-              width: _screenSize.getWidthPerSize(2),
+              width: screenSize.getWidthPerSize(2),
             ),
           ],
         ),

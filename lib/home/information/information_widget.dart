@@ -51,7 +51,6 @@ class InformationMenuWidget extends StatefulWidget {
 }
 
 class _InformationMenuWidgetState extends State<InformationMenuWidget> {
-  late ScreenSize _screenSize;
   late String _title;
   late String _location;
   late VoidCallback _onTap;
@@ -86,10 +85,10 @@ class _InformationMenuWidgetState extends State<InformationMenuWidget> {
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Container(
-      margin: EdgeInsets.fromLTRB(
-          _screenSize.getHeightPerSize(2), 0, _screenSize.getHeightPerSize(2), 0),
+      margin:
+          EdgeInsets.fromLTRB(screenSize.getHeightPerSize(2), 0, screenSize.getHeightPerSize(2), 0),
       child: ListTile(
         onTap: _onTap,
         tileColor: Colors.white,
@@ -240,10 +239,7 @@ class _InformationSizeMenuWidget extends State<InformationSizeMenuWidget> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return ChatStringSizeDialog(
-                reflashSize: widget.reflashSize,
-                screenSize: widget.screenSize,
-              );
+              return ChatStringSizeDialog(reflashSize: widget.reflashSize);
             },
           );
         },

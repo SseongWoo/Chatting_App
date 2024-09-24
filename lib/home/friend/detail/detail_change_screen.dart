@@ -20,7 +20,6 @@ class DetailChangeScreen extends StatefulWidget {
 }
 
 class _DetailChangeScreenState extends State<DetailChangeScreen> {
-  late ScreenSize screenSize;
   late FriendData friendData;
   final TextEditingController _textEditingController = TextEditingController();
   final MultiSelectController<String> _multiSelectController = MultiSelectController<String>();

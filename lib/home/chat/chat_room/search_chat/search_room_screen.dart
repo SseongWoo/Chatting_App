@@ -20,7 +20,6 @@ class SearchRoomScreen extends StatefulWidget {
 }
 
 class _SearchRoomScreenState extends State<SearchRoomScreen> with SingleTickerProviderStateMixin {
-  late ScreenSize _screenSize;
   late TabController _tabController;
 
   @override
@@ -32,7 +31,7 @@ class _SearchRoomScreenState extends State<SearchRoomScreen> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return Scaffold(
       appBar: AppBar(
         title: const Text('검색'),
@@ -66,7 +65,6 @@ class LocalSearchScreen extends StatefulWidget {
 }
 
 class _LocalSearchScreenState extends State<LocalSearchScreen> {
-  late ScreenSize _screenSize;
   final TextEditingController _controllerSearchBox = TextEditingController();
   late List<String> _chatRoomSequence = [];
   late List<FriendData> _frendDataSequence = [];
@@ -132,36 +130,36 @@ class _LocalSearchScreenState extends State<LocalSearchScreen> {
   // _frendDataSequence의 리스트 뷰의 사이즈를 조절하는 함수
   double _userListViewSize() {
     if (_frendDataSequence.length < 4) {
-      return _screenSize.getHeightPerSize(9) * _frendDataSequence.length;
+      return screenSize.getHeightPerSize(9) * _frendDataSequence.length;
     } else {
-      return _screenSize.getHeightPerSize(27);
+      return screenSize.getHeightPerSize(27);
     }
   }
 
   // _chatRoomSequence 리스트 뷰의 사이즈를 조절하는 함수
   double _chatListViewSize() {
     if (_chatRoomSequence.length < 4) {
-      return _screenSize.getHeightPerSize(8) * _chatRoomSequence.length;
+      return screenSize.getHeightPerSize(8) * _chatRoomSequence.length;
     } else {
-      return _screenSize.getHeightPerSize(24);
+      return screenSize.getHeightPerSize(24);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return SingleChildScrollView(
       child: Center(
         child: Column(
           children: [
             SizedBox(
-              height: _screenSize.getHeightPerSize(6),
+              height: screenSize.getHeightPerSize(6),
               child: SizedBox(
-                width: _screenSize.getWidthPerSize(90),
+                width: screenSize.getWidthPerSize(90),
                 child: TextField(
                   controller: _controllerSearchBox,
                   style: TextStyle(
-                    fontSize: _screenSize.getHeightPerSize(2),
+                    fontSize: screenSize.getHeightPerSize(2),
                   ),
                   textInputAction: TextInputAction.search,
                   onTapOutside: (event) {
@@ -190,7 +188,7 @@ class _LocalSearchScreenState extends State<LocalSearchScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(_screenSize.getWidthPerSize(5), 0, 0, 0),
+              padding: EdgeInsets.fromLTRB(screenSize.getWidthPerSize(5), 0, 0, 0),
               child: const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -199,14 +197,14 @@ class _LocalSearchScreenState extends State<LocalSearchScreen> {
               ),
             ),
             Container(
-              width: _screenSize.getWidthPerSize(90),
+              width: screenSize.getWidthPerSize(90),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
               ),
               child: _frendDataSequence.isEmpty
                   ? SizedBox(
-                      height: _screenSize.getHeightPerSize(2),
+                      height: screenSize.getHeightPerSize(2),
                       // 검색 결과가 없을경우 나타나는 위젯
                       child: Visibility(
                         visible: _isSearched,
@@ -218,7 +216,7 @@ class _LocalSearchScreenState extends State<LocalSearchScreen> {
                   : Column(
                       children: [
                         SizedBox(
-                          height: _screenSize.getHeightPerSize(1),
+                          height: screenSize.getHeightPerSize(1),
                         ),
                         SizedBox(
                           height: _userListViewSize(),
@@ -235,7 +233,7 @@ class _LocalSearchScreenState extends State<LocalSearchScreen> {
                             },
                             // 리스트 뷰의 아이템 간의 간격 조절
                             separatorBuilder: (context, index) {
-                              return SizedBox(height: _screenSize.getHeightPerSize(1));
+                              return SizedBox(height: screenSize.getHeightPerSize(1));
                             },
                           ),
                         ),
@@ -244,7 +242,7 @@ class _LocalSearchScreenState extends State<LocalSearchScreen> {
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(
-                  _screenSize.getWidthPerSize(5), _screenSize.getHeightPerSize(2), 0, 0),
+                  screenSize.getWidthPerSize(5), screenSize.getHeightPerSize(2), 0, 0),
               child: const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -253,14 +251,14 @@ class _LocalSearchScreenState extends State<LocalSearchScreen> {
               ),
             ),
             Container(
-              width: _screenSize.getWidthPerSize(90),
+              width: screenSize.getWidthPerSize(90),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
               ),
               child: _chatRoomSequence.isEmpty
                   ? SizedBox(
-                      height: _screenSize.getHeightPerSize(2),
+                      height: screenSize.getHeightPerSize(2),
                       // 검색결과가 없을 경우 나타나는 위젯
                       child: Visibility(
                         visible: _isSearched,
@@ -272,7 +270,7 @@ class _LocalSearchScreenState extends State<LocalSearchScreen> {
                   : Column(
                       children: [
                         SizedBox(
-                          height: _screenSize.getHeightPerSize(1),
+                          height: screenSize.getHeightPerSize(1),
                         ),
                         SizedBox(
                           height: _chatListViewSize(),
@@ -286,7 +284,7 @@ class _LocalSearchScreenState extends State<LocalSearchScreen> {
                             },
                             // 리스트 뷰 아이템 간의 간격 조절
                             separatorBuilder: (context, index) {
-                              return SizedBox(height: _screenSize.getHeightPerSize(1));
+                              return SizedBox(height: screenSize.getHeightPerSize(1));
                             },
                           ),
                         ),
@@ -309,7 +307,6 @@ class GlobalSearchScreen extends StatefulWidget {
 }
 
 class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
-  late ScreenSize _screenSize;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController _controllerSearchBox = TextEditingController();
   late List<ChatRoomPublicData> _chatRoomSequence = [];
@@ -389,36 +386,36 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
   // _userDataSequence 리스트 뷰의 사이즈를 조절하는 함수
   double _userListViewSize() {
     if (_userDataSequence.length < 4) {
-      return _screenSize.getHeightPerSize(9) * _userDataSequence.length;
+      return screenSize.getHeightPerSize(9) * _userDataSequence.length;
     } else {
-      return _screenSize.getHeightPerSize(27);
+      return screenSize.getHeightPerSize(27);
     }
   }
 
   // _chatRoomSequence 리스트 뷰의 사이즈를 조절하는 함수
   double _chatListViewSize() {
     if (_chatRoomSequence.length < 4) {
-      return _screenSize.getHeightPerSize(8) * _chatRoomSequence.length;
+      return screenSize.getHeightPerSize(8) * _chatRoomSequence.length;
     } else {
-      return _screenSize.getHeightPerSize(24);
+      return screenSize.getHeightPerSize(24);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    _screenSize = ScreenSize(MediaQuery.of(context).size);
+    screenSize = ScreenSize(MediaQuery.of(context).size);
     return SingleChildScrollView(
       child: Center(
         child: Column(
           children: [
             SizedBox(
-              height: _screenSize.getHeightPerSize(6),
+              height: screenSize.getHeightPerSize(6),
               child: SizedBox(
-                width: _screenSize.getWidthPerSize(90),
+                width: screenSize.getWidthPerSize(90),
                 child: TextField(
                   controller: _controllerSearchBox,
                   style: TextStyle(
-                    fontSize: _screenSize.getHeightPerSize(2),
+                    fontSize: screenSize.getHeightPerSize(2),
                   ),
                   textInputAction: TextInputAction.search,
                   onTapOutside: (event) {
@@ -447,7 +444,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(_screenSize.getWidthPerSize(5), 0, 0, 0),
+              padding: EdgeInsets.fromLTRB(screenSize.getWidthPerSize(5), 0, 0, 0),
               child: const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -456,14 +453,14 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
               ),
             ),
             Container(
-              width: _screenSize.getWidthPerSize(90),
+              width: screenSize.getWidthPerSize(90),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
               ),
               child: _userDataSequence.isEmpty
                   ? SizedBox(
-                      height: _screenSize.getHeightPerSize(2),
+                      height: screenSize.getHeightPerSize(2),
                       // 검색 결과가 없을경우 나타나는 위젯
                       child: Visibility(
                           visible: _isSearched,
@@ -474,7 +471,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                   : Column(
                       children: [
                         SizedBox(
-                          height: _screenSize.getHeightPerSize(1),
+                          height: screenSize.getHeightPerSize(1),
                         ),
                         SizedBox(
                           height: _userListViewSize(),
@@ -491,7 +488,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                             },
                             // 리스트 뷰 아이템 간의 간격 조절
                             separatorBuilder: (context, index) {
-                              return SizedBox(height: _screenSize.getHeightPerSize(1));
+                              return SizedBox(height: screenSize.getHeightPerSize(1));
                             },
                           ),
                         ),
@@ -500,7 +497,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(
-                  _screenSize.getWidthPerSize(5), _screenSize.getHeightPerSize(2), 0, 0),
+                  screenSize.getWidthPerSize(5), screenSize.getHeightPerSize(2), 0, 0),
               child: const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -509,14 +506,14 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
               ),
             ),
             Container(
-              width: _screenSize.getWidthPerSize(90),
+              width: screenSize.getWidthPerSize(90),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
               ),
               child: _chatRoomSequence.isEmpty
                   ? SizedBox(
-                      height: _screenSize.getHeightPerSize(2),
+                      height: screenSize.getHeightPerSize(2),
                       // 검색 결과가 없을경우 나타나는 위젯
                       child: Visibility(
                         visible: _isSearched,
@@ -528,7 +525,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                   : Column(
                       children: [
                         SizedBox(
-                          height: _screenSize.getHeightPerSize(1),
+                          height: screenSize.getHeightPerSize(1),
                         ),
                         SizedBox(
                           height: _chatListViewSize(),
@@ -542,7 +539,7 @@ class _GlobalSearchScreenState extends State<GlobalSearchScreen> {
                             },
                             // 리스트 뷰 아이템 간의 간격 조절
                             separatorBuilder: (context, index) {
-                              return SizedBox(height: _screenSize.getHeightPerSize(1));
+                              return SizedBox(height: screenSize.getHeightPerSize(1));
                             },
                           ),
                         ),
