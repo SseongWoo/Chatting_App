@@ -16,6 +16,7 @@
 - Android Studio Koala | 2024.1.1
 - Flutter 3.24.3
 - Dart 3.5.3
+- Android 14.0, iOS 17.5
 
 ## 주요 기능
 - 1대1 채팅 및 그룹 채팅, 그룹 오픈채팅 생성 기능
@@ -228,8 +229,5 @@ lib
   path_provider: ^2.1.4 : 파일 시스템 접근 패키지
   permission_handler: ^11.3.1 : 권한 요청 패키지
 ```
-
-
-
-
-
+### 출처
+- 말풍선 로고 이미지 https://www.pngegg.com/ko/png-ssozv/download
