@@ -86,6 +86,13 @@
 |<img src = "https://github.com/user-attachments/assets/3fcec1ef-1b37-4ef3-b008-5d56cc6388c5" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/ca38303a-a635-4293-b2ce-a5f8475876c0" width="350" height="750">|
 </details>
 
+<details><summary>에러 화면구성</summary>
+    
+|에러 메인|에러 제보|
+|:---:|:---:|
+|<img src = "https://github.com/user-attachments/assets/47592275-2309-49a5-8cff-732e4ae620d4" width="350" height="750">|<img src = "https://github.com/user-attachments/assets/104d6d88-3e6d-4f04-b46f-29bd1b975872" width="350" height="750">|
+</details>
+
 ### 디렉토리 구조
 
 ```sh
@@ -100,7 +107,7 @@ assets
 ```sh
 lib
 ├── error : 에러관련 폴더
-│   ├── error_dialog.dart
+│   ├── error_screen.dart
 │   └── error_report_screen.dart
 ├── firebase_options.dart
 ├── home : 메인화면 폴더
@@ -231,3 +238,4 @@ lib
 ```
 ### 출처
 - 말풍선 로고 이미지 https://www.pngegg.com/ko/png-ssozv/download
+- 에러 이미지 https://www.flaticon.com/kr/free-icon/error_5741333
