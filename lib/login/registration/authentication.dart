@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:core';
 import 'package:intl/intl.dart';
 import 'package:image_cropper/image_cropper.dart';
+import '../../error/error_screen.dart';
 import '../../home/chat/chat_list_data.dart';
 import '../../home/friend/friend_data.dart';
 import '../../utils/logger.dart';
@@ -50,7 +51,8 @@ Future<String> createUserWithEmailAndPassword(String email, String password) asy
 }
 
 //파이어베이스에 있는 사용자에게 인증 이메일 발송
-Future<void> signInWithVerifyEmailAndPassword(String email, String password) async {
+Future<void> signInWithVerifyEmailAndPassword(
+    String email, String password, BuildContext context) async {
   try {
     if (_auth.currentUser != null) {
       await _auth.currentUser!.sendEmailVerification();
@@ -63,6 +65,9 @@ Future<void> signInWithVerifyEmailAndPassword(String email, String password) asy
     }
   } on FirebaseAuthException catch (e) {
     logger.e('signInWithVerifyEmailAndPassword오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
@@ -82,7 +87,7 @@ Future<bool> signIn(String email, String password) async {
 }
 
 // 로그아웃
-void signOut() async {
+void signOut(BuildContext context) async {
   try {
     await _auth.signOut();
     friendList.clear();
@@ -95,11 +100,14 @@ void signOut() async {
     myData = MyData('', '', '', '', '', {}, []);
   } catch (e) {
     logger.e('signOut오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
 // 이메일 인증 여부 확인
-Future<bool> checkEmailVerificationStatus() async {
+Future<bool> checkEmailVerificationStatus(BuildContext context) async {
   try {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -115,6 +123,9 @@ Future<bool> checkEmailVerificationStatus() async {
     }
   } catch (e) {
     logger.e('checkEmailVerificationStatus오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
   return false;
 }
@@ -152,6 +163,9 @@ Future<void> saveUserImage(CroppedFile? croppedFile, String nickName, BuildConte
     }
   } catch (e) {
     logger.e('saveUserImage오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
@@ -179,10 +193,13 @@ Future<bool> isEmailRegistered(String email) async {
 
 // 이메일에 비밀번호 재 설정 이메일을 보내는 함수
 @override
-Future<void> resetPassword(String email) async {
+Future<void> resetPassword(String email, BuildContext context) async {
   try {
     await _auth.sendPasswordResetEmail(email: email);
   } catch (e) {
     logger.e('resetPassword오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }

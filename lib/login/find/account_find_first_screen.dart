@@ -29,7 +29,7 @@ class _AccountFindFirstScreenState extends State<AccountFindFirstScreen> {
   void findPassword() async {
     bool emailCheck = await isEmailRegistered(controllerID.text);
     if (emailCheck) {
-      await resetPassword(controllerID.text);
+      await resetPassword(controllerID.text, context);
       Navigator.push(
         context,
         MaterialPageRoute(

@@ -19,8 +19,8 @@ void leaveChatRoomDialog(BuildContext getContext, String roomUid) {
           TextButton(
               onPressed: () async {
                 EasyLoading.show();
-                await leaveChatRoom(roomUid);
-                await refreshData();
+                await leaveChatRoom(roomUid, context);
+                await refreshData(context);
                 EasyLoading.dismiss();
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const HomeScreen()), (route) => false);
@@ -68,7 +68,7 @@ class ManagerDelegationDialog extends StatelessWidget {
         TextButton(
           onPressed: () async {
             EasyLoading.show();
-            await managerDelegation(chatRoomUid, delegationUid);
+            await managerDelegation(chatRoomUid, delegationUid, context);
             refresh(delegationUid);
             EasyLoading.dismiss();
             Navigator.of(context).pop();

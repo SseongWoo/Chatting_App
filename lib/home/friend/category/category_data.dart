@@ -1,6 +1,8 @@
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import '../../../error/error_screen.dart';
 import '../../../utils/convert_array.dart';
 import '../../../utils/logger.dart';
 import '../friend_data.dart';
@@ -13,7 +15,7 @@ bool categoryControlCheck = false;
 List<String> deleteUserList = [];
 
 // 카테고리 데이터를 서버에서 가져와 리스트에 저장하는 함수
-Future<void> getCategoryList() async {
+Future<void> getCategoryList(BuildContext context) async {
   try {
     DocumentSnapshot documentSnapshot =
         await FirebaseFirestore.instance.collection('users').doc(myData.myUID).get();
@@ -22,9 +24,16 @@ Future<void> getCategoryList() async {
       categorySequence = convertList(documentSnapshot.get('category_sequence'));
     } else {
       logger.e('getCategoryList오류');
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (context) => const ErrorScreen(errorMessage: 'getCategoryList오류')),
+          (route) => false);
     }
   } catch (e) {
     logger.e('getCategoryList오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
@@ -51,7 +60,7 @@ void getCategory() {
 // 카테고리 설정 화면에서 카테고리를 수정했을 경우 실행되는 함수이며
 // deleteCategory 함수에서 설정 된 deleteUserList 리스트에 속해있는 친구데이터의 카테고리를 수정뒤,
 // 사용자의 카테고리 데이터도 수정하는 함수
-Future<void> setCategory() async {
+Future<void> setCategory(BuildContext context) async {
   try {
     for (var item in deleteUserList) {
       await firestore.collection('users').doc(myData.myUID).collection('friend').doc(item).update({
@@ -65,6 +74,9 @@ Future<void> setCategory() async {
     deleteUserList.clear();
   } catch (e) {
     logger.e('setCategory오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
@@ -113,7 +125,8 @@ void changeSequenceCategory(int oldIndex, int newIndex) {
 }
 
 // DB에 카테고리 리스트와 친구 데이터의 카테고리 데이터를 수정하는 작업
-Future<void> addCategoryUserData(List<String> category, FriendData friendData) async {
+Future<void> addCategoryUserData(
+    List<String> category, FriendData friendData, BuildContext context) async {
   try {
     User? user = _auth.currentUser;
     if (user != null) {
@@ -147,5 +160,8 @@ Future<void> addCategoryUserData(List<String> category, FriendData friendData) a
     }
   } catch (e) {
     logger.e('addCategoryUserData오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }

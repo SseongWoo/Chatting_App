@@ -47,7 +47,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _getID() async {
     String? getid = await getIDShared();
-    _controllerID.text = getid.toString();
+
+    if (getid != null) {
+      _controllerID.text = getid.toString();
+    }
   }
 
   // 로그인을 하기위해 DB에서 정보를 가지고와 내부 저장소에 저장하고 로그인을 완료하는 함수
@@ -59,11 +62,11 @@ class _LoginScreenState extends State<LoginScreen> {
         await setIDShared('');
       }
       await getMyData();
-      await getFriendDataList();
-      await getChatRoomData();
-      await getChatRoomDataList();
+      await getFriendDataList(context);
+      await getChatRoomData(context);
+      await getChatRoomDataList(context);
       await getTapShared();
-      await getRealTimeData();
+      await getRealTimeData(context);
       initializationTap();
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const HomeScreen()), (route) => false);

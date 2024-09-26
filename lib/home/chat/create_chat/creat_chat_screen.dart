@@ -82,7 +82,7 @@ class _CreateChatState extends State<CreateChat> {
     }
 
     if (_croppedProFile != null) {
-      profileUrl = await uploadChatRoomProfile(_croppedProFile, _controllerCode.text);
+      profileUrl = await uploadChatRoomProfile(_croppedProFile, _controllerCode.text, context);
     }
 
     ChatRoomData chatRoomData = ChatRoomData(
@@ -96,11 +96,11 @@ class _CreateChatState extends State<CreateChat> {
         _isChecked,
         invitationList);
 
-    await createChatRoom(chatRoomData);
+    await createChatRoom(chatRoomData, context);
     if (_isChecked) {
-      await setChatPublicData(chatRoomData);
+      await setChatPublicData(chatRoomData, context);
     }
-    await getChatData(chatRoomData.chatRoomUid);
+    await getChatData(chatRoomData.chatRoomUid, context);
     List<ChatPeopleClass> chatPeople = await getPeopleData(chatRoomData.chatRoomUid);
     EasyLoading.dismiss();
     Navigator.push(
@@ -462,7 +462,7 @@ class _CreateChatState extends State<CreateChat> {
                         EasyLoading.show();
                         if (_creatChatKey.currentState!.validate() &&
                             selectValueList.length <= 100) {
-                          bool checkRoomCode = await checkRoomUid(_controllerName.text);
+                          bool checkRoomCode = await checkRoomUid(_controllerName.text, context);
                           if (!checkRoomCode) {
                             _startCreatChatRoom();
                           } else {

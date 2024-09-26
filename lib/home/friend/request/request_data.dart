@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../../error/error_screen.dart';
 import '../../../utils/logger.dart';
 import '../../../utils/my_data.dart';
 import '../../chat/chat_list_data.dart';
@@ -30,9 +31,10 @@ List<RequestData> requestReceivedList = []; //받은 요청 리스트
 Future<void> addFriendRequest(String friendUID, BuildContext context) async {
   try {
     FriendData? friendData;
-    friendData = await getRequestFriendData(friendUID);
+    friendData = await getRequestFriendData(friendUID, context);
     String dateTime = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    bool friendCheck = await checkFriend(friendData!.friendUID); // 파이어베이스의 본인의 친구목록에 있는지 확인하는 변수
+    bool friendCheck =
+        await checkFriend(friendData!.friendUID, context); // 파이어베이스의 본인의 친구목록에 있는지 확인하는 변수
     List<String> category = [];
 
     CollectionReference creatCollectionUid = _firestore.collection('chat');
@@ -77,11 +79,11 @@ Future<void> addFriendRequest(String friendUID, BuildContext context) async {
         'bookmark': false,
       });
 
-      await createChatRoom(chatRoomData);
-      await deleteRequest(friendUID, true, true);
-      await getFriendDataList();
-      await getChatRoomData();
-      await getChatRoomDataList();
+      await createChatRoom(chatRoomData, context);
+      await deleteRequest(friendUID, true, true, context);
+      await getFriendDataList(context);
+      await getChatRoomData(context);
+      await getChatRoomDataList(context);
 
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('친구 추가에 성공하였습니다.')));
     } else {
@@ -100,14 +102,15 @@ Future<void> sendRequest(String friendUID, BuildContext context) async {
   FriendData? myData;
   try {
     User? user = _auth.currentUser;
-    friendData = await getRequestFriendData(friendUID);
-    myData = await getRequestFriendData(user!.uid);
+    friendData = await getRequestFriendData(friendUID, context);
+    myData = await getRequestFriendData(user!.uid, context);
     String dateTime;
     bool requestSendCheck = requestSendList.any((request) =>
         request.requestUID == friendData?.friendUID); // 리스트에 friendUID를 가지고있는 데이터가 존재하는지 체크하는 작업
     bool requestReceivedCheck =
         requestReceivedList.any((request) => request.requestUID == friendData?.friendUID);
-    bool friendCheck = await checkFriend(friendData!.friendUID); // 파이어베이스의 본인의 친구목록에 있는지 확인하는 변수
+    bool friendCheck =
+        await checkFriend(friendData!.friendUID, context); // 파이어베이스의 본인의 친구목록에 있는지 확인하는 변수
 
     if (!friendCheck &&
         !requestSendCheck &&
@@ -174,7 +177,7 @@ Future<void> sendRequest(String friendUID, BuildContext context) async {
 }
 
 // 파이어베이스에서 Request데이터를 불러오는 작업
-Future<void> acceptRequest() async {
+Future<void> acceptRequest(BuildContext context) async {
   requestSendList = []; //리스트 초기화
   requestReceivedList = [];
   try {
@@ -190,6 +193,9 @@ Future<void> acceptRequest() async {
     }
   } catch (e) {
     logger.e('acceptRequest오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
@@ -221,7 +227,7 @@ void addRequestList(dynamic result) {
 }
 
 // 가져온 문자데이터를 이메일형식 또는 UID형식인지 구분뒤 친구 데이터를 확인후 가져오는 작업
-Future<FriendData?> getRequestFriendData(String friendUID) async {
+Future<FriendData?> getRequestFriendData(String friendUID, BuildContext context) async {
   bool emailChcek = friendUID.contains('@');
 
   if (emailChcek) {
@@ -243,13 +249,16 @@ Future<FriendData?> getRequestFriendData(String friendUID) async {
           '', '', [], false);
     } catch (e) {
       logger.e('getRequestFriendData오류 : $e');
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+          (route) => false);
       return null;
     }
   }
 }
 
 //
-Future<bool> checkRequest(String aUID, String bUID) async {
+Future<bool> checkRequest(String aUID, String bUID, BuildContext context) async {
   try {
     DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
         .collection('users')
@@ -260,18 +269,19 @@ Future<bool> checkRequest(String aUID, String bUID) async {
     return documentSnapshot.exists;
   } catch (e) {
     logger.e('checkRequest오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
     return false;
   }
 }
 
 // 사용자가 받은 요청을 수락하거나 거절했을 경우 상대방에게 확인했다는 표시를 주기 위한 함수
-Future<void> updateRequest(
-  String friendUID,
-) async {
+Future<void> updateRequest(String friendUID, BuildContext context) async {
   try {
     User? user = _auth.currentUser;
-    bool checkMyData = await checkRequest(user!.uid, friendUID);
-    bool checkFriendData = await checkRequest(friendUID, user.uid);
+    bool checkMyData = await checkRequest(user!.uid, friendUID, context);
+    bool checkFriendData = await checkRequest(friendUID, user.uid, context);
 
     if (checkMyData && checkFriendData) {
       await FirebaseFirestore.instance
@@ -293,14 +303,18 @@ Future<void> updateRequest(
     }
   } catch (e) {
     logger.e('updateRequest오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
 // 상대방 혹은 나의 요청데이터를 삭제하기 위한 함수
-Future<void> deleteRequest(String friendUID, bool deleteA, bool deleteB) async {
+Future<void> deleteRequest(
+    String friendUID, bool deleteA, bool deleteB, BuildContext context) async {
   try {
     if (deleteA) {
-      bool checkMyData = await checkRequest(myData.myUID, friendUID);
+      bool checkMyData = await checkRequest(myData.myUID, friendUID, context);
       if (checkMyData) {
         await FirebaseFirestore.instance
             .collection('users')
@@ -311,7 +325,7 @@ Future<void> deleteRequest(String friendUID, bool deleteA, bool deleteB) async {
       }
     }
     if (deleteB) {
-      bool checkFriendData = await checkRequest(friendUID, myData.myUID);
+      bool checkFriendData = await checkRequest(friendUID, myData.myUID, context);
       if (checkFriendData) {
         await FirebaseFirestore.instance
             .collection('users')
@@ -323,22 +337,25 @@ Future<void> deleteRequest(String friendUID, bool deleteA, bool deleteB) async {
     }
   } catch (e) {
     logger.e('deleteRequest오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
 // 친구 요청을 수락하거나 거절할때 상대방이 이미 행동했을때를 방지하기 위한 확인작업
-Future<bool> requestCheck(String friendUID) async {
+Future<bool> requestCheck(String friendUID, BuildContext context) async {
   User? user = _auth.currentUser;
-  bool myRequestCheck = await checkRequest(user!.uid, friendUID);
-  bool friendRequestCheck = await checkRequest(friendUID, user.uid);
+  bool myRequestCheck = await checkRequest(user!.uid, friendUID, context);
+  bool friendRequestCheck = await checkRequest(friendUID, user.uid, context);
 
   if (myRequestCheck && friendRequestCheck) {
     return true;
   } else if (!myRequestCheck && friendRequestCheck) {
-    await deleteRequest(friendUID, false, true);
+    await deleteRequest(friendUID, false, true, context);
     return false;
   } else if (myRequestCheck && !friendRequestCheck) {
-    await deleteRequest(friendUID, true, false);
+    await deleteRequest(friendUID, true, false, context);
     return false;
   } else {
     return false;

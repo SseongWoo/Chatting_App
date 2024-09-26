@@ -101,7 +101,7 @@ class _InformationScreenState extends State<InformationScreen> {
     EasyLoading.show();
 
     if (user != null) {
-      await resetPassword(myData.myEmail);
+      await resetPassword(myData.myEmail, context);
       EasyLoading.dismiss();
       showDialog(
         context: context,

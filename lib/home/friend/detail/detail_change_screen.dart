@@ -70,14 +70,14 @@ class _DetailChangeScreenState extends State<DetailChangeScreen> {
               // 커스텀 닉네임과, 카테고리중 수정된 것만 실행후 홈 화면으로 이동
               if ((_textEditingController.text == '' && friendData.friendCustomName != '') ||
                   _textEditingController.text == friendData.friendNickName) {
-                await updateFriendName(friendData, '');
+                await updateFriendName(friendData, '', context);
               } else if (_textEditingController.text != friendData.friendCustomName) {
-                await updateFriendName(friendData, _textEditingController.text);
+                await updateFriendName(friendData, _textEditingController.text, context);
               }
               if (selectedNames.isNotEmpty && (_multiSelectController.selectedItems.isNotEmpty) ||
                   (_multiSelectController.selectedItems.isEmpty &&
                       friendData.category.isNotEmpty)) {
-                await addCategoryUserData(selectedNames, friendData);
+                await addCategoryUserData(selectedNames, friendData, context);
               }
               EasyLoading.dismiss();
               Navigator.of(context).pushAndRemoveUntil(

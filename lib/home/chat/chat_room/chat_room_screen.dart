@@ -160,9 +160,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   Future<void> _onFieldSubmitted() async {
     DateTime dateTime = DateTime.now();
     await setChatData(
-        _chatRoomSimpleData.chatRoomUid, _textEditingController.text, 'text', dateTime);
+        _chatRoomSimpleData.chatRoomUid, _textEditingController.text, 'text', dateTime, context);
     await setChatRealTimeData(_chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid,
-        _textEditingController.text, dateTime);
+        _textEditingController.text, dateTime, context);
 
     setState(() {});
     // 스크롤 위치를 맨 아래로 이동 시킴
@@ -181,7 +181,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         _scrollController.position.pixels != 0 &&
         messageList.length >= _chatLength) {
       EasyLoading.show();
-      await getChatDataAfter(_chatRoomSimpleData.chatRoomUid);
+      await getChatDataAfter(_chatRoomSimpleData.chatRoomUid, context);
       setState(() {
         _chatLength += 50;
       });
@@ -211,18 +211,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         imageFile != null && (imageFile.path.endsWith('.jpg') || imageFile.path.endsWith('.png'));
     if (isImageFile) {
       croppedFile = await cropImageInChatRoom(imageFile);
-      imgURL = await uploadChatImage(croppedFile, _chatRoomSimpleData.chatRoomUid);
+      imgURL = await uploadChatImage(croppedFile, _chatRoomSimpleData.chatRoomUid, context);
       if (imgURL.isNotEmpty) {
-        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'image', dateTime);
+        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'image', dateTime, context);
         await setChatRealTimeData(
-            _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '이미지', dateTime);
+            _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '이미지', dateTime, context);
       }
     } else {
-      imgURL = await uploadChatVideo(imageFile!, _chatRoomSimpleData.chatRoomUid);
+      imgURL = await uploadChatVideo(imageFile!, _chatRoomSimpleData.chatRoomUid, context);
       if (imgURL.isNotEmpty) {
-        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'video', dateTime);
+        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'video', dateTime, context);
         await setChatRealTimeData(
-            _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '비디오', dateTime);
+            _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '비디오', dateTime, context);
       }
     }
     setState(() {});
@@ -237,11 +237,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     mediaFile = await getMultipleMedia(); // getImage 함수 비동기 호출
 
     for (var file in mediaFile!) {
-      imgURL = await uploadChatMultiImage(file, _chatRoomSimpleData.chatRoomUid);
+      imgURL = await uploadChatMultiImage(file, _chatRoomSimpleData.chatRoomUid, context);
       if (imgURL.isNotEmpty) {
-        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'image', dateTime);
+        await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'image', dateTime, context);
         await setChatRealTimeData(
-            _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '이미지', dateTime);
+            _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '이미지', dateTime, context);
       }
     }
     setState(() {});
@@ -260,18 +260,20 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       isImageFile = (file.path.endsWith('.jpg') || file.path.endsWith('.png'));
 
       if (isImageFile) {
-        imgURL = await uploadChatMultiImageV2(file, _chatRoomSimpleData.chatRoomUid, 'image');
+        imgURL =
+            await uploadChatMultiImageV2(file, _chatRoomSimpleData.chatRoomUid, 'image', context);
         if (imgURL.isNotEmpty) {
-          await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'image', dateTime);
+          await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'image', dateTime, context);
           await setChatRealTimeData(
-              _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '이미지', dateTime);
+              _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '이미지', dateTime, context);
         }
       } else {
-        imgURL = await uploadChatMultiImageV2(file, _chatRoomSimpleData.chatRoomUid, 'video');
+        imgURL =
+            await uploadChatMultiImageV2(file, _chatRoomSimpleData.chatRoomUid, 'video', context);
         if (imgURL.isNotEmpty) {
-          await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'video', dateTime);
+          await setChatData(_chatRoomSimpleData.chatRoomUid, imgURL, 'video', dateTime, context);
           await setChatRealTimeData(
-              _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '비디오', dateTime);
+              _chatRoomData.peopleList, _chatRoomSimpleData.chatRoomUid, '비디오', dateTime, context);
         }
       }
     }

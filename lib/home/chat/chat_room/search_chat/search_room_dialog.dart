@@ -228,7 +228,7 @@ class _EnterPasswordDialogState extends State<EnterPasswordDialog> {
 
   // 서버에서 암호 데이터를 가져와 사용자가 입력한 데이터와 같을경우 _passwordCheck변수를 true로 변경
   Future<void> _checkPassword() async {
-    String password = await getPassword(_chatRoomPublicData);
+    String password = await getPassword(_chatRoomPublicData, context);
     if (_controller.text == password) {
       _passwordCheck = true;
     } else {

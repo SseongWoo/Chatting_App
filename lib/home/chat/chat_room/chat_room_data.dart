@@ -5,9 +5,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
+import '../../../error/error_screen.dart';
 import '../../../utils/logger.dart';
 import '../../friend/friend_data.dart';
 
@@ -33,7 +35,7 @@ Map<String, int> messageMapData =
 var uuid = const Uuid(); // uuid를 생성하기 위한 uuid객체를 할당한 변수
 
 //DB에 저장된 채팅방 메세지중 최근 메세지 50건만 가져와서 리스트에 저장하는 함수
-Future<void> getChatData(String chatRoomUID) async {
+Future<void> getChatData(String chatRoomUID, BuildContext context) async {
   int count = 0;
   try {
     await _firestore
@@ -65,11 +67,14 @@ Future<void> getChatData(String chatRoomUID) async {
     });
   } catch (e) {
     logger.e('getChatData오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
 //사용자가 채팅방을 끝까지 올렸을때 새롭개 50개의 메세지를 더 추가로 불러오는 함수
-Future<void> getChatDataAfter(String chatRoomUID) async {
+Future<void> getChatDataAfter(String chatRoomUID, BuildContext context) async {
   int count = 0;
   try {
     await _firestore
@@ -100,12 +105,15 @@ Future<void> getChatDataAfter(String chatRoomUID) async {
     });
   } catch (e) {
     logger.e('getChatDataAfter오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
 // 메세지 데이터를 DB에 저장하기 위한 함수
-Future<void> setChatData(
-    String chatRoomUID, String message, String messagetype, DateTime dateTime) async {
+Future<void> setChatData(String chatRoomUID, String message, String messagetype, DateTime dateTime,
+    BuildContext context) async {
   try {
     CollectionReference collection =
         _firestore.collection('chat').doc(chatRoomUID).collection('chat');
@@ -122,6 +130,9 @@ Future<void> setChatData(
     });
   } catch (e) {
     logger.e('setChatData오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
@@ -136,7 +147,8 @@ String getName(MessageDataClass messageDataClass) {
 }
 
 // 채팅방에 이미지를 보낼때 서버에 이미지를 저장하고 받는 url을 리턴하는 함수
-Future<String> uploadChatImage(CroppedFile? croppedFile, String chatRoomUid) async {
+Future<String> uploadChatImage(
+    CroppedFile? croppedFile, String chatRoomUid, BuildContext context) async {
   User? user = FirebaseAuth.instance.currentUser;
   FirebaseStorage storage = FirebaseStorage.instance;
   String randomId = uuid.v4();
@@ -156,12 +168,15 @@ Future<String> uploadChatImage(CroppedFile? croppedFile, String chatRoomUid) asy
     }
   } catch (e) {
     logger.e('uploadChatImage오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
   return downloadURL;
 }
 
 // 채팅방에 비디오를 보낼때 서버에 비디오를 저장하고 받는 url을 리턴하는 함수
-Future<String> uploadChatVideo(XFile xfile, String chatRoomUid) async {
+Future<String> uploadChatVideo(XFile xfile, String chatRoomUid, BuildContext context) async {
   User? user = FirebaseAuth.instance.currentUser;
   FirebaseStorage storage = FirebaseStorage.instance;
   String randomId = uuid.v4();
@@ -179,12 +194,15 @@ Future<String> uploadChatVideo(XFile xfile, String chatRoomUid) async {
     }
   } catch (e) {
     logger.e('uploadChatVideo오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
   return downloadURL;
 }
 
 // 채팅방에 여러 이미지를 보낼때 서버에 이미지를 저장하고 받는 url을 리턴하는 함수
-Future<String> uploadChatMultiImage(XFile xfile, String chatRoomUid) async {
+Future<String> uploadChatMultiImage(XFile xfile, String chatRoomUid, BuildContext context) async {
   User? user = FirebaseAuth.instance.currentUser;
   FirebaseStorage storage = FirebaseStorage.instance;
   String randomId = uuid.v4();
@@ -202,12 +220,16 @@ Future<String> uploadChatMultiImage(XFile xfile, String chatRoomUid) async {
     }
   } catch (e) {
     logger.e('uploadChatMultiImage오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
   return downloadURL;
 }
 
 // 채팅방에 여러 이미지를 보낼때 서버에 이미지를 저장하고 받는 url을 리턴하는 함수
-Future<String> uploadChatMultiImageV2(XFile xfile, String chatRoomUid, String type) async {
+Future<String> uploadChatMultiImageV2(
+    XFile xfile, String chatRoomUid, String type, BuildContext context) async {
   User? user = FirebaseAuth.instance.currentUser;
   FirebaseStorage storage = FirebaseStorage.instance;
   String randomId = uuid.v4();
@@ -225,12 +247,15 @@ Future<String> uploadChatMultiImageV2(XFile xfile, String chatRoomUid, String ty
     }
   } catch (e) {
     logger.e('uploadChatMultiImageV2오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
   return downloadURL;
 }
 
 // 채팅방을 나갈때 채팅방 DB안에 있는 사용자의 데이터와 사용자 DB안에 있는 채팅방 데이터를 삭제하는 함수
-Future<void> leaveChatRoom(String chatRoomUid) async {
+Future<void> leaveChatRoom(String chatRoomUid, BuildContext context) async {
   try {
     DateTime dateTime = DateTime.now();
     ChatRoomData? chatRoomData = chatRoomDataList[chatRoomUid];
@@ -260,25 +285,32 @@ Future<void> leaveChatRoom(String chatRoomUid) async {
     // 사용자의 채팅방 커스텀 프로필 삭제
     await FirebaseStorage.instance.ref('/chat/$chatRoomUid/').delete();
     // 채팅방에 퇴장 시스템 메세지 생성
-    await setChatData(chatRoomUid, '${myData.myNickName}님이 퇴장하였습니다.', 'system', dateTime);
-    await setChatRealTimeData(peopleList, chatRoomUid, '${myData.myNickName}님이 퇴장하였습니다.', dateTime);
+    await setChatData(chatRoomUid, '${myData.myNickName}님이 퇴장하였습니다.', 'system', dateTime, context);
+    await setChatRealTimeData(
+        peopleList, chatRoomUid, '${myData.myNickName}님이 퇴장하였습니다.', dateTime, context);
   } catch (e) {
     logger.e('leaveChatRoom오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
 // 채팅방의 매니저를 변경하는 함수
-Future<void> managerDelegation(String roomUid, String delegationUid) async {
+Future<void> managerDelegation(String roomUid, String delegationUid, BuildContext context) async {
   try {
     await _firestore.collection('chat').doc(roomUid).update({'chatroommanager': delegationUid});
   } catch (e) {
     logger.e('managerDelegation오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
 // 채팅방 리스트 화면에서 메세지 미리보기와 안읽은 메세지 숫자를 나타내기 위해 DB에 업데이트 하는 함수
-Future<void> setChatRealTimeData(
-    List<String> chatPeopleList, String chatRoomUID, String message, DateTime dateTime) async {
+Future<void> setChatRealTimeData(List<String> chatPeopleList, String chatRoomUID, String message,
+    DateTime dateTime, BuildContext context) async {
   try {
     // 채팅방의 마지막 메세지와 시간을 업데이트
     await _firestore
@@ -301,5 +333,8 @@ Future<void> setChatRealTimeData(
     }
   } catch (e) {
     logger.e('setChatRealTimeData오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }

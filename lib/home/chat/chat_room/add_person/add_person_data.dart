@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:flutter/material.dart';
+import '../../../../error/error_screen.dart';
 import '../../../../utils/logger.dart';
 
 FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 // 채팅방에 친구를 초대하능 기능을 가진 함수
-Future<void> addNewPeople(
-    String roomUid, List<String> peopleList, List<String> newPeopleList) async {
+Future<void> addNewPeople(String roomUid, List<String> peopleList, List<String> newPeopleList,
+    BuildContext context) async {
   try {
     // 채팅방 데이터에 인원 리스트 업데이트
     await FirebaseFirestore.instance.collection('chat').doc(roomUid).update({
@@ -27,5 +28,8 @@ Future<void> addNewPeople(
     }
   } catch (e) {
     logger.e('addNewPeople오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }

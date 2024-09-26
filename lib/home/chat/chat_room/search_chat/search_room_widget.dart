@@ -172,9 +172,9 @@ class _GlobalChatListWidgetState extends State<GlobalChatListWidget> {
         // 해당 채팅방이 사용자가 이미 들어가 있는 채팅방인지 확인 후 맞을경우 채팅방 입장,
         // 아닐경우 JoinGlobalChatRoom 다이얼로그 생성하여 입장과정을 거침
         if (chatRoomList.containsKey(_chatRoomPublicData.chatRoomUid)) {
-          await getChatData(_chatRoomPublicData.chatRoomUid);
+          await getChatData(_chatRoomPublicData.chatRoomUid, context);
           List<ChatPeopleClass> chatPeople = await getPeopleData(_chatRoomPublicData.chatRoomUid);
-          await refreshData();
+          await refreshData(context);
 
           Navigator.push(
             context,

@@ -76,14 +76,15 @@ class _SettingRoomState extends State<SettingRoom> {
         _controllerName.text = _chatRoomSimpleData.chatRoomCustomName;
       }
       if (_croppedProFile != null) {
-        _imageUrl = await uploadChatRoomCustomProfile(_croppedProFile, _chatRoomData.chatRoomUid);
+        _imageUrl =
+            await uploadChatRoomCustomProfile(_croppedProFile, _chatRoomData.chatRoomUid, context);
       }
       _chatRoomSimpleData.chatRoomCustomName = _controllerName.text;
       _chatRoomSimpleData.chatRoomCustomProfile = _imageUrl;
-      await updateChatData(_chatRoomSimpleData);
-      await refreshData();
+      await updateChatData(_chatRoomSimpleData, context);
+      await refreshData(context);
 
-      await getChatData(_chatRoomSimpleData.chatRoomUid);
+      await getChatData(_chatRoomSimpleData.chatRoomUid, context);
       List<ChatPeopleClass> chatPeople = await getPeopleData(_chatRoomSimpleData.chatRoomUid);
       EasyLoading.dismiss();
       Navigator.of(context).pushAndRemoveUntil(

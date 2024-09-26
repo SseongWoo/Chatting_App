@@ -4,8 +4,10 @@ import 'package:chattingapp/utils/my_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../error/error_screen.dart';
 import '../../utils/data_refresh.dart';
 import '../../utils/logger.dart';
 
@@ -68,7 +70,7 @@ String lastSortUid = '';
 
 // 서버에서 가져온 사용자의 채팅방 데이터들을 MAP 형태로 저장하는 함수
 // 1대1채팅방, 그룹채팅방 나누어서 저장
-Future<bool> getChatRoomDataList() async {
+Future<bool> getChatRoomDataList(BuildContext context) async {
   try {
     DocumentSnapshot documentSnapshot;
     chatRoomDataList.clear();
@@ -103,12 +105,15 @@ Future<bool> getChatRoomDataList() async {
     return true;
   } catch (e) {
     logger.e('getChatRoomDataList오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
     return false;
   }
 }
 
 // 파이어베이스에 있는 채팅방 데이터를 가져와서 1대1 채팅방과 그룹채팅방을 분류해서 저장하는 함수
-Future<bool> getChatRoomData() async {
+Future<bool> getChatRoomData(BuildContext context) async {
   try {
     chatRoomList.clear();
     chatRoomSequence.clear();
@@ -132,12 +137,15 @@ Future<bool> getChatRoomData() async {
     return true;
   } catch (e) {
     logger.e('getChatRoomData오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
     return false;
   }
 }
 
 // 주어진 데이터로 채팅방을 생성하는 함수
-Future<void> createChatRoom(ChatRoomData chatRoomData) async {
+Future<void> createChatRoom(ChatRoomData chatRoomData, BuildContext context) async {
   try {
     DateTime dateTime = DateTime.now(); // 채팅방 생성 시간
     // 채팅방 데이터 chat DB에 저장하는 작업
@@ -198,25 +206,31 @@ Future<void> createChatRoom(ChatRoomData chatRoomData) async {
       // });
     }
 
-    await refreshData();
+    await refreshData(context);
   } catch (e) {
     logger.e('createChatRoom오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
 // 채팅방 UID가 중복되는지 확인하는 함수
-Future<bool> checkRoomUid(String uid) async {
+Future<bool> checkRoomUid(String uid, BuildContext context) async {
   try {
     DocumentSnapshot documentSnapshot = await _firestore.collection('chat').doc(uid).get();
     return documentSnapshot.exists;
   } catch (e) {
     logger.e('checkRoomUid오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
     return false;
   }
 }
 
 // 수정된 사용자의 채팅방 커스텀데이터를 서버에 업데이트 하는 함수
-Future<void> updateChatData(ChatRoomSimpleData chatRoomSimpleData) async {
+Future<void> updateChatData(ChatRoomSimpleData chatRoomSimpleData, BuildContext context) async {
   try {
     await _firestore
         .collection('users')
@@ -229,11 +243,14 @@ Future<void> updateChatData(ChatRoomSimpleData chatRoomSimpleData) async {
     });
   } catch (e) {
     logger.e('updateChatData오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
 // 수정된 채팅방 데이터를 서버에 업데이트 하는 함수
-Future<void> updateChatMainData(ChatRoomData chatRoomData) async {
+Future<void> updateChatMainData(ChatRoomData chatRoomData, BuildContext context) async {
   try {
     await _firestore.collection('chat').doc(chatRoomData.chatRoomUid).update({
       'chatroomname': chatRoomData.chatRoomName,
@@ -244,11 +261,14 @@ Future<void> updateChatMainData(ChatRoomData chatRoomData) async {
     });
   } catch (e) {
     logger.e('updateChatMainData오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
 // 채팅방 실시간 데이터(안읽은 메세지 수, 마지막 메세지 시간 등)를 가져오는 함수
-Future<void> getRealTimeData() async {
+Future<void> getRealTimeData(BuildContext context) async {
   try {
     for (var entry in chatRoomDataList.entries) {
       // 채팅방 마지막 메세지 데이터를 가져오는 기능
@@ -282,16 +302,22 @@ Future<void> getRealTimeData() async {
     }
   } catch (e) {
     logger.e('getRealTimeData오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
 // 채팅방에 입장할때 해당 채팅방에 누적되어있던 안읽은 메세지 수 데이터를 초기화 하는 함수
-Future<void> updateRealTimeData(String chatRoomUID) async {
+Future<void> updateRealTimeData(String chatRoomUID, BuildContext context) async {
   try {
     _firestore.collection('users').doc(myData.myUID).collection('chat').doc(chatRoomUID).update({
       'readablemessage': 0,
     });
   } catch (e) {
     logger.e('updateRealTimeData오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }

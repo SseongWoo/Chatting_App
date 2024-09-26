@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 
+import '../../error/error_screen.dart';
 import '../../login/registration/authentication.dart';
 import '../../utils/convert_array.dart';
 import '../../utils/logger.dart';
@@ -19,7 +20,7 @@ import 'information_dialog.dart';
 FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 // 수정된 이름을 기존에 DB에 업데이트 하는 작업
-Future<void> updateMyName(String name) async {
+Future<void> updateMyName(String name, BuildContext context) async {
   try {
     await _firestore.collection('users').doc(myData.myUID).update({
       'nickname': name,
@@ -30,11 +31,14 @@ Future<void> updateMyName(String name) async {
     myData.myNickName = name;
   } catch (e) {
     logger.e('updateMyName오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
 // 수정된 프로필 사진을 기존에 있던 프로필사진의 파일에 덮어씌우는 작업과 DB에 등록하는 작업
-Future<void> uploadMyProfile(CroppedFile? croppedFile) async {
+Future<void> uploadMyProfile(CroppedFile? croppedFile, BuildContext context) async {
   FirebaseStorage storage = FirebaseStorage.instance;
   String downloadURL = '';
 
@@ -58,6 +62,9 @@ Future<void> uploadMyProfile(CroppedFile? croppedFile) async {
     myData.myProfile = downloadURL;
   } catch (e) {
     logger.e('uploadMyProfile오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
@@ -66,7 +73,7 @@ Future<void> checkEmail(
   BuildContext context,
 ) async {
   User? user = FirebaseAuth.instance.currentUser;
-  bool check = await checkEmailVerificationStatus();
+  bool check = await checkEmailVerificationStatus(context);
 
   if (user != null) {
     if (check) {
@@ -194,5 +201,8 @@ Future<void> deleteUser(BuildContext context) async {
     }
   } catch (e) {
     logger.e('deleteUser오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }

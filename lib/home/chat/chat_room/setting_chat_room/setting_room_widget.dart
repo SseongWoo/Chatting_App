@@ -17,8 +17,8 @@ void deleteChatRoomDialog(BuildContext getContext, String roomUid) {
           TextButton(
               onPressed: () async {
                 EasyLoading.show();
-                await deleteChatRoom(roomUid);
-                await refreshData();
+                await deleteChatRoom(roomUid, context);
+                await refreshData(context);
                 EasyLoading.dismiss();
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const HomeScreen()), (route) => false);

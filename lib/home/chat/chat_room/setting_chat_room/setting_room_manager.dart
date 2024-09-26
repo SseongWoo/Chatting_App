@@ -84,7 +84,8 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
       EasyLoading.show();
       if (_chatRoomData.chatRoomProfile != _imageUrl) {
         if (_croppedProFile != null) {
-          _imageUrl = await uploadChatRoomProfile(_croppedProFile, _chatRoomData.chatRoomUid);
+          _imageUrl =
+              await uploadChatRoomProfile(_croppedProFile, _chatRoomData.chatRoomUid, context);
         } else {
           _imageUrl = '';
         }
@@ -112,21 +113,21 @@ class _SettingRoomManagerState extends State<SettingRoomManager> {
         _chatRoomData.chatRoomExplain = _controllerExplain.text;
       }
 
-      await updateChatMainData(_chatRoomData);
+      await updateChatMainData(_chatRoomData, context);
 
       // 외부 데이터 업데이트
       if (_originalChecked == false && _isChecked == true) {
-        await setChatPublicData(_chatRoomData);
+        await setChatPublicData(_chatRoomData, context);
       } else if (_originalChecked == true && _isChecked == false) {
-        await deleteChatPublicData(_chatRoomData.chatRoomUid);
+        await deleteChatPublicData(_chatRoomData.chatRoomUid, context);
       } else if ((_originalPassword == true && _controllerPassword.text.isEmpty)) {
-        updateChatPublicPassWordData(_chatRoomData.chatRoomUid, false);
+        updateChatPublicPassWordData(_chatRoomData.chatRoomUid, false, context);
       } else if (_originalPassword == false && _controllerPassword.text.isNotEmpty) {
-        updateChatPublicPassWordData(_chatRoomData.chatRoomUid, true);
+        updateChatPublicPassWordData(_chatRoomData.chatRoomUid, true, context);
       }
 
-      await refreshData();
-      await getChatData(_chatRoomSimpleData.chatRoomUid);
+      await refreshData(context);
+      await getChatData(_chatRoomSimpleData.chatRoomUid, context);
       List<ChatPeopleClass> chatPeople = await getPeopleData(_chatRoomSimpleData.chatRoomUid);
       EasyLoading.dismiss();
       Navigator.of(context).pushAndRemoveUntil(

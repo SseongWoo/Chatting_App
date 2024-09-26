@@ -1,6 +1,7 @@
 import 'package:chattingapp/utils/my_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../../../../error/error_screen.dart';
 import '../../../../utils/convert_array.dart';
 import '../../../../utils/data_refresh.dart';
 import '../../../../utils/get_people_data.dart';
@@ -26,7 +27,7 @@ class ChatRoomPublicData {
 FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 // 채팅방의 비밀번호를 가져오는 함수
-Future<String> getPassword(ChatRoomPublicData chatRoomPublicData) async {
+Future<String> getPassword(ChatRoomPublicData chatRoomPublicData, BuildContext context) async {
   String password = '';
   try {
     DocumentSnapshot documentSnapshot =
@@ -34,12 +35,15 @@ Future<String> getPassword(ChatRoomPublicData chatRoomPublicData) async {
     password = documentSnapshot['chatroompassword'];
   } catch (e) {
     logger.e('getPassword오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
   return password;
 }
 
 // 채팅방에 새로 입장할떄 DB에 데이터를 새로 저장하거나 변경하는 함수
-Future<void> enterChatRoom(ChatRoomPublicData chatRoomPublicData) async {
+Future<void> enterChatRoom(ChatRoomPublicData chatRoomPublicData, BuildContext context) async {
   try {
     DateTime dateTime = DateTime.now();
     DocumentSnapshot documentSnapshot =
@@ -72,21 +76,24 @@ Future<void> enterChatRoom(ChatRoomPublicData chatRoomPublicData) async {
     });
 
     // 채팅방에 입장 시스템 메세지 입력
-    await setChatData(
-        chatRoomPublicData.chatRoomUid, '${myData.myNickName}님이 입장하였습니다.', 'system', dateTime);
-    await setChatRealTimeData(
-        peopleList, chatRoomPublicData.chatRoomUid, '${myData.myNickName}님이 입장하였습니다.', dateTime);
+    await setChatData(chatRoomPublicData.chatRoomUid, '${myData.myNickName}님이 입장하였습니다.', 'system',
+        dateTime, context);
+    await setChatRealTimeData(peopleList, chatRoomPublicData.chatRoomUid,
+        '${myData.myNickName}님이 입장하였습니다.', dateTime, context);
 
     // 로컬데이터 새로 갱신
-    await refreshData();
+    await refreshData(context);
   } catch (e) {
     logger.e('enterChatRoom오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
 
 // enterChatRoom 함수를 실행 뒤 해당 채팅방으로 화면이 이동하게 하는 함수
 Future<void> moveChatRoom(BuildContext context, ChatRoomPublicData chatRoomPublicData) async {
-  await enterChatRoom(chatRoomPublicData);
+  await enterChatRoom(chatRoomPublicData, context);
   // 채팅방 인원 데이터 가져오기
   List<ChatPeopleClass> chatPeople = await getPeopleData(chatRoomPublicData.chatRoomUid);
   Navigator.of(context).pushAndRemoveUntil(

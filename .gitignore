@@ -41,3 +41,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Keystore files
+*.jks
+
+# 또는 특정 경로의 파일을 제외
+android/app/fluttertalk_aos.jks

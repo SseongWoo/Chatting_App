@@ -73,11 +73,12 @@ class _AddPersonScreenState extends State<AddPersonScreen> {
     }
 
     // 파이어베이스에 데이터를 등록하는 작업
-    await addNewPeople(_chatRoomSimpleData.chatRoomUid, _chatPeopleList, _newPeopleList);
+    await addNewPeople(_chatRoomSimpleData.chatRoomUid, _chatPeopleList, _newPeopleList, context);
     // 시스템 메세지를 채팅방에 생성하는 작업
-    await setChatData(_chatRoomSimpleData.chatRoomUid, message, 'system', dateTime);
+    await setChatData(_chatRoomSimpleData.chatRoomUid, message, 'system', dateTime, context);
     // 시스템 메세지를 채팅방 마지막 메세지 데이터로 업데이트하는 작업
-    await setChatRealTimeData(_chatPeopleList, _chatRoomSimpleData.chatRoomUid, message, dateTime);
+    await setChatRealTimeData(
+        _chatPeopleList, _chatRoomSimpleData.chatRoomUid, message, dateTime, context);
 
     // 업데이트된 채팅방 인원을 다시 가져와서 내부 데이터를 업데이트 하는 작업
     List<ChatPeopleClass> chatPeople = await getPeopleData(_chatRoomSimpleData.chatRoomUid);

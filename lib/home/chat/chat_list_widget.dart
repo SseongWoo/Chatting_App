@@ -152,10 +152,10 @@ class _ChatListWidgetState extends State<ChatListWidget> {
           return GestureDetector(
             onTap: () async {
               EasyLoading.show();
-              await getChatData(_chatRoomSimpleData.chatRoomUid);
+              await getChatData(_chatRoomSimpleData.chatRoomUid, context);
               List<ChatPeopleClass> chatPeople =
                   await getPeopleData(_chatRoomSimpleData.chatRoomUid);
-              await updateRealTimeData(_chatRoomSimpleData.chatRoomUid);
+              await updateRealTimeData(_chatRoomSimpleData.chatRoomUid, context);
               EasyLoading.dismiss();
               Navigator.push(
                 context,

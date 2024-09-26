@@ -153,7 +153,7 @@ void friendWidgetDialog(BuildContext context, ScreenSize screenSize, FriendData 
   // 채팅방으로 이동하는 함수
   void moveChatRoom() async {
     EasyLoading.show();
-    await getChatData(chatRoomSimpleData.chatRoomUid);
+    await getChatData(chatRoomSimpleData.chatRoomUid, context);
     List<ChatPeopleClass> chatPeople = await getPeopleData(chatRoomSimpleData.chatRoomUid);
     EasyLoading.dismiss();
     Navigator.push(
@@ -282,7 +282,7 @@ void friendCustomNickNameDialog(BuildContext getContext, FriendData friendData) 
               onPressed: () async {
                 Navigator.of(context).pop();
                 EasyLoading.show();
-                await updateFriendName(friendData, controller.text);
+                await updateFriendName(friendData, controller.text, context);
                 EasyLoading.dismiss();
               },
               child: const Text('변경')),

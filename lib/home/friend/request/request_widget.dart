@@ -26,10 +26,10 @@ class _RequestSentWidgetState extends State<RequestSentWidget> {
   Future<void> delete() async {
     if (!deleteWidget) {
       // 거부된 요청이 아닐경우
-      await deleteRequest(requestSendList[index].requestUID, true, true);
+      await deleteRequest(requestSendList[index].requestUID, true, true, context);
     } else {
       //거부된 요청일 경우
-      await deleteRequest(requestSendList[index].requestUID, true, false);
+      await deleteRequest(requestSendList[index].requestUID, true, false, context);
     }
     setState(() {
       requestSendList.removeAt(index);
@@ -185,7 +185,7 @@ class _RequestReceivedWidgetState extends State<RequestReceivedWidget> {
               child: IconButton(
                 onPressed: () {
                   setState(() {
-                    deleteRequest(requestReceivedList[index].requestUID, true, false);
+                    deleteRequest(requestReceivedList[index].requestUID, true, false, context);
                   });
                 },
                 icon: const Icon(Icons.close),
@@ -268,8 +268,8 @@ class _RequestReceivedWidgetState extends State<RequestReceivedWidget> {
                                           borderRadius: BorderRadius.circular(10)),
                                     ),
                                     onPressed: () async {
-                                      bool check =
-                                          await requestCheck(requestReceivedList[index].requestUID);
+                                      bool check = await requestCheck(
+                                          requestReceivedList[index].requestUID, context);
                                       if (check) {
                                         setState(() {
                                           deleteWidget = true;
@@ -302,14 +302,15 @@ class _RequestReceivedWidgetState extends State<RequestReceivedWidget> {
                                           borderRadius: BorderRadius.circular(10)),
                                     ),
                                     onPressed: () async {
-                                      bool check =
-                                          await requestCheck(requestReceivedList[index].requestUID);
+                                      bool check = await requestCheck(
+                                          requestReceivedList[index].requestUID, context);
                                       if (check) {
                                         setState(() {
                                           deleteWidget = true;
                                           checkWidget = false;
                                         });
-                                        updateRequest(requestReceivedList[index].requestUID);
+                                        updateRequest(
+                                            requestReceivedList[index].requestUID, context);
                                       } else {
                                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                                             content: Text('문제가 발생하였습니다. 다시 시도해 주세요')));

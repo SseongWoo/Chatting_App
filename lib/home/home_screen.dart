@@ -1,3 +1,4 @@
+import 'package:chattingapp/error/error_screen.dart';
 import 'package:chattingapp/home/chat/chat_room/search_chat/search_room_screen.dart';
 import 'package:chattingapp/home/chat/create_chat/creat_chat_screen.dart';
 import 'package:chattingapp/home/friend/request/friend_request_screen.dart';
@@ -98,6 +99,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               },
               icon: const Icon(Icons.search),
               tooltip: '검색',
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ErrorScreen(
+                            errorMessage: '에러에어레어레',
+                          )),
+                );
+              },
+              icon: const Icon(Icons.access_alarm_outlined),
             ),
           ],
         ),

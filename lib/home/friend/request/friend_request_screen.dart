@@ -52,7 +52,7 @@ class _FriendManagementScreenState extends State<FriendManagementScreen>
 
   Future<void> getRequestList() async {
     EasyLoading.show();
-    await acceptRequest();
+    await acceptRequest(context);
     EasyLoading.dismiss();
   }
 
@@ -224,7 +224,7 @@ class RequestSentScreen extends StatefulWidget {
 
 class _RequestSentScreenState extends State<RequestSentScreen> {
   Future<void> refreshSend() async {
-    await acceptRequest();
+    await acceptRequest(context);
     setState(() {
       requestSendList;
     });
@@ -271,7 +271,7 @@ class RequestReceivedScreen extends StatefulWidget {
 
 class _RequestReceivedScreenState extends State<RequestReceivedScreen> {
   Future<void> refreshAccept() async {
-    await acceptRequest();
+    await acceptRequest(context);
     setState(() {
       requestReceivedList;
     });
@@ -289,7 +289,7 @@ class _RequestReceivedScreenState extends State<RequestReceivedScreen> {
     for (int index = 0; index < requestReceivedList.length; index++) {
       if (dateDifference(requestReceivedList[index].requestTime) > 3 &&
           requestReceivedList[index].requestCheck != false) {
-        deleteRequest(requestReceivedList[index].requestUID, true, false);
+        deleteRequest(requestReceivedList[index].requestUID, true, false, context);
         requestReceivedList.removeAt(index);
       }
     }

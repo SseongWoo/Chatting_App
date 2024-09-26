@@ -47,7 +47,7 @@ class _CategorySettingScreenState extends State<CategorySettingScreen>
   void _popScope() async {
     EasyLoading.show(status: '로딩 중입니다...');
     if (categoryControlCheck || widget.checkData) {
-      await setCategory();
+      await setCategory(context);
     }
     EasyLoading.dismiss();
     Navigator.of(context).pushAndRemoveUntil(

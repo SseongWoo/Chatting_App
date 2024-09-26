@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../error/error_screen.dart';
 import '../../utils/logger.dart';
 import '../chat/chat_list_data.dart';
 
@@ -53,7 +54,7 @@ Map<String, String> friendListUidKey = {};
 List<String> friendListSequence = [];
 
 // 특정 친구 데이터가 DB에 존재하는지 확인하는 함수
-Future<bool> checkFriend(String friendUID) async {
+Future<bool> checkFriend(String friendUID, BuildContext context) async {
   try {
     DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
         .collection('users')
@@ -64,12 +65,15 @@ Future<bool> checkFriend(String friendUID) async {
     return documentSnapshot.exists;
   } catch (e) {
     logger.e('checkFriend오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
     return false;
   }
 }
 
 // 특정 유저 데이터를 서버의 유저 공개 데이터에서 가져오는 함수
-Future<UserData?> getUserData(String friendUID) async {
+Future<UserData?> getUserData(String friendUID, BuildContext context) async {
   UserData userData;
   try {
     DocumentSnapshot documentSnapshot =
@@ -80,12 +84,15 @@ Future<UserData?> getUserData(String friendUID) async {
     return userData;
   } catch (e) {
     logger.e('getUserData오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
     return null;
   }
 }
 
 // 서버에서 내 모든 친구 데이터를 가져와 리스트에 저장하는 함수
-Future<bool> getFriendDataList() async {
+Future<bool> getFriendDataList(BuildContext context) async {
   try {
     friendList.clear();
     friendListUidKey.clear();
@@ -121,6 +128,9 @@ Future<bool> getFriendDataList() async {
     return true;
   } catch (e) {
     logger.e('getFriendDataList오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
     return false;
   }
 }
@@ -192,10 +202,10 @@ Future<void> deleteFriend(BuildContext context, String friendUID) async {
           .delete();
 
       // 수정된 데이터를 다시 가져와 저장하는 작업
-      await getFriendDataList();
-      await getFriendDataList();
-      await getChatRoomData();
-      await getChatRoomDataList();
+      await getFriendDataList(context);
+      await getFriendDataList(context);
+      await getChatRoomData(context);
+      await getChatRoomDataList(context);
       snackBarMessage(context, '친구가 성공적으로 삭제되었습니다.');
     } else {
       snackBarMessage(context, '친구를 삭제하는 중 오류가 발생했습니다.');
@@ -207,9 +217,9 @@ Future<void> deleteFriend(BuildContext context, String friendUID) async {
 }
 
 // 친구 커스텀 이름을 서버에 업데이트 하는 함수
-Future<void> updateFriendName(FriendData friendData, String name) async {
+Future<void> updateFriendName(FriendData friendData, String name, BuildContext context) async {
   try {
-    bool check = await checkFriend(friendData.friendUID);
+    bool check = await checkFriend(friendData.friendUID, context);
 
     if (check) {
       await _firestore
@@ -220,9 +230,12 @@ Future<void> updateFriendName(FriendData friendData, String name) async {
           .update({
         'friendcustomname': name,
       });
-      await getFriendDataList();
+      await getFriendDataList(context);
     }
   } catch (e) {
     logger.e('updateFriendName오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }

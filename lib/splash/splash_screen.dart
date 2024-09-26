@@ -53,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
       // 5초 후에 실행할 함수
       _delayedAction = Future.delayed(const Duration(seconds: 5), () {
         if (mounted) {
-          signOut();
+          signOut(context);
           Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) => const LoginScreen()), (route) => false);
         }
@@ -125,11 +125,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<bool> loadData() async {
     //await getCategoryList();
     bool checkMyData = await getMyData();
-    bool checkFriendDataList = await getFriendDataList();
-    bool checkChatRoomData = await getChatRoomData();
-    bool checkChatRoomDataList = await getChatRoomDataList();
+    bool checkFriendDataList = await getFriendDataList(context);
+    bool checkChatRoomData = await getChatRoomData(context);
+    bool checkChatRoomDataList = await getChatRoomDataList(context);
     await getTapShared();
-    await getRealTimeData();
+    await getRealTimeData(context);
     if (checkFriendDataList &&
         checkMyData &&
         checkChatRoomData &&

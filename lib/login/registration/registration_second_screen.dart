@@ -30,7 +30,7 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
   // 이메일인증을 완료하였을때 다음화면으로 넘어가는 함수
   Future<void> _checkEmail(context) async {
     EasyLoading.show();
-    bool isEmailVerified = await checkEmailVerificationStatus();
+    bool isEmailVerified = await checkEmailVerificationStatus(context);
     if (isEmailVerified) {
       Navigator.push(
         context,
@@ -90,7 +90,7 @@ class _RegistrationSecondScreenState extends State<RegistrationSecondScreen> {
                     width: screenSize.getWidthPerSize(50),
                     child: ElevatedButton(
                         onPressed: () {
-                          signInWithVerifyEmailAndPassword(email, password);
+                          signInWithVerifyEmailAndPassword(email, password, context);
                         },
                         child: Text(
                           '이메일 다시 보내기',

@@ -38,7 +38,7 @@ class UpdateMyNameDialog extends StatelessWidget {
           onPressed: () async {
             if (_controller.text != myData.myNickName) {
               EasyLoading.show();
-              await updateMyName(_controller.text);
+              await updateMyName(_controller.text, context);
               onRefresh(_controller.text);
               EasyLoading.dismiss();
               snackBarMessage(context, '닉네임 변경이 완료되었습니다.');
@@ -132,7 +132,7 @@ class _UpdateMyProfileDialogState extends State<UpdateMyProfileDialog> {
           onPressed: () async {
             if (_croppedProFile != null && _croppedProFile?.path != myData.myProfile) {
               EasyLoading.show();
-              await uploadMyProfile(_croppedProFile);
+              await uploadMyProfile(_croppedProFile, context);
               onRefresh(myData.myProfile);
               EasyLoading.dismiss();
               snackBarMessage(context, '프로필 변경이 완료되었습니다.');
@@ -339,7 +339,7 @@ class _EmailCheckDialogState extends State<EmailCheckDialog> {
             TextButton(
               onPressed: () async {
                 EasyLoading.show();
-                bool check = await checkEmailVerificationStatus();
+                bool check = await checkEmailVerificationStatus(context);
                 if (check) {
                   snackBarMessage(context, '인증이 완료되었습니다.');
                   EasyLoading.dismiss();
@@ -395,7 +395,7 @@ class _UpdatePassWordDialogState extends State<UpdatePassWordDialog> {
             TextButton(
               onPressed: () async {
                 EasyLoading.show();
-                await resetPassword(myData.myEmail);
+                await resetPassword(myData.myEmail, context);
                 setState(() {
                   _message = '메일이 재전송이 되었습니다.\n해당 메일에서 비밀번호 변경을 완료해주세요';
                 });
@@ -434,7 +434,7 @@ class LogOutDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            signOut();
+            signOut(context);
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const LoginScreen()),

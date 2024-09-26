@@ -2,8 +2,11 @@ import 'dart:io';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:uuid/uuid.dart';
+import '../../../error/error_screen.dart';
 import '../../../utils/logger.dart';
 import '../chat_list_data.dart';
 
@@ -28,7 +31,8 @@ String createRandomCode() {
 }
 
 // 채팅방을 생성할때 프로필 사진을 서버에 저장하고 프로필 사진의 url을 리턴하는 함수
-Future<String> uploadChatRoomProfile(CroppedFile? croppedFile, String chatRoomUid) async {
+Future<String> uploadChatRoomProfile(
+    CroppedFile? croppedFile, String chatRoomUid, BuildContext context) async {
   FirebaseStorage storage = FirebaseStorage.instance;
   String downloadURL = '';
 
@@ -42,12 +46,15 @@ Future<String> uploadChatRoomProfile(CroppedFile? croppedFile, String chatRoomUi
     });
   } catch (e) {
     logger.e('uploadChatRoomProfile오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
   return downloadURL;
 }
 
 // 채팅방을 생성할 때 공개설정을 공개로 했을 경우 채팅방 공개데이터에 채팅방데이터를 등록하는 함수
-Future<void> setChatPublicData(ChatRoomData chatRoomData) async {
+Future<void> setChatPublicData(ChatRoomData chatRoomData, BuildContext context) async {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   bool isPassword = false;
   try {
@@ -67,5 +74,8 @@ Future<void> setChatPublicData(ChatRoomData chatRoomData) async {
     });
   } catch (e) {
     logger.e('setChatPublicData오류 : $e');
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => ErrorScreen(errorMessage: e.toString())),
+        (route) => false);
   }
 }
